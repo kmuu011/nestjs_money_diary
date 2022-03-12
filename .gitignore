@@ -1,35 +1,39 @@
 # compiled output
-/dist
-/node_modules
+nest/dist
+nest/node_modules
 
 # Logs
-logs
-*.log
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+nest/logs
+nest/*.log
+nest/npm-debug.log*
+nest/pnpm-debug.log*
+nest/yarn-debug.log*
+nest/yarn-error.log*
+nest/lerna-debug.log*
 
 # OS
-.DS_Store
+nest/.DS_Store
 
 # Tests
-/coverage
-/.nyc_output
+nest/coverage
+nest/.nyc_output
 
 # IDEs and editors
 /.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+nest/.project
+nest/.classpath
+nest/.c9/
+nest/*.launch
+nest/.settings/
+nest/*.sublime-workspace
 
 # IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+nest/.vscode/*
+nest/!.vscode/settings.json
+nest/!.vscode/tasks.json
+nest/!.vscode/launch.json
+nest/!.vscode/extensions.json
+
+# more_ignore
+nest/config/config.js
+nest/config/config.ts
