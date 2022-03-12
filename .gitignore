@@ -35,5 +35,5 @@ nest/!.vscode/launch.json
 nest/!.vscode/extensions.json
 
 # more_ignore
-nest/config/config.js
-nest/config/config.ts
+nest/config/config.*
+nginx_window/logs/*
