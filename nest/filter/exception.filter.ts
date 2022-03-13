@@ -1,4 +1,4 @@
-import {ExceptionFilter, Catch, ArgumentsHost, HttpException} from '@nestjs/common';
+import {ArgumentsHost, Catch, ExceptionFilter, HttpException} from '@nestjs/common';
 import {Request, Response} from 'express';
 
 @Catch(HttpException)
@@ -9,17 +9,19 @@ export class ControllableExceptionFilter implements ExceptionFilter {
         const req = ctx.getRequest<Request>();
         const status = exception.getStatus();
         const message = exception.getResponse();
+        const stack = exception?.stack.toString() || '';
+
+        // @ts-ignore
+        const {code, description} = message;
+
         console.log('HttpExceptionFilter log');
-
-        console.log(message);
-
-        console.log(exception);
 
         res
             .status(status)
             .json({
                 statusCode: status,
-                message
+                code,
+                description
             });
     }
 }
@@ -30,20 +32,19 @@ export class OutOfControlExceptionFilter implements ExceptionFilter {
         const ctx = host.switchToHttp();
         const res = ctx.getResponse<Response>();
         const req = ctx.getRequest<Request>();
-        const err = exception;
-
-        const stack = err?.stack.toString();
-
-        console.log(stack)
+        const stack = exception?.stack.toString() || '';
 
         console.log('EveryExceptionFilter log');
-        // console.log(err);
+        console.log(exception);
 
         res
             .status(500)
             .json({
-                statusCode: 'SERVER_ERROR',
-                message: stack
+                statusCode: 500,
+                code: 'out_of_control_serve_error',
+                description: '지정되지 않은 오류가 발생했습니다.' +
+                    '\n빠른 시일 내에 수정 될 예정입니다.' +
+                    '\n이용해 주셔서 감사합니다.'
             });
     }
 }

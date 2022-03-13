@@ -2,8 +2,8 @@ import {MiddlewareConsumer, Module, NestModule} from '@nestjs/common';
 
 import {TodoModule} from './todo/todo.module';
 import {MemberModule} from "./member/member.module";
-import {PrefixMiddleware} from "middleware/prefixMiddleware";
-import {LoggerMiddleware} from "middleware/loggerMiddleware";
+import {PrefixMiddleware} from "middleware/prefix.middleware";
+import {LoggerMiddleware} from "middleware/logger.middleware";
 
 
 @Module({
