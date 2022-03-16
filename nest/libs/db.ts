@@ -1,12 +1,13 @@
 import config from 'config/config';
 import utils from "libs/utils";
+import {ResultSetHeader} from "mysql2";
 
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
-const pool = mysql.createPool(config.mysql_config);
-const pool_admin = mysql.createPool(config.mysql_config_admin);
+const pool = mysql.createPool(config.mysqlConfig);
+const pool_admin = mysql.createPool(config.mysqlConfigAdmin);
 
-const query = async (sql, connect) => {
+const query = async (sql, connect): Promise<any> => {
     return await new Promise(async (resolve, reject) => {
         connect.getConnection(function (err, connection) {
             if (err) {
@@ -38,7 +39,7 @@ const query = async (sql, connect) => {
 };
 
 export default {
-    get_connection: async () => {
+    get_connection: async (): Promise<void> => {
         try {
             return await new Promise(async (resolve, reject) => {
                 pool.getConnection(function (err, connection) {
@@ -57,7 +58,7 @@ export default {
         }
     },
 
-    run: async (connector, sql) => {
+    run: async (connector, sql): Promise<ResultSetHeader> => {
         try {
             return await new Promise(async (resolve, reject) => {
                 connector.query(sql, function (err, rows) {
@@ -76,7 +77,7 @@ export default {
         }
     },
 
-    commit: async (connector) => {
+    commit: async (connector): Promise<void> => {
         try {
             await new Promise(async (resolve, reject) => {
                 connector.commit(function (err) {
@@ -94,7 +95,7 @@ export default {
         }
     },
 
-    rollback: async (connector) => {
+    rollback: async (connector): Promise<void> => {
         console.log('롤백 작동');
         try {
             await connector.rollback(function () {});
@@ -104,15 +105,15 @@ export default {
         }
     },
 
-    release: async (connector) => {
+    release: async (connector): Promise<void> => {
         connector.release();
     },
 
-    query: async (sql) => {
+    query: async (sql): Promise<any> => {
         return await query(sql, pool);
     },
 
-    admin_query: async (sql) => {
+    admin_query: async (sql): Promise<any> => {
         return await query(sql, pool_admin);
     }
 }

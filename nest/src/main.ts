@@ -6,6 +6,7 @@ import {
   } from 'filter/exception.filter';
 
 import Config from 'config/config';
+import {ValidationPipe} from "@nestjs/common";
 
 const port = Config.port;
 
@@ -13,8 +14,15 @@ const appOptions = {
     cors: true
 };
 
+const validationOptions = {
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+};
+
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, appOptions);
+    app.useGlobalPipes(new ValidationPipe(validationOptions));
 
     app.setGlobalPrefix('api');
 

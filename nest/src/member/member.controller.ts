@@ -1,23 +1,25 @@
-import {All, Body, Controller, Get, HttpException, HttpStatus, Post, Req} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req} from '@nestjs/common';
 import {MemberService} from './member.service';
 import {NextFunction, Request} from "express";
 import {Message} from 'libs/message';
 
-import db from 'libs/db';
-
+import {LoginMemberDto} from "./dto/login-member.dto";
+import db from "libs/db";
+import {Member} from "./model/member.model";
 
 @Controller('/member')
 export class MemberController {
     constructor(
-        private readonly memberService: MemberService
+        private readonly memberService: MemberService,
     ) {}
 
     @Post('/login')
-    async login(@Req() req: Request, @Body() body){
-        // throw Message.SERVER_ERROR;
-        let sql = "SELECT * FROM member WHERE id = 'test'";
+    async login(@Req() req: Request, @Body() loginMemberDto:LoginMemberDto){
+        req.connector = await db.get_connection();
 
-        const result = await db.query(sql);
+        const result = await this.memberService.login(req, loginMemberDto);
+
+        await db.commit(req.connector);
 
         return result;
     }

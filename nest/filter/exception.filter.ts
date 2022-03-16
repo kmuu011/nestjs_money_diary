@@ -8,11 +8,11 @@ export class ControllableExceptionFilter implements ExceptionFilter {
         const res = ctx.getResponse<Response>();
         const req = ctx.getRequest<Request>();
         const status = exception.getStatus();
-        const message = exception.getResponse();
+        const response = exception.getResponse();
         const stack = exception?.stack.toString() || '';
 
         // @ts-ignore
-        const {code, description} = message;
+        const {error, message} = response;
 
         console.log('HttpExceptionFilter log');
 
@@ -20,8 +20,8 @@ export class ControllableExceptionFilter implements ExceptionFilter {
             .status(status)
             .json({
                 statusCode: status,
-                code,
-                description
+                error,
+                message: message.toString().replace(/\,/g, '\n')
             });
     }
 }
@@ -42,7 +42,7 @@ export class OutOfControlExceptionFilter implements ExceptionFilter {
             .json({
                 statusCode: 500,
                 code: 'out_of_control_serve_error',
-                description: '지정되지 않은 오류가 발생했습니다.' +
+                message: '지정되지 않은 오류가 발생했습니다.' +
                     '\n빠른 시일 내에 수정 될 예정입니다.' +
                     '\n이용해 주셔서 감사합니다.'
             });
