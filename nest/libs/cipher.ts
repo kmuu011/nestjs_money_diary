@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const cipherKey = config.cipher.key;
 
 export default {
-    encrypt: async (text) => {
+    encrypt: (text) => {
         const cipherIv = crypto.randomBytes(16);
         const enc = crypto.createCipheriv(config.cipher.twoWayAlgorithm, Buffer.from(cipherKey), cipherIv);
         let encrypted = enc.update(text);
@@ -14,7 +14,7 @@ export default {
         return cipherIv.toString('hex') + ':' + encrypted.toString('hex');
     },
 
-    decrypt: async (text) => {
+    decrypt: (text) => {
         const textParts = text.split(':');
         const iv = Buffer.from(textParts.shift(), 'hex');
         const encryptedText = Buffer.from(textParts.join(':'), 'hex');

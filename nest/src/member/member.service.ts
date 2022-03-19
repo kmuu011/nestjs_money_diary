@@ -12,26 +12,26 @@ export class MemberService {
         private readonly member: Member,
     ) {}
 
-    async login(req: Request, loginMemberDto: LoginMemberDto) {
-        await loginMemberDto.passwordEncrypt();
+    async login(req: Request, loginMemberDto: LoginMemberDto): Promise<Member> {
+        loginMemberDto.passwordEncrypt();
 
-        await this.member.dataMigration(loginMemberDto);
+        this.member.dataMigration(loginMemberDto);
 
         const memberModel = await this.memberDao.login(loginMemberDto);
 
-        await this.member.dataMigration(memberModel);
-        await this.member.dataMigration({
+        this.member.dataMigration(memberModel);
+        this.member.dataMigration({
             ip: req.headers.ip,
             user_agent: req.headers['user-agent']
         });
 
-        await this.member.createToken();
+        this.member.createToken();
 
-        req.organizedSql = await Organizer.get_sql(this.member,
+        req.organizedSql = Organizer.getSql(this.member,
             'ip, user_agent', undefined, 2);
 
         await this.memberDao.update(req, this.member);
 
-        return memberModel;
+        return this.member;
     }
 }

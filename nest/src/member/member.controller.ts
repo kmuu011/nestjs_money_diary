@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post, Req} from '@nestjs/common';
+import {Body, Controller, Get, Post, Req} from '@nestjs/common';
 import {MemberService} from './member.service';
-import {NextFunction, Request} from "express";
+import {Request} from "express";
 import {Message} from 'libs/message';
 
 import {LoginMemberDto} from "./dto/login-member.dto";
@@ -14,14 +14,25 @@ export class MemberController {
     ) {}
 
     @Post('/login')
-    async login(@Req() req: Request, @Body() loginMemberDto:LoginMemberDto){
-        req.connector = await db.get_connection();
+    async login(@Req() req: Request, @Body() loginMemberDto: LoginMemberDto) {
+        req.connector = await db.getConnection();
 
-        const result = await this.memberService.login(req, loginMemberDto);
+        const member = await this.memberService.login(req, loginMemberDto);
 
         await db.commit(req.connector);
 
-        return result;
+        return {token: member.token};
+    }
+
+    @Post('/signUp')
+    async login(@Req() req: Request, @Body() loginMemberDto: LoginMemberDto) {
+        req.connector = await db.getConnection();
+
+        const member = await this.memberService.login(req, loginMemberDto);
+
+        await db.commit(req.connector);
+
+        return {token: member.token};
     }
 
 }

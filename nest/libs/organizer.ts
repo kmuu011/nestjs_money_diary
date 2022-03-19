@@ -6,7 +6,7 @@ const timeAdditionalList = [
     {col: 'updated_at', val: 'UNIX_TIMESTAMP()', set: 'updated_at = UNIX_TIMESTAMP()'},
 ];
 
-const sqlCreator = async (data, key) => {
+const sqlCreator = (data, key) => {
     let sqlCol: string = '';
     let sqlVal: string = '';
     let sqlSet: string = '';
@@ -23,7 +23,7 @@ const sqlCreator = async (data, key) => {
 };
 
 export default {
-    get_sql: async (
+    getSql: (
         dataObj: object,
         requireKeys: string | string[] | undefined,
         optionalKeys: string | string[] | undefined,
@@ -41,7 +41,7 @@ export default {
             requireKeys = requireKeys.replace(/\s/g, '').split(',');
 
             for (let k of requireKeys) {
-                const sqlPiece = await sqlCreator(dataObj[k], k);
+                const sqlPiece = sqlCreator(dataObj[k], k);
 
                 sqlCol += sqlPiece.sqlCol;
                 sqlVal += sqlPiece.sqlVal;
@@ -59,7 +59,7 @@ export default {
             for(let k of optionalKeys){
                 if(dataObj[k] === undefined) continue;
 
-                const sqlPiece = await sqlCreator(dataObj[k], k);
+                const sqlPiece = sqlCreator(dataObj[k], k);
 
                 sqlCol += sqlPiece.sqlCol;
                 sqlVal += sqlPiece.sqlVal;

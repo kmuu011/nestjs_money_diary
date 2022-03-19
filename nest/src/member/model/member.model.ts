@@ -1,5 +1,6 @@
 import config from "config/config";
 import cipher from "libs/cipher";
+import {pluck} from "rxjs";
 
 const jwt = require('jsonwebtoken');
 
@@ -28,7 +29,7 @@ export class Member {
     token: string;
     keep_check: boolean;
 
-    async passwordEncrypt(){
+    passwordEncrypt(){
         if(this.password_encrypted === true) return;
 
         this.password = crypto
@@ -52,15 +53,15 @@ export class Member {
         }
     }
 
-    async createToken() {
+    createToken() {
         const payloadObj = this.getPayload();
 
         const token = jwt.sign(payloadObj, jwtSecret, {expiresIn: expireTime});
 
-        this.token = await cipher.encrypt(token);
+        this.token = cipher.encrypt(token);
     }
 
-    async dataMigration(object) {
+    dataMigration(object) {
         for(let k in object){
             this[k] = object[k];
         }

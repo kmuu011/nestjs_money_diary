@@ -5,7 +5,7 @@ import {ResultSetHeader} from "mysql2";
 const mysql = require('mysql2');
 
 const pool = mysql.createPool(config.mysqlConfig);
-const pool_admin = mysql.createPool(config.mysqlConfigAdmin);
+const poolAdmin = mysql.createPool(config.mysqlConfigAdmin);
 
 const query = async (sql, connect): Promise<any> => {
     return await new Promise(async (resolve, reject) => {
@@ -39,7 +39,7 @@ const query = async (sql, connect): Promise<any> => {
 };
 
 export default {
-    get_connection: async (): Promise<void> => {
+    getConnection: async (): Promise<void> => {
         try {
             return await new Promise(async (resolve, reject) => {
                 pool.getConnection(function (err, connection) {
@@ -113,7 +113,7 @@ export default {
         return await query(sql, pool);
     },
 
-    admin_query: async (sql): Promise<any> => {
-        return await query(sql, pool_admin);
+    adminQuery: async (sql): Promise<any> => {
+        return await query(sql, poolAdmin);
     }
 }
