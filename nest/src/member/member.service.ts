@@ -1,5 +1,4 @@
 import {Injectable} from '@nestjs/common';
-import {LoginMemberDto} from "./dto/login-member.dto";
 import {Request} from "express";
 import {MemberDao} from "./member.dao";
 import {Member} from "./model/member.model";
@@ -12,12 +11,10 @@ export class MemberService {
         private readonly member: Member,
     ) {}
 
-    async login(req: Request, loginMemberDto: LoginMemberDto): Promise<Member> {
-        loginMemberDto.passwordEncrypt();
+    async login(req: Request, member: Member): Promise<Member> {
+        member.passwordEncrypt();
 
-        this.member.dataMigration(loginMemberDto);
-
-        const memberModel = await this.memberDao.login(loginMemberDto);
+        const memberModel = await this.memberDao.login(member);
 
         this.member.dataMigration(memberModel);
         this.member.dataMigration({

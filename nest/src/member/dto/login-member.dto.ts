@@ -1,13 +1,7 @@
-import {IsNumber, IsString} from "class-validator";
 import {Member} from "../model/member.model";
+import {PickType} from "@nestjs/mapped-types";
 
-export class LoginMemberDto extends Member {
-    @IsString()
-    readonly id:string;
-
-    @IsString()
-    readonly password:string;
-
-    @IsNumber()
-    readonly keep_check: boolean
-}
+export class LoginMemberDto extends PickType(
+    Member,
+    ['id', 'password', 'keep_check'] as const
+) {}

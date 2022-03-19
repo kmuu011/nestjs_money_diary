@@ -1,3 +1,4 @@
+import {IsBoolean, IsNumber, IsString, Length} from "class-validator";
 import config from "config/config";
 import cipher from "libs/cipher";
 import {pluck} from "rxjs";
@@ -11,33 +12,61 @@ const jwtSecret = config.member.jwtSecret;
 
 export class Member {
     idx: number;
+
+    @Length(3, 15)
+    @IsString()
     id: string;
+
+    @IsString()
     password: string;
-    password_encrypted: boolean;
+
+    @IsString()
+    encrypted_password: string;
+
+    @IsString()
     nickname: string;
+
+    @IsString()
     email: string;
+
+    @IsString()
     profile_img_key: string;
+
+    @IsNumber()
     admin: number;
+    @IsNumber()
     created_at: number;
+    @IsNumber()
     updated_at: number;
+    @IsNumber()
     auth_type: number;
+
+    @IsString()
     auth_id: string;
+
+    @IsString()
     ip: string | string[];
+
+    @IsString()
     user_agent: string;
+
+    @IsNumber()
     max_sale_keyword_cnt: number;
+
+    @IsNumber()
     mailing_test_at: number;
+
+    @IsString()
     token: string;
+
+    @IsBoolean()
     keep_check: boolean;
 
     passwordEncrypt(){
-        if(this.password_encrypted === true) return;
-
-        this.password = crypto
+        this.encrypted_password = crypto
             .createHash(config.member.hashAlgorithm)
             .update(this.password+config.member.salt)
             .digest('hex');
-
-        this.password_encrypted = true;
     }
 
     getPayload(){

@@ -1,6 +1,5 @@
 import {Injectable} from "@nestjs/common";
 import {Request} from "express";
-import {LoginMemberDto} from "./dto/login-member.dto";
 
 import {Member} from "./model/member.model";
 import {Message} from "libs/message";
@@ -14,13 +13,13 @@ let sql: string;
 
 @Injectable()
 export class MemberDao {
-    async login(loginMemberDto: LoginMemberDto): Promise<Member> {
-        const { id, password } = loginMemberDto;
+    async login(member: Member): Promise<Member> {
+        const { id, encrypted_password } = member;
 
         sql = "SELECT idx, id, nickname, email, auth_id, " +
             "email, created_at*1000 created_at " +
             "FROM member WHERE id = ? AND password = ? ";
-        sql = mysql.format(sql, [id, password]);
+        sql = mysql.format(sql, [id, encrypted_password]);
 
         const loginResult: Member[] = await DB.query(sql);
 
@@ -35,13 +34,13 @@ export class MemberDao {
         return loginResult[0];
     }
 
-    async update(req: Request, memberData: UpdateMemberDto | Member) {
+    async update(req: Request, member: Member) {
         const { sqlSet } = req.organizedSql;
 
         sql = "UPDATE member " +
             "SET " + sqlSet + " " +
             "WHERE idx = ? ";
-        sql = mysql.format(sql, [ memberData.idx ]);
+        sql = mysql.format(sql, [ member.idx ]);
 
         const resultUpdateMember = await DB.run(req.connector, sql);
 
