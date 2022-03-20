@@ -1,20 +1,25 @@
 import {ArgumentsHost, Catch, ExceptionFilter, HttpException} from '@nestjs/common';
 import {Request, Response} from 'express';
 
+import DB from 'libs/db';
+
 @Catch(HttpException)
 export class ControllableExceptionFilter implements ExceptionFilter {
-    catch(exception: HttpException, host: ArgumentsHost) {
+    async catch(exception: HttpException, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const res = ctx.getResponse<Response>();
         const req = ctx.getRequest<Request>();
         const status = exception.getStatus();
-        const response = exception.getResponse();
+        const response: any = exception.getResponse();
         const stack = exception?.stack.toString() || '';
 
-        // @ts-ignore
         const {error, message} = response;
 
         console.log('HttpExceptionFilter log');
+
+        if(req.connector !== undefined) {
+            await DB.rollback(req.connector)
+        }
 
         res
             .status(status)
@@ -28,7 +33,7 @@ export class ControllableExceptionFilter implements ExceptionFilter {
 
 @Catch()
 export class OutOfControlExceptionFilter implements ExceptionFilter {
-    catch(exception: any, host: ArgumentsHost) {
+    async catch(exception: any, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const res = ctx.getResponse<Response>();
         const req = ctx.getRequest<Request>();
@@ -36,6 +41,10 @@ export class OutOfControlExceptionFilter implements ExceptionFilter {
 
         console.log('EveryExceptionFilter log');
         console.log(exception);
+
+        if(req.connector !== undefined) {
+            await DB.rollback(req.connector)
+        }
 
         res
             .status(500)

@@ -1,60 +1,75 @@
 import config from 'config/config';
 import utils from "libs/utils";
-import {ResultSetHeader} from "mysql2";
+import {PoolConnection, ResultSetHeader} from "mysql2";
+import {Message} from "./message";
 
 const mysql = require('mysql2');
 
 const pool = mysql.createPool(config.mysqlConfig);
 const poolAdmin = mysql.createPool(config.mysqlConfigAdmin);
 
+const getConnection = async (connect): Promise<PoolConnection> => {
+    try {
+        return await new Promise(async (resolve, reject) => {
+            connect.getConnection(function (err, connection: PoolConnection) {
+                if (err) {
+                    console.log('-------DB CONNECTION ERROR-------');
+                    console.log(err);
+                    reject();
+                }
+
+                resolve(connection);
+            });
+        })
+    }catch (e){
+        throw Message.SERVER_ERROR;
+    }
+};
+
 const query = async (sql, connect): Promise<any> => {
-    return await new Promise(async (resolve, reject) => {
-        connect.getConnection(function (err, connection) {
-            if (err) {
-                console.log('-------DB CONNECTION ERROR-------');
-                throw err;
-            }
+    const connection: PoolConnection = await getConnection(connect);
 
-            try {
-                connection.query(sql, async function (err, rows) {
-                    if (err) {
-                        reject(err);
-                    }else{
-                        if(rows !== undefined && rows.constructor === Array){
-                            await utils.activeQuestionMark(rows);
-                        }
-                    }
+    try {
+        return await new Promise(async (resolve, reject) => {
+            connection.query(sql, async function (err, rows) {
+                if (err) {
+                    console.log(err);
+                    reject();
+                }
 
-                    resolve(rows);
-                })
-            } catch (e) {
-                throw e;
+                if (rows !== undefined && rows.constructor === Array) {
+                    await utils.activeQuestionMark(rows);
+                }
 
-            } finally {
-                connection.release();
-            }
-
+                resolve(rows);
+            });
         });
-    });
+    }catch (e){
+        throw Message.SERVER_ERROR;
+    }finally {
+        connection.release();
+    }
 };
 
 export default {
-    getConnection: async (): Promise<void> => {
+    getConnection: async (): Promise<PoolConnection> => {
+        const connection: PoolConnection = await getConnection(pool);
+
         try {
             return await new Promise(async (resolve, reject) => {
-                pool.getConnection(function (err, connection) {
-                    connection.beginTransaction(function (err) {
-                        if (err) {
-                            console.log('transaction err');
-                            console.log(err);
-                            reject('Error');
-                        }
-                        resolve(connection);
-                    })
+                connection.beginTransaction(function (err) {
+                    if (err) {
+                        console.log('transaction err');
+                        console.log(err);
+                        reject();
+                    }
+                    resolve(connection);
                 });
-            });
+            })
         } catch (e) {
-            throw 'Error';
+            throw Message.SERVER_ERROR;
+        } finally {
+            connection.release();
         }
     },
 
@@ -65,7 +80,7 @@ export default {
                     if (err) {
                         console.log('----- SQL ERROR -----');
                         console.log(err);
-                        reject('Error');
+                        reject();
                     }
 
                     resolve(rows);
@@ -73,7 +88,7 @@ export default {
             });
 
         } catch (e) {
-            throw 'Error';
+            throw Message.SERVER_ERROR;
         }
     },
 
@@ -82,27 +97,25 @@ export default {
             await new Promise(async (resolve, reject) => {
                 connector.commit(function (err) {
                     if (err) {
-                        reject(err);
+                        console.log(err);
+                        reject();
                     }
 
                     resolve(true);
                 });
             })
         } catch (e) {
-            throw 'Error';
+            throw Message.SERVER_ERROR;
         } finally {
             connector.release();
         }
     },
 
     rollback: async (connector): Promise<void> => {
-        console.log('롤백 작동');
-        try {
-            await connector.rollback(function () {});
-        } catch (e) {
-        } finally {
+        connector.rollback(() => {
+            console.log('롤백 작동');
             connector.release();
-        }
+        });
     },
 
     release: async (connector): Promise<void> => {

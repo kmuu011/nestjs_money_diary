@@ -3,23 +3,24 @@ import {Request} from "express";
 
 import {Member} from "./model/member.model";
 import {Message} from "libs/message";
-import {UpdateMemberDto} from "./dto/update-member.dto";
 
 import DB from "libs/db";
 
 const mysql = require('mysql2');
+
+const duplicateCheckKeys = ['id', 'nickname', 'email'];
 
 let sql: string;
 
 @Injectable()
 export class MemberDao {
     async login(member: Member): Promise<Member> {
-        const { id, encrypted_password } = member;
+        const { id, password } = member;
 
         sql = "SELECT idx, id, nickname, email, auth_id, " +
             "email, created_at*1000 created_at " +
             "FROM member WHERE id = ? AND password = ? ";
-        sql = mysql.format(sql, [id, encrypted_password]);
+        sql = mysql.format(sql, [id, password]);
 
         const loginResult: Member[] = await DB.query(sql);
 
@@ -32,6 +33,22 @@ export class MemberDao {
         }
 
         return loginResult[0];
+    }
+
+    async signUp(req: Request, member: Member): Promise<void> {
+        const { sqlCol, sqlVal } = req.organizedSql;
+
+        sql = "INSERT " +
+            "INTO member (" + sqlCol + ") " +
+            "VALUES(" + sqlVal + ")";
+
+        const signUpResult = await DB.run(req.connector, sql);
+
+        if(signUpResult.affectedRows !== 1){
+            throw Message.SERVER_ERROR;
+        }
+
+        member.idx = signUpResult.insertId;
     }
 
     async update(req: Request, member: Member) {
@@ -49,5 +66,16 @@ export class MemberDao {
         }
 
         return resultUpdateMember;
+    }
+
+    async duplicateCheck(type: number, value: string) {
+        sql = "SELECT idx " +
+            "FROM member " +
+            "WHERE  " + duplicateCheckKeys[type] + " = ? ";
+        sql = mysql.format(sql, [ value ]);
+
+        const memberInfo = await DB.query(sql);
+
+        return {type, isDuplicate : memberInfo.length !== 0};
     }
 }

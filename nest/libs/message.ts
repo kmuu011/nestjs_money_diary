@@ -1,5 +1,11 @@
 import {HttpException, HttpStatus} from "@nestjs/common";
 
+const keyDescription = {
+    id: '아이디',
+    nickname: '닉네임',
+    email: '이메일'
+}
+
 export class Message extends HttpException{
     static INVALID_PARAM(name) {
         return new HttpException({
@@ -31,7 +37,7 @@ export class Message extends HttpException{
 
     static DETAIL_ERROR(message) {
         return new HttpException({
-            error: `already_exist_${name}`,
+            error: `already_exist_${message}`,
             message: message
         }, HttpStatus.BAD_REQUEST);
     }
@@ -47,6 +53,13 @@ export class Message extends HttpException{
         return new HttpException({
             error: `max_sale_keyword_count`,
             message: `키워드는 최대 ${cnt}개 까지만 등록할 수 있습니다.`
+        }, HttpStatus.BAD_REQUEST);
+    }
+
+    static ALREADY_EXIST(key) {
+        return new HttpException({
+            error: `already_exist`,
+            message: `이미 존재하는 ${keyDescription[key]} 입니다.`
         }, HttpStatus.BAD_REQUEST);
     }
 

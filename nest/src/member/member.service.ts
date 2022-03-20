@@ -24,11 +24,35 @@ export class MemberService {
 
         this.member.createToken();
 
-        req.organizedSql = Organizer.getSql(this.member,
-            'ip, user_agent', undefined, 2);
+        req.organizedSql = Organizer.getSql(
+            this.member, 'ip, user_agent', undefined,
+            Organizer.timeAdditional.updateOnly);
 
         await this.memberDao.update(req, this.member);
 
         return this.member;
+    }
+
+    async signUp(req: Request, member: Member): Promise<void> {
+        member.passwordEncrypt();
+
+        req.organizedSql = Organizer.getSql(
+            member, 'id, nickname, password, email', undefined,
+            Organizer.timeAdditional.createAndUpdate);
+
+        await this.memberDao.signUp(req, member);
+    }
+
+    async duplicateCheck(type: number, value: string) {
+        return await this.memberDao.duplicateCheck(type, value);
+    }
+
+    async update(req: Request, member: Member): Promise<void> {
+        req.organizedSql = Organizer.getSql(
+            member, 'max_sale_keyword_cnt', undefined,
+            Organizer.timeAdditional.updateOnly
+        );
+
+        await this.memberDao.update(req, member);
     }
 }

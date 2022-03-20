@@ -1,12 +1,16 @@
 import {Body, Controller, Get, Post, Req} from '@nestjs/common';
 import {MemberService} from './member.service';
 import {Request} from "express";
-import {Message} from 'libs/message';
-import db from "libs/db";
+import DB from "libs/db";
+
+import {Member} from "./model/member.model";
 
 import {LoginMemberDto} from "./dto/login-member.dto";
 import {CreateMemberDto} from "./dto/create-member-dto";
-import {Member} from "./model/member.model";
+import {DuplicateCheckMemberDto} from "./dto/duplicate-check-member.dto";
+import {Message} from "libs/message";
+
+const duplicateCheckKeys = ['id', 'nickname', 'email'];
 
 @Controller('/member')
 export class MemberController {
@@ -16,25 +20,61 @@ export class MemberController {
     ) {}
 
     @Post('/login')
-    async login(@Req() req: Request, @Body() loginMemberDto: LoginMemberDto) {
-        req.connector = await db.getConnection();
+    async login(
+        @Req() req: Request,
+        @Body() loginMemberDto: LoginMemberDto
+    ) {
+        req.connector = await DB.getConnection();
 
         this.member.dataMigration(loginMemberDto);
 
         const member = await this.memberService.login(req, this.member);
 
-        await db.commit(req.connector);
+        await DB.commit(req.connector);
 
         return {token: member.token};
     }
 
     @Post('/signUp')
-    async signUp(@Req() req: Request, @Body() createMemberDto: CreateMemberDto) {
-        req.connector = await db.getConnection();
+    async signUp(
+        @Req() req: Request,
+        @Body() createMemberDto: CreateMemberDto
+    ) {
+        for(let i=0 ; i<duplicateCheckKeys.length ; i ++){
+            const duplicateCheckResult = await this.memberService.duplicateCheck(i, createMemberDto[duplicateCheckKeys[i]]);
 
-        await db.commit(req.connector);
+            if(duplicateCheckResult.isDuplicate){
+                throw Message.ALREADY_EXIST(duplicateCheckKeys[i]);
+            }
+        }
 
-        return;
+        this.member.dataMigration(createMemberDto);
+
+        req.connector = await DB.getConnection();
+
+        await this.memberService.signUp(req, this.member);
+
+        await DB.commit(req.connector);
+
+        console.log(this.member);
+
+        return {result: true};
+    }
+
+    @Get('/duplicateCheck')
+    async duplicateCheck(
+        @Req() req: Request,
+        @Body() duplicateCheckMemberDto: DuplicateCheckMemberDto
+    ) {
+        const { type, value } = duplicateCheckMemberDto;
+
+        const result = await this.memberService.duplicateCheck(type, value);
+
+        if(result.isDuplicate){
+            throw Message.ALREADY_EXIST(duplicateCheckKeys[type]);
+        }
+
+        return {result: true};
     }
 
 }

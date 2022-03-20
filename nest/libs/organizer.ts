@@ -1,11 +1,5 @@
 const mysql = require('mysql2');
 
-const timeAdditionalList = [
-    {col: 'created_at', val: 'UNIX_TIMESTAMP()', set: 'created_at = UNIX_TIMESTAMP()'},
-    {col: 'created_at, updated_at', val: 'UNIX_TIMESTAMP(),UNIX_TIMESTAMP()', set: 'created_at = UNIX_TIMESTAMP(), updated_at = UNIX_TIMESTAMP()'},
-    {col: 'updated_at', val: 'UNIX_TIMESTAMP()', set: 'updated_at = UNIX_TIMESTAMP()'},
-];
-
 const sqlCreator = (data, key) => {
     let sqlCol: string = '';
     let sqlVal: string = '';
@@ -23,11 +17,17 @@ const sqlCreator = (data, key) => {
 };
 
 export default {
+    timeAdditional : {
+        createOnly: {col: 'created_at', val: 'UNIX_TIMESTAMP()', set: 'created_at = UNIX_TIMESTAMP()'},
+        createAndUpdate: {col: 'created_at, updated_at', val: 'UNIX_TIMESTAMP(),UNIX_TIMESTAMP()', set: 'created_at = UNIX_TIMESTAMP(), updated_at = UNIX_TIMESTAMP()'},
+        updateOnly: {col: 'updated_at', val: 'UNIX_TIMESTAMP()', set: 'updated_at = UNIX_TIMESTAMP()'},
+    },
+
     getSql: (
         dataObj: object,
         requireKeys: string | string[] | undefined,
         optionalKeys: string | string[] | undefined,
-        timeAdditional: number | undefined
+        timeAdditional: any | undefined
     ) => {
         let sqlCol: string = '';
         let sqlVal: string = '';
@@ -68,11 +68,9 @@ export default {
         }
 
         if(timeAdditional !== undefined){
-            const timeAdditionalObj = timeAdditionalList[timeAdditional];
-
-            sqlCol += timeAdditionalObj.col;
-            sqlVal += timeAdditionalObj.val;
-            sqlSet += timeAdditionalObj.set;
+            sqlCol += timeAdditional.col;
+            sqlVal += timeAdditional.val;
+            sqlSet += timeAdditional.set;
         }
 
         return { sqlCol, sqlVal, sqlSet };

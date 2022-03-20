@@ -1,7 +1,6 @@
-import {IsBoolean, IsNumber, IsString, Length} from "class-validator";
+import {IsBoolean, IsEmail, IsNumber, IsString, Length, NotContains} from "class-validator";
 import config from "config/config";
 import cipher from "libs/cipher";
-import {pluck} from "rxjs";
 
 const jwt = require('jsonwebtoken');
 
@@ -11,22 +10,39 @@ const expireTime = config.member.expireTime;
 const jwtSecret = config.member.jwtSecret;
 
 export class Member {
+    @IsNumber()
     idx: number;
 
     @Length(3, 15)
+    @NotContains('어드민')
+    @NotContains('admin')
+    @NotContains('테스트')
+    @NotContains('test')
+    @NotContains('관리자')
     @IsString()
     id: string;
 
     @IsString()
     password: string;
 
-    @IsString()
-    encrypted_password: string;
+    @IsBoolean()
+    password_encrypted: boolean
 
+    @Length(2, 20)
     @IsString()
+    @NotContains('어드민')
+    @NotContains('admin')
+    @NotContains('테스트')
+    @NotContains('test')
+    @NotContains('관리자')
     nickname: string;
 
-    @IsString()
+    @NotContains('어드민')
+    @NotContains('admin')
+    @NotContains('테스트')
+    @NotContains('test')
+    @NotContains('관리자')
+    @IsEmail()
     email: string;
 
     @IsString()
@@ -63,10 +79,12 @@ export class Member {
     keep_check: boolean;
 
     passwordEncrypt(){
-        this.encrypted_password = crypto
-            .createHash(config.member.hashAlgorithm)
-            .update(this.password+config.member.salt)
-            .digest('hex');
+        if(this.password_encrypted !== true) {
+            this.password = crypto
+                .createHash(config.member.hashAlgorithm)
+                .update(this.password + config.member.salt)
+                .digest('hex');
+        }
     }
 
     getPayload(){

@@ -1,12 +1,15 @@
 import {MiddlewareConsumer, Module, NestModule} from '@nestjs/common';
 
+import {TestModule} from "./test/test.module";
 import {TodoModule} from './todo/todo.module';
 import {MemberModule} from "./member/member.module";
+
 import {PrefixMiddleware} from "middleware/prefix.middleware";
 import {LoggerMiddleware} from "middleware/logger.middleware";
 
 @Module({
     imports: [
+        TestModule,
         MemberModule,
         TodoModule,
     ],
