@@ -13,7 +13,6 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {Test} from "../../entities/test.entity";
 import {TestSelectDto} from "./dto/test.selectDto";
 
-
 const mysql = require('mysql2');
 
 function test <T> (obj: T): T {
