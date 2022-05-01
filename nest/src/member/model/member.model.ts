@@ -1,6 +1,7 @@
 import {IsBoolean, IsEmail, IsNumber, IsString, Length, NotContains} from "class-validator";
 import config from "config/config";
 import cipher from "libs/cipher";
+import {Message} from "../../../libs/message";
 
 const jwt = require('jsonwebtoken');
 
@@ -11,7 +12,7 @@ const jwtSecret = config.member.jwtSecret;
 
 export class Member {
     @IsNumber()
-    idx: number;
+    idx: number = undefined;
 
     @Length(3, 15)
     @NotContains('어드민')
@@ -20,13 +21,13 @@ export class Member {
     @NotContains('test')
     @NotContains('관리자')
     @IsString()
-    id: string;
+    id: string = undefined;
 
     @IsString()
-    password: string;
+    password: string = undefined;
 
     @IsBoolean()
-    password_encrypted: boolean
+    password_encrypted: boolean = undefined;
 
     @Length(2, 20)
     @IsString()
@@ -35,7 +36,7 @@ export class Member {
     @NotContains('테스트')
     @NotContains('test')
     @NotContains('관리자')
-    nickname: string;
+    nickname: string = undefined;
 
     @NotContains('어드민')
     @NotContains('admin')
@@ -43,42 +44,42 @@ export class Member {
     @NotContains('test')
     @NotContains('관리자')
     @IsEmail()
-    email: string;
+    email: string = undefined;
 
     @IsString()
-    profile_img_key: string;
+    profile_img_key: string = undefined;
 
     @IsNumber()
-    admin: number;
+    admin: number = undefined;
     @IsNumber()
-    created_at: number;
+    created_at: number = undefined;
     @IsNumber()
-    updated_at: number;
+    updated_at: number = undefined;
     @IsNumber()
-    auth_type: number;
+    auth_type: number = undefined;
 
     @IsString()
-    auth_id: string;
+    auth_id: string = undefined;
 
     @IsString()
-    ip: string | string[];
+    ip: string | string[] = undefined;
 
     @IsString()
-    user_agent: string;
+    user_agent: string = undefined;
 
     @IsNumber()
-    max_sale_keyword_cnt: number;
+    max_sale_keyword_cnt: number = undefined;
 
     @IsNumber()
-    mailing_test_at: number;
+    mailing_test_at: number = undefined;
 
     @IsString()
-    token: string;
+    token: string = undefined;
 
     @IsBoolean()
-    keep_check: boolean;
+    keep_check: boolean = undefined;
 
-    passwordEncrypt(){
+    passwordEncrypt(): void{
         if(this.password_encrypted !== true) {
             this.password = crypto
                 .createHash(config.member.hashAlgorithm)
@@ -87,7 +88,7 @@ export class Member {
         }
     }
 
-    getPayload(){
+    getPayload(): object{
         return {
             idx: this.idx,
             id: this.id,
@@ -100,7 +101,7 @@ export class Member {
         }
     }
 
-    createToken() {
+    createToken(): void {
         const payloadObj = this.getPayload();
 
         const token = jwt.sign(payloadObj, jwtSecret, {expiresIn: expireTime});
@@ -108,8 +109,29 @@ export class Member {
         this.token = cipher.encrypt(token);
     }
 
-    dataMigration(object) {
-        for(let k in object){
+    async decodeToken(): Promise<void> {
+        const authorization = await new Promise(async (resolve) => {
+            const token = cipher.decrypt(this.token);
+            if(token === undefined) resolve(undefined);
+
+            jwt.verify(token, jwtSecret, (err, decoded) => {
+                if(err){
+                    resolve(undefined);
+                }
+                resolve(decoded);
+            });
+        });
+
+        if(authorization === undefined){
+            throw Message.UNAUTHORIZED;
+        }
+
+        this.dataMigration(authorization);
+    }
+
+    dataMigration(object): void {
+        for(let k in new Member()){
+            if(object[k] === undefined) continue;
             this[k] = object[k];
         }
     }

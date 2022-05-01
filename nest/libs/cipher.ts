@@ -5,25 +5,33 @@ const cipherKey = config.cipher.key;
 
 export default {
     encrypt: (text) => {
-        const cipherIv = crypto.randomBytes(16);
-        const enc = crypto.createCipheriv(config.cipher.twoWayAlgorithm, Buffer.from(cipherKey), cipherIv);
-        let encrypted = enc.update(text);
+        try {
+            const cipherIv = crypto.randomBytes(16);
+            const enc = crypto.createCipheriv(config.cipher.twoWayAlgorithm, Buffer.from(cipherKey), cipherIv);
+            let encrypted = enc.update(text);
 
-        encrypted = Buffer.concat([encrypted, enc.final()]);
+            encrypted = Buffer.concat([encrypted, enc.final()]);
 
-        return cipherIv.toString('hex') + ':' + encrypted.toString('hex');
+            return cipherIv.toString('hex') + ':' + encrypted.toString('hex');
+        }catch (e){
+            return undefined;
+        }
     },
 
     decrypt: (text) => {
-        const textParts = text.split(':');
-        const iv = Buffer.from(textParts.shift(), 'hex');
-        const encryptedText = Buffer.from(textParts.join(':'), 'hex');
-        const decipher = crypto.createDecipheriv(config.cipher.twoWayAlgorithm, Buffer.from(cipherKey), iv);
-        let decrypted = decipher.update(encryptedText);
+        try {
+            const textParts = text.split(':');
+            const iv = Buffer.from(textParts.shift(), 'hex');
+            const encryptedText = Buffer.from(textParts.join(':'), 'hex');
+            const decipher = crypto.createDecipheriv(config.cipher.twoWayAlgorithm, Buffer.from(cipherKey), iv);
+            let decrypted = decipher.update(encryptedText);
 
-        decrypted = Buffer.concat([decrypted, decipher.final()]);
+            decrypted = Buffer.concat([decrypted, decipher.final()]);
 
-        return decrypted.toString();
+            return decrypted.toString();
+        }catch (e){
+            return undefined;
+        }
 
     }
 }

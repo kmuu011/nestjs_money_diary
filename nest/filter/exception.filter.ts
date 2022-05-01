@@ -16,6 +16,7 @@ export class ControllableExceptionFilter implements ExceptionFilter {
         const {error, message} = response;
 
         console.log('HttpExceptionFilter log');
+        console.log(exception)
 
         if(req.connector !== undefined) {
             await DB.rollback(req.connector)
@@ -37,10 +38,11 @@ export class OutOfControlExceptionFilter implements ExceptionFilter {
         const ctx = host.switchToHttp();
         const res = ctx.getResponse<Response>();
         const req = ctx.getRequest<Request>();
-        const stack = exception?.stack.toString() || '';
+        const stack = exception?.stack?.toString() || '';
 
-        console.log('EveryExceptionFilter log');
+        console.log('OutOfControlException log');
         console.log(exception);
+
 
         if(req.connector !== undefined) {
             await DB.rollback(req.connector)
