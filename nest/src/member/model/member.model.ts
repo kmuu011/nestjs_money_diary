@@ -1,7 +1,7 @@
 import {IsBoolean, IsEmail, IsNumber, IsString, Length, NotContains} from "class-validator";
 import config from "config/config";
 import cipher from "libs/cipher";
-import {Message} from "../../../libs/message";
+import {Message} from "libs/message";
 
 const jwt = require('jsonwebtoken');
 
