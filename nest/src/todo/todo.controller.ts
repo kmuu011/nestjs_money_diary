@@ -2,7 +2,7 @@ import {All, Controller, Get, Next, Param, Req} from '@nestjs/common';
 import {TodoService} from './todo.service';
 import {NextFunction, Request} from "express";
 
-@Controller('todo')
+@Controller('/todo')
 export class TodoController {
     constructor(private readonly todoService: TodoService) {}
 

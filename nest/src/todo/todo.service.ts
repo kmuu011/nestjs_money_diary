@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 export class TodoService {
 
     getList(): object[] {
+        console.log('TodoService : getList()')
         return [{name:'미누'}];
     }
 }
