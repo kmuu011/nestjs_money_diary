@@ -1,39 +1,39 @@
 # compiled output
-nest/dist
-nest/node_modules
+nestjs/dist
+nestjs/node_modules
 
 # Logs
-nest/logs
-nest/*.log
-nest/npm-debug.log*
-nest/pnpm-debug.log*
-nest/yarn-debug.log*
-nest/yarn-error.log*
-nest/lerna-debug.log*
+nestjs/logs
+nestjs/*.log
+nestjs/npm-debug.log*
+nestjs/pnpm-debug.log*
+nestjs/yarn-debug.log*
+nestjs/yarn-error.log*
+nestjs/lerna-debug.log*
 
 # OS
-nest/.DS_Store
+nestjs/.DS_Store
 
 # Tests
-nest/coverage
-nest/.nyc_output
+nestjs/coverage
+nestjs/.nyc_output
 
 # IDEs and editors
 /.idea
-nest/.project
-nest/.classpath
-nest/.c9/
-nest/*.launch
-nest/.settings/
-nest/*.sublime-workspace
+nestjs/.project
+nestjs/.classpath
+nestjs/.c9/
+nestjs/*.launch
+nestjs/.settings/
+nestjs/*.sublime-workspace
 
 # IDE - VSCode
-nest/.vscode/*
-nest/!.vscode/settings.json
-nest/!.vscode/tasks.json
-nest/!.vscode/launch.json
-nest/!.vscode/extensions.json
+nestjs/.vscode/*
+nestjs/!.vscode/settings.json
+nestjs/!.vscode/tasks.json
+nestjs/!.vscode/launch.json
+nestjs/!.vscode/extensions.json
 
 # more_ignore
-nest/config/config.*
+nestjs/config/config.*
 nginx_window/logs/*

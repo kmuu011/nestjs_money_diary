@@ -1,5 +1,18 @@
-import {Body, Controller, Get, Post, Query, Req, UseGuards, UseInterceptors} from '@nestjs/common';
-import {Request} from "express";
+import {
+    All,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Next,
+    Param,
+    Post,
+    Query,
+    Req,
+    UseGuards,
+    UseInterceptors
+} from '@nestjs/common';
+import {NextFunction, Request} from "express";
 import {Message} from 'libs/message';
 
 import DB from "libs/db";
@@ -10,12 +23,14 @@ import {AuthGuard} from "guard/auth.guard";
 import {TestDto} from "./dto/test.dto";
 import {TestRepository} from "./test.repository";
 import {InjectRepository} from "@nestjs/typeorm";
-import {Test} from "../../entities/test.entity";
 import {TestSelectDto} from "./dto/test.selectDto";
+import {TestDeleteDto} from "./dto/test.deleteDto";
+import {DeleteResult} from "typeorm";
+import {Test} from "./entities/test.entity";
 
 const mysql = require('mysql2');
 
-function test <T> (obj: T): T {
+function test <T> (obj: T) {
     return obj;
 }
 
@@ -61,12 +76,9 @@ export class TestController <T> {
         @Query() testSelectDto: TestSelectDto
     ){
 
-        const testList: Test[] = await this.testRepository.findAll(testSelectDto);
-        console.log(testSelectDto)
+        const testList: Test[] = await this.testRepository.select(testSelectDto);
 
-        console.log(testList);
-
-        return testList
+        return testList;
     }
 
     @Post('/insert')
@@ -76,9 +88,31 @@ export class TestController <T> {
     ){
         const test = await this.testRepository.onCreate(testDto);
 
-        console.log(test);
-
         return true;
+    }
+
+    @All('/:idx(\\d+)')
+    async check(
+        @Req() req: Request,
+        @Param() idx: number,
+        @Next() next: NextFunction
+    ){
+        const test = await this.testRepository.selectOne(idx);
+
+        console.log(test);
+        next();
+    }
+
+
+    @Delete('/delete/:idx')
+    async delete(
+        @Req() req: Request,
+        @Param() idx: number
+    ){
+
+        const result: DeleteResult = await this.testRepository.deleteTest(idx);
+
+        return result;
     }
 
 }

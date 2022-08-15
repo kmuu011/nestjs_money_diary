@@ -43,7 +43,6 @@ export class OutOfControlExceptionFilter implements ExceptionFilter {
         console.log('OutOfControlException log');
         console.log(exception);
 
-
         if(req.connector !== undefined) {
             await DB.rollback(req.connector)
         }

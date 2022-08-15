@@ -3,16 +3,16 @@ import {Member} from "../src/member/model/member.model";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private member: Member) {}
-
     async canActivate(
         context: ExecutionContext
     ) {
         const req = context.switchToHttp().getRequest();
 
-        this.member.dataMigration({token: req.headers['x-token']});
+        const member = new Member();
 
-        await this.member.decodeToken()
+        member.dataMigration({token: req.headers['x-token']});
+
+        await member.decodeToken()
 
         return true;
     }

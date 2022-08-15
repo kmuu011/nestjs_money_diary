@@ -28,11 +28,30 @@ export class MemberController {
 
         this.member.dataMigration(loginMemberDto);
 
+        await new Promise(async (resolve) => {
+            setTimeout(() => {
+                resolve('');
+            }, 10000);
+        });
+
+        console.log(this.member)
+
         const member = await this.memberService.login(req, this.member);
 
         await DB.commit(req.connector);
 
         return {token: member.token};
+    }
+
+    @Post('/check')
+    async check(
+        @Req() req: Request,
+    ) {
+        console.log(this.member)
+
+        await this.member.decodeToken()
+
+        return true;
     }
 
     @Post('/signUp')

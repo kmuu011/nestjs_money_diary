@@ -10,9 +10,13 @@ import {
 @Unique(['idx'])
 export class Test extends BaseEntity {
     @PrimaryGeneratedColumn()
-    idx: number;
+    idx: number = undefined;
 
     @Column({ type: 'varchar', length: 50, comment: '유저 이름' })
-    name: string;
+    name: string = undefined;
+
+    say(){
+        console.log(this.name + ' 입니다.');
+    }
 
 }
