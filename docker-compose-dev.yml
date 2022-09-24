@@ -1,0 +1,61 @@
+version: '2.1'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: docker_file/nginx/Dockerfile
+    links:
+      - node_0:node_0
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/html:/usr/share/nginx/html
+      - ./nginx/config:/etc/nginx
+    expose:
+      - "80"
+    container_name: "nginx"
+    restart: always
+    networks:
+      static-network:
+        ipv4_address: 172.18.0.2
+
+  redis:
+    ports:
+      - "6379"
+    image: "redis"
+    expose:
+      - "6379"
+    container_name: "redis"
+    restart: always
+    networks:
+      static-network:
+        ipv4_address: 172.18.0.4
+
+  node_0:
+    build:
+      context: .
+      dockerfile: docker_file/node/Dockerfile
+    ports:
+      - "8081"
+    working_dir: /home/nestjs/app
+    volumes:
+      - ./nestjs:/home/nestjs/app
+
+    environment:
+      TZ: "Asia/Seoul"
+
+    command: "npm run start:dev"
+    expose:
+      - "8081"
+    restart: always
+    container_name: "node_0"
+    networks:
+      static-network:
+        ipv4_address: 172.18.0.5
+
+networks:
+  static-network:
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16

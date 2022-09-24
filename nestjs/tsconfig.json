@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "strict": true,
+    "strictNullChecks": false, //null, undefined 타입에 이상한 짓 할시 에러내기
+    "strictFunctionTypes": true, //함수파라미터 타입체크 강하게
+    "strictBindCallApply": true,
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
@@ -12,9 +16,7 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
     "noImplicitAny": false,
-    "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   }

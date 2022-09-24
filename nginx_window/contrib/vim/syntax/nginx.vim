@@ -1099,7 +1099,7 @@ syn keyword ngxDirectiveThirdParty contained push_stream_max_number_of_wildcard_
 syn keyword ngxDirectiveThirdParty contained push_stream_max_subscribers_per_channel
 syn keyword ngxDirectiveThirdParty contained push_stream_message_template
 syn keyword ngxDirectiveThirdParty contained push_stream_message_ttl
-syn keyword ngxDirectiveThirdParty contained push_stream_padding_by_user_agent
+syn keyword ngxDirectiveThirdParty contained push_stream_padding_by_userAgent
 syn keyword ngxDirectiveThirdParty contained push_stream_ping_message_interval
 syn keyword ngxDirectiveThirdParty contained push_stream_ping_message_text
 syn keyword ngxDirectiveThirdParty contained push_stream_publisher
@@ -1108,7 +1108,7 @@ syn keyword ngxDirectiveThirdParty contained push_stream_store_messages
 syn keyword ngxDirectiveThirdParty contained push_stream_subscriber
 syn keyword ngxDirectiveThirdParty contained push_stream_subscriber_connection_ttl
 syn keyword ngxDirectiveThirdParty contained push_stream_timeout_with_body
-syn keyword ngxDirectiveThirdParty contained push_stream_user_agent
+syn keyword ngxDirectiveThirdParty contained push_stream_userAgent
 syn keyword ngxDirectiveThirdParty contained push_stream_websocket_allow_publish
 syn keyword ngxDirectiveThirdParty contained push_stream_wildcard_channel_max_qtd
 syn keyword ngxDirectiveThirdParty contained push_stream_wildcard_channel_prefix
@@ -1409,7 +1409,7 @@ syn keyword ngxDirectiveThirdParty contained rules_enabled
 " https://www.phusionpassenger.com/library/config/nginx/reference/
 syn keyword ngxDirectiveThirdParty contained passenger_abort_on_startup_error
 syn keyword ngxDirectiveThirdParty contained passenger_abort_websockets_on_process_shutdown
-syn keyword ngxDirectiveThirdParty contained passenger_admin_panel_auth_type
+syn keyword ngxDirectiveThirdParty contained passenger_admin_panel_authType
 syn keyword ngxDirectiveThirdParty contained passenger_admin_panel_password
 syn keyword ngxDirectiveThirdParty contained passenger_admin_panel_url
 syn keyword ngxDirectiveThirdParty contained passenger_admin_panel_username
@@ -2297,7 +2297,7 @@ syn keyword ngxDirectiveThirdParty contained url_encoding_convert_to
 
 " A nginx module to match browsers and crawlers
 " https://github.com/alibaba/nginx-http-user-agent
-syn keyword ngxDirectiveThirdParty contained user_agent
+syn keyword ngxDirectiveThirdParty contained userAgent
 
 " nginx load-balancer module implementing ketama consistent hashing
 " https://github.com/flygoast/ngx_http_upstream_ketama_chash

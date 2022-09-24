@@ -1,43 +1,38 @@
 import {HttpException, HttpStatus} from "@nestjs/common";
+import {keyDescription} from "./messageKeyDescription";
 
-const keyDescription = {
-    id: '아이디',
-    nickname: '닉네임',
-    email: '이메일'
-}
-
-export class Message extends HttpException{
+export class Message extends HttpException {
     static INVALID_PARAM(name) {
         return new HttpException({
             error: `invalid_parameter_${name}`,
-            message: `${name} 을(를) 입력해주세요.`
+            message: `${keyDescription[name]}을(를) 입력해주세요.`
         }, HttpStatus.BAD_REQUEST);
     }
 
     static WRONG_PARAM(name) {
         return new HttpException({
             error: `wrong_param_${name}`,
-            message: `${name} 이(가) 올바르지 않습니다.`
+            message: `${keyDescription[name]}이(가) 올바르지 않습니다.`
         }, HttpStatus.BAD_REQUEST);
     }
 
     static INCLUDE_BAN_KEYWORD(name) {
         return new HttpException({
             error: `include_ban_keyword_${name}`,
-            message: `${name} 에 사용할 수 없는 값이 포함되어있습니다.`
+            message: `${keyDescription[name]}에 사용할 수 없는 값이 포함되어있습니다.`
         }, HttpStatus.BAD_REQUEST);
     }
 
     static NOT_EXIST(name) {
         return new HttpException({
             error: `not_exist_${name}`,
-            message: `${name} 이(가) 존재하지 않습니다.`
-        }, HttpStatus.NOT_FOUND);
+            message: `${keyDescription[name]}이(가) 존재하지 않습니다.`
+        }, HttpStatus.BAD_REQUEST);
     }
 
-    static DETAIL_ERROR(message) {
+    static CUSTOM_ERROR(message) {
         return new HttpException({
-            error: `already_exist_${message}`,
+            error: `custom_error`,
             message: message
         }, HttpStatus.BAD_REQUEST);
     }
@@ -64,8 +59,6 @@ export class Message extends HttpException{
     }
 
 
-
-
     static get CONNECTED_SNS() {
         return new HttpException({
             error: `connected_sns`,
@@ -73,6 +66,7 @@ export class Message extends HttpException{
             '연결한 SNS로그인으로 시도해주세요.`
         }, HttpStatus.BAD_REQUEST);
     }
+
     static get FORBIDDEN() {
         return new HttpException({
             error: `forbidden`,
@@ -98,6 +92,13 @@ export class Message extends HttpException{
         return new HttpException({
             error: `can_not_action_default`,
             message: `기본값은 삭제 또는 변경할 수 없습니다.`
+        }, HttpStatus.BAD_REQUEST);
+    }
+
+    static FILE_TOO_LARGE(maxSize) {
+        return new HttpException({
+            error: `file_too_large`,
+            message: `${maxSize}mb 이하만 업로드할 수 있습니다.`
         }, HttpStatus.BAD_REQUEST);
     }
 

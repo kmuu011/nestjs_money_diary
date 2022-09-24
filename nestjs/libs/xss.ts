@@ -1,7 +1,7 @@
 const startScript = '<script>';
 const endScript = '</script>';
 
-const scriptTagRemover = async (data: string|object, is_string: boolean, script: string): Promise<string|object> => {
+const scriptTagRemover = (data: string|object, is_string: boolean, script: string): string|object => {
     if(is_string){
         while(data.toString().toLowerCase().indexOf(script) !== -1){
             const start_idx: number = data.toString().toLowerCase().indexOf(script);
@@ -20,7 +20,7 @@ const scriptTagRemover = async (data: string|object, is_string: boolean, script:
 };
 
 export default {
-    check : async (data: object): Promise<void> => {
+    check : (data: object): void => {
         if (data === undefined) return;
 
         for (const k in data) {
@@ -32,8 +32,8 @@ export default {
 
             let isString = !(data[k].constructor === Array || data[k].constructor === Object);
 
-            data[k] = await scriptTagRemover(data[k], isString, startScript);
-            data[k] = await scriptTagRemover(data[k], isString, endScript);
+            data[k] = scriptTagRemover(data[k], isString, startScript);
+            data[k] = scriptTagRemover(data[k], isString, endScript);
         }
     }
 

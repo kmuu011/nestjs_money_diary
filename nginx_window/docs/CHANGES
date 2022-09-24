@@ -7877,7 +7877,7 @@ Changes with nginx 0.1.25                                        19 Mar 2005
        expression.
 
     *) Feature: the ngx_http_rewrite_filter_module module supports the
-       condition like "if ($HTTP_USER_AGENT ~ MSIE)".
+       condition like "if ($HTTP_userAgent ~ MSIE)".
 
     *) Bugfix: nginx started too slow if the large number of addresses and
        text values were used in the "geo" directive.
