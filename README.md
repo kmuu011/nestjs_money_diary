@@ -1,7 +1,6 @@
 # 프로젝트 설명
-간단한 Todo List 기능과 로그인 및 회원가입 기능이 구현되어있는 
-
-Nest JS 보일러 플레이트
+Nest JS 기반의 가계부 서비스를 구현할 예정으로
+현재 Nest JS BoilerPlate를 클론한 상태임.
 
 ### DB
 Mysql과 TypeORM으로 구성
@@ -36,7 +35,7 @@ docker-compose -f docker-compose-dev up
 ## 주의사항
 nestjs/config/example.ts 파일의 이름을
 
-nestjs/config/config.ts로 변경해서 사용해야함.
+nestjs/config/config.ts로 변경해서 사용할것!
 
 # 커밋 타입
 | 키워드      | 설명                               |
