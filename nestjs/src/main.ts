@@ -3,7 +3,7 @@ import {AppModule} from './app.module';
 import {
     ControllableExceptionFilter,
     OutOfControlExceptionFilter
-  } from 'src/common/filter/exception.filter';
+} from 'src/common/filter/exception.filter';
 
 import {port, swaggerUser} from 'config/config';
 import {ValidationPipe} from "@nestjs/common";
@@ -46,7 +46,6 @@ async function bootstrap() {
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api-docs', app, document);
-
 
     await sentrySettingRun();
 

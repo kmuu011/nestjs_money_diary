@@ -15,8 +15,6 @@ const errorLevelObject = {
 function captureSentry (status: number, api: string, exception: HttpException, req: Request): void {
     const { query, params } = req;
 
-    console.log(exception)
-
     Sentry.setContext("desc", {
         exception,
         query, params, status
@@ -90,7 +88,18 @@ export class OutOfControlExceptionFilter implements ExceptionFilter {
         const req = ctx.getRequest<Request>();
         // const stack = exception?.stack?.toString() || '';
         const api = req.originalUrl;
-        const status = 500;
+        const status = exception?.status || 500;
+
+        if(status === 404){
+            res
+                .status(status)
+                .json({
+                    statusCode: status,
+                    error: 'not_found',
+                    message: '요청하신 url을 찾을 수 없습니다.'
+                });
+            return;
+        }
 
         captureSentry(status, api, exception, req);
 
@@ -98,7 +107,7 @@ export class OutOfControlExceptionFilter implements ExceptionFilter {
             .status(status)
             .json({
                 statusCode: status,
-                code: 'out_of_control_serve_error',
+                error: 'out_of_control_server_error',
                 message: '지정되지 않은 오류가 발생했습니다.' +
                     '\n빠른 시일 내에 수정 될 예정입니다.' +
                     '\n이용해 주셔서 감사합니다.'
