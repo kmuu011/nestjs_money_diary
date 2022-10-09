@@ -19,11 +19,14 @@ export class TodoEntity extends BaseEntity {
     })
     idx: number = undefined
 
-    @ManyToOne(() => TodoGroupEntity, todoGroup => todoGroup.todoList, {
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
-        nullable: false
-    })
+    @ManyToOne(() => TodoGroupEntity,
+        todoGroup => todoGroup.todoList,
+        {
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE",
+            nullable: false
+        }
+    )
     @JoinColumn()
     todoGroup: TodoGroupEntity = undefined;
 

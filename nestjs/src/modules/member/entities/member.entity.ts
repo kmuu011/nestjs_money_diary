@@ -14,6 +14,7 @@ import {ApiProperty} from "@nestjs/swagger";
 import {AccountEntity} from "../../account/entities/account.entity";
 import {AccountHistoryCategoryEntity} from "../../account/history/category/accountHistoryCategory.entity";
 import {SaleKeywordEntity} from "../sale/keyword/entities/saleKeyword.entity";
+import {swagger} from "../../../../config/config";
 
 @Entity({name: 'member'})
 export class MemberEntity extends BaseEntity {
@@ -34,14 +35,14 @@ export class MemberEntity extends BaseEntity {
     @IsString()
     @Column({type: 'varchar', length: 20, unique: true, comment: '유저 아이디'})
     @ApiProperty({
-        example: 'tts'
+        example: swagger.dummyUserInfo.id
     })
     id: string = undefined;
 
     @IsString()
     @Column({type: 'varchar', length: 200, comment: '유저 비밀번호'})
     @ApiProperty({
-        example: 'tts0000'
+        example: swagger.dummyUserInfo.password
     })
     password: string = undefined;
 
@@ -57,7 +58,7 @@ export class MemberEntity extends BaseEntity {
     @IsString()
     @Column({type: 'varchar', length: 20, comment: '유저 닉네임'})
     @ApiProperty({
-        example: 'tts'
+        example: swagger.dummyUserInfo.nickname
     })
     nickname: string = undefined;
 
@@ -69,7 +70,7 @@ export class MemberEntity extends BaseEntity {
     @IsEmail()
     @Column({type: 'varchar', length: 150, unique: true, comment: '유저 이메일'})
     @ApiProperty({
-        example: 'tts@email.com'
+        example: swagger.dummyUserInfo.email
     })
     email: string = undefined;
 

@@ -42,7 +42,8 @@ export class TodoGroupEntity extends BaseEntity {
     })
     order: number = undefined;
 
-    @OneToMany(() => TodoEntity, todo => todo.todoGroup, {
+    @OneToMany(() => TodoEntity,
+            todo => todo.todoGroup, {
         onDelete: "CASCADE",
         onUpdate: "CASCADE"
     })

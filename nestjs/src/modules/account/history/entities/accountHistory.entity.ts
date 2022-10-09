@@ -10,11 +10,12 @@ export class AccountHistoryEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     @Column({primary: true, type: "int", unique: true, unsigned: true})
     @ApiProperty({
-        example: '3'
+        example: 3
     })
     idx: number = undefined;
 
-    @ManyToOne(() => AccountEntity, account => account.accountHistoryList,
+    @ManyToOne(() => AccountEntity,
+            account => account.accountHistoryList,
         {
             onDelete: "CASCADE",
             onUpdate: "CASCADE",
@@ -24,16 +25,16 @@ export class AccountHistoryEntity extends BaseEntity {
     @JoinColumn()
     account: AccountEntity = undefined;
 
-    @OneToOne(() => AccountHistoryCategoryEntity,
-        accountHistoryCategory => accountHistoryCategory.accountHistory,
-        {
-            onDelete: "CASCADE",
-            onUpdate: "CASCADE",
-            nullable: false
-        }
-    )
-    @JoinColumn()
-    accountHistoryCategory: AccountHistoryCategoryEntity = undefined;
+    // @OneToOne(() => AccountHistoryCategoryEntity,
+    //     accountHistoryCategory => accountHistoryCategory.accountHistory,
+    //     {
+    //         onDelete: "CASCADE",
+    //         onUpdate: "CASCADE",
+    //         nullable: false
+    //     }
+    // )
+    // @JoinColumn()
+    // accountHistoryCategory: AccountHistoryCategoryEntity = undefined;
 
     @IsNumber()
     @Column({type: "bigint", unsigned: true, comment: "금액"})

@@ -76,7 +76,7 @@ describe('Todo Service', () => {
     });
 
     describe('delete()', () => {
-        it('할일 등록', async () => {
+        it('할일 삭제', async () => {
             const deleteResult: DeleteResult = await todoService.delete(createdTodoInfo);
 
             expect(deleteResult.affected === 1).toBeTruthy();

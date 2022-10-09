@@ -5,7 +5,7 @@ import {
     OutOfControlExceptionFilter
 } from 'src/common/filter/exception.filter';
 
-import {port, swaggerUser} from 'config/config';
+import {port, swagger} from 'config/config';
 import {ValidationPipe} from "@nestjs/common";
 import {Handlers} from "@sentry/node";
 import {sentrySettingRun} from "./sentry/cli/createRelease";
@@ -29,19 +29,19 @@ const validationOptions = {
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, appOptions);
     app.use(json({ limit: '50mb' }));
+    app.setGlobalPrefix('api');
 
     app.use(
-        ['/api-docs'],
+        [swagger.url],
         expressBasicAuth({
             challenge: true,
-            users: { [swaggerUser.id]: swaggerUser.password },
+            users: { [swagger.adminInfo.id]: swagger.adminInfo.password },
         }),
     );
 
     const config = new DocumentBuilder()
-        .setTitle('Nestjs Boiler Plate Example')
-        .setDescription('API호출시 api/를 붙여주세요.' +
-            '<br/> ex) /api/member/auth')
+        .setTitle(swagger.title)
+        .setDescription(swagger.description)
         .setVersion(process.env.npm_package_version)
         .build();
     const document = SwaggerModule.createDocument(app, config);
@@ -55,8 +55,6 @@ async function bootstrap() {
     // app.useGlobalInterceptors(new TestInterceptor());
 
     app.useGlobalPipes(new ValidationPipe(validationOptions));
-
-    app.setGlobalPrefix('api');
 
     // 예상 범위 밖의 예외 필터
     app.useGlobalFilters(new OutOfControlExceptionFilter());

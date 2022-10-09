@@ -25,10 +25,10 @@ export class AccountHistoryCategoryEntity extends BaseEntity {
     @JoinColumn()
     member: MemberEntity = undefined;
 
-    @OneToOne(() => AccountHistoryEntity,
-        accountHistory => accountHistory.accountHistoryCategory
-    )
-    accountHistory: AccountHistoryEntity = undefined;
+    // @OneToOne(() => AccountHistoryEntity,
+    //     accountHistory => accountHistory.accountHistoryCategory
+    // )
+    // accountHistory: AccountHistoryEntity = undefined;
 
     @IsNumber()
     @Column({

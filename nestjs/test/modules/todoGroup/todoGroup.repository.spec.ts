@@ -7,7 +7,6 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {typeOrmOptions} from "../../../config/config";
 import {getCreateTodoGroupData, getSavedTodoGroup} from "./todoGroup";
 import {DeleteResult, UpdateResult} from "typeorm";
-import {TodoGroupInterceptor} from "../../../src/modules/todoGroup/todoGroup.interceptor";
 
 describe('TodoGroup Repository', () => {
     const savedMemberInfo: MemberEntity = getSavedMember();
@@ -53,7 +52,7 @@ describe('TodoGroup Repository', () => {
             const result: [TodoGroupEntity[], number] = await todoGroupRepository.selectList(savedMemberInfo, 1, 10);
 
             expect(result[0].every(v => v instanceof TodoGroupEntity)).toBeTruthy();
-            expect(typeof result[1] === "number").toBeTruthy()
+            expect(typeof result[1] === "number").toBeTruthy();
         });
     });
 
@@ -87,6 +86,5 @@ describe('TodoGroup Repository', () => {
             expect(deleteResult.affected === 1).toBeTruthy();
         });
     });
-
 
 });

@@ -13,7 +13,7 @@ import {writeFileSync, existsSync, unlinkSync} from "fs";
 import {FileType} from "../../common/type/type";
 import {UpdateMemberDto} from "./dto/update-member.dto";
 import {encryptPassword} from "../../../libs/member";
-import {staticPath, filePath, testTokenCode} from "../../../config/config";
+import {staticPath, filePath, swagger} from "../../../config/config";
 import {Connection, DeleteResult, UpdateResult} from "typeorm";
 import {TodoGroupEntity} from "../todoGroup/entities/todoGroup.entity";
 import {TodoGroupRepository} from "../todoGroup/todoGroup.repository";
@@ -55,10 +55,12 @@ export class MemberService {
             throw Message.WRONG_ID_OR_PASSWORD;
         }
 
-        if(loginResult.id === 'tts'){
-            const token: TokenEntity = new TokenEntity();
-            token.dataMigration({idx: 0, code: testTokenCode, token: 'test'})
-            member.tokenInfo = token;
+        if (loginResult.id === swagger.dummyUserInfo.id) {
+            const token: TokenEntity = (await this.tokenRepository.select(undefined, loginResult)) ?? new TokenEntity();
+            token.dataMigration({
+                code: swagger.dummyUserInfo.tokenCode, token: 'test', member: loginResult
+            });
+            member.tokenInfo = await this.tokenRepository.saveToken(token);
             return member;
         }
 
@@ -108,7 +110,7 @@ export class MemberService {
 
             const resultTodoGroup: TodoGroupEntity = await this.todoGroupRepository.createTodoGroup(queryRunner, todoGroup);
 
-            if(!resultTodoGroup){
+            if (!resultTodoGroup) {
                 throw Message.SERVER_ERROR;
             }
 
@@ -128,16 +130,16 @@ export class MemberService {
     }
 
     async updateMember(updateMemberDto: UpdateMemberDto, member: MemberEntity): Promise<UpdateResult> {
-        const memberInfo: MemberEntity = await this.memberRepository.select(member, undefined,true);
+        const memberInfo: MemberEntity = await this.memberRepository.select(member, undefined, true);
 
-        if(memberInfo.authType === 0) {
+        if (memberInfo.authType === 0) {
             updateMemberDto.originalPassword = encryptPassword(updateMemberDto.originalPassword);
 
             if (updateMemberDto.originalPassword !== memberInfo.password) {
                 throw Message.CUSTOM_ERROR("기존 비밀번호가 틀립니다.")
             }
 
-            if(updateMemberDto.password !== undefined){
+            if (updateMemberDto.password !== undefined) {
                 updateMemberDto.password = encryptPassword(updateMemberDto.password);
             }
         }
@@ -146,7 +148,7 @@ export class MemberService {
 
         const updateResult: UpdateResult = await this.memberRepository.updateMember(memberInfo);
 
-        if(updateResult.affected !== 1){
+        if (updateResult.affected !== 1) {
             throw Message.SERVER_ERROR;
         }
 
@@ -156,7 +158,7 @@ export class MemberService {
     async signOut(member: MemberEntity): Promise<DeleteResult> {
         const deleteResult: DeleteResult = await this.memberRepository.signOut(member);
 
-        if(deleteResult.affected !== 1){
+        if (deleteResult.affected !== 1) {
             throw Message.SERVER_ERROR;
         }
 
@@ -177,13 +179,13 @@ export class MemberService {
 
         const updateResult = await this.memberRepository.updateMember(updateMember);
 
-        if(updateResult.affected !== 1) {
+        if (updateResult.affected !== 1) {
             throw Message.SERVER_ERROR;
         }
 
         writeFileSync(staticPath + profileImgKey, file.fileBuffer);
 
-        if(originalProfileImgKey !== undefined && existsSync(staticPath + originalProfileImgKey)) {
+        if (originalProfileImgKey !== undefined && existsSync(staticPath + originalProfileImgKey)) {
             unlinkSync(staticPath + originalProfileImgKey);
         }
 
@@ -197,11 +199,11 @@ export class MemberService {
 
         const updateResult = await this.memberRepository.updateMember(member);
 
-        if(updateResult.affected !== 1){
+        if (updateResult.affected !== 1) {
             throw Message.SERVER_ERROR;
         }
 
-        if(originalProfileImgKey !== undefined && existsSync(staticPath + originalProfileImgKey)){
+        if (originalProfileImgKey !== undefined && existsSync(staticPath + originalProfileImgKey)) {
             unlinkSync(staticPath + originalProfileImgKey);
         }
     }

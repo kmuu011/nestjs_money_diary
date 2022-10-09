@@ -5,7 +5,7 @@ import {Message} from "../../../libs/message";
 import {TokenRepository} from "../../modules/member/token/token.repository";
 import * as utils from "../../../libs/utils";
 import {Request, Response} from "express";
-import { auth } from "../../../config/config";
+import {auth, swagger} from "../../../config/config";
 import {TokenEntity} from "../../modules/member/token/entities/token.entity";
 
 const serverType = process.env.NODE_ENV;
@@ -37,7 +37,7 @@ export class AuthGuard implements CanActivate {
                 'AND t.code = :code', {code: tokenCode})
             .getOne();
 
-        if(memberInfo?.member?.id !== 'tts' && (!memberInfo || (serverType !== 'localDevelopment' && (memberInfo.member.ip !== ip || memberInfo.member.userAgent !== userAgent)))){
+        if(memberInfo?.member?.id !== swagger.dummyUserInfo.id && (!memberInfo || (serverType !== 'localDevelopment' && (memberInfo.member.ip !== ip || memberInfo.member.userAgent !== userAgent)))){
             throw Message.UNAUTHORIZED;
         }
 
@@ -45,6 +45,11 @@ export class AuthGuard implements CanActivate {
 
         member.tokenInfo = memberInfo;
         delete memberInfo.member;
+
+        if(member.id === swagger.dummyUserInfo.id){
+            req.locals.memberInfo = member;
+            return true;
+        }
 
         const jwtPayload = await member.decodeToken();
 

@@ -9,17 +9,17 @@ const memberUpdateKeys: string[] = ["nickname", "email", "profileImgKey", "ip", 
 export class MemberRepository extends Repository<MemberEntity> {
 
     async select(member: MemberEntity, selectKeys?: string, includePassword?: boolean): Promise<MemberEntity> {
-        if(selectKeys === undefined) selectKeys = "idx";
+        if (selectKeys === undefined) selectKeys = "idx";
         const selectKeysList = selectKeys.replace(/\s/g, '').split(',');
         const where = {};
 
-        for(const k of selectKeysList){
+        for (const k of selectKeysList) {
             where[k] = member[k];
         }
 
         const additionalKeys = [];
 
-        if(includePassword === true){
+        if (includePassword === true) {
             additionalKeys.push('password');
         }
 
@@ -31,9 +31,9 @@ export class MemberRepository extends Repository<MemberEntity> {
     }
 
     async signUp(queryRunner: QueryRunner, member: MemberEntity): Promise<MemberEntity> {
-        if(queryRunner) {
+        if (queryRunner) {
             return await queryRunner.manager.save(member);
-        }else{
+        } else {
             return await this.save(member);
         }
     }
