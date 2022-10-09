@@ -1,4 +1,4 @@
-import {Member} from "../../../src/modules/member/entities/member.entity";
+import {MemberEntity} from "../../../src/modules/member/entities/member.entity";
 import {createRandomString} from "../../../libs/utils";
 import {readFileSync} from "fs";
 import {basePath} from "../../../config/config";
@@ -16,8 +16,8 @@ export const savedMemberData = {
     email: 'tts1@email.com'
 };
 
-export const getSavedMember = (encryptPassword?): Member => {
-    const savedMember: Member = new Member();
+export const getSavedMember = (encryptPassword?): MemberEntity => {
+    const savedMember: MemberEntity = new MemberEntity();
     savedMember.dataMigration(savedMemberData);
     savedMember.tokenInfo = getTokenInfo();
 
@@ -33,10 +33,10 @@ export const loginHeader = {
     "user-agent": "test-agent"
 };
 
-export const getCreateMemberData = (encryptPassword): Member => {
+export const getCreateMemberData = (encryptPassword): MemberEntity => {
     const key = createRandomString(12);
 
-    const member = new Member();
+    const member = new MemberEntity();
 
     member.dataMigration({
         idx: 120,

@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {TodoGroupRepository} from "./todoGroup.repository";
-import {TodoGroup} from "./entities/todoGroup.entity";
-import {Member} from "../member/entities/member.entity";
+import {TodoGroupEntity} from "./entities/todoGroup.entity";
+import {MemberEntity} from "../member/entities/member.entity";
 import {CreateTodoGroupDto} from "./dto/create-todoGroup-dto";
 import {DeleteResult, UpdateResult} from "typeorm";
 import {Message} from "../../../libs/message";
@@ -17,7 +17,7 @@ export class TodoGroupService {
         @InjectRepository(TodoRepository) private readonly todoRepository: TodoRepository
     ) {}
 
-    async arrangeOrder(member: Member, todoGroup?: TodoGroup, order?: number): Promise<void> {
+    async arrangeOrder(member: MemberEntity, todoGroup?: TodoGroupEntity, order?: number): Promise<void> {
         const todoGroupList = (await this.todoGroupRepository.selectList(member))[0];
         let splicedTodoGroupList = [...todoGroupList];
 
@@ -46,11 +46,11 @@ export class TodoGroupService {
         }
     }
 
-    async selectOne(member: Member, todoGroupIdx: number): Promise<TodoGroup> {
+    async selectOne(member: MemberEntity, todoGroupIdx: number): Promise<TodoGroupEntity> {
         return await this.todoGroupRepository.selectOne(member, todoGroupIdx);
     }
 
-    async selectList(member: Member, page: number, count: number): Promise<SelectListResponseType<TodoGroup>> {
+    async selectList(member: MemberEntity, page: number, count: number): Promise<SelectListResponseType<TodoGroupEntity>> {
         const result = await this.todoGroupRepository.selectList(member, page, count);
 
         for (const r of result[0]) {
@@ -66,8 +66,8 @@ export class TodoGroupService {
         };
     }
 
-    async create(member: Member, body: CreateTodoGroupDto): Promise<TodoGroup> {
-        const todoGroup: TodoGroup = new TodoGroup();
+    async create(member: MemberEntity, body: CreateTodoGroupDto): Promise<TodoGroupEntity> {
+        const todoGroup: TodoGroupEntity = new TodoGroupEntity();
         todoGroup.dataMigration({
             ...body,
             ...{member}
@@ -80,7 +80,7 @@ export class TodoGroupService {
         return await this.todoGroupRepository.createTodoGroup(undefined, todoGroup);
     }
 
-    async update(member: Member, todoGroup: TodoGroup, body: UpdateTodoGroupDto): Promise<UpdateResult> {
+    async update(member: MemberEntity, todoGroup: TodoGroupEntity, body: UpdateTodoGroupDto): Promise<UpdateResult> {
         todoGroup.title = body.title;
 
         const updateResult: UpdateResult = await this.todoGroupRepository.updateTodoGroup(todoGroup);
@@ -96,7 +96,7 @@ export class TodoGroupService {
         return updateResult;
     }
 
-    async delete(member: Member, todoGroup: TodoGroup): Promise<DeleteResult> {
+    async delete(member: MemberEntity, todoGroup: TodoGroupEntity): Promise<DeleteResult> {
         const deleteResult: DeleteResult = await this.todoGroupRepository.deleteTodoGroup(todoGroup);
 
         if (deleteResult.affected !== 1) {

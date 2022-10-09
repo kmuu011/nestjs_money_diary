@@ -1,4 +1,4 @@
-import {Member} from "../../../src/modules/member/entities/member.entity";
+import {MemberEntity} from "../../../src/modules/member/entities/member.entity";
 import {Test, TestingModule} from "@nestjs/testing";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {typeOrmOptions} from "../../../config/config";
@@ -24,7 +24,7 @@ import {DuplicateCheckMemberDto} from "../../../src/modules/member/dto/duplicate
 describe('Member Controller', () => {
     let memberController: MemberController;
     let memberService: MemberService;
-    const savedMemberInfo: Member = getSavedMember();
+    const savedMemberInfo: MemberEntity = getSavedMember();
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -113,10 +113,10 @@ describe('Member Controller', () => {
 
     describe('signOut()', () => {
         it('회원 탈퇴', async () => {
-            const createMemberDto: Member = getCreateMemberData(false);
+            const createMemberDto: MemberEntity = getCreateMemberData(false);
 
             const req: Request = createRequest();
-            const member: Member = new Member();
+            const member: MemberEntity = new MemberEntity();
             member.idx = createMemberDto.idx;
 
             req.locals = {
@@ -157,7 +157,7 @@ describe('Member Controller', () => {
         it('프로필 사진 삭제', async () => {
             const req: Request = createRequest();
 
-            const savedMember: Member = await memberService.select(savedMemberInfo)
+            const savedMember: MemberEntity = await memberService.select(savedMemberInfo)
 
             req.locals = {
                 memberInfo: savedMember

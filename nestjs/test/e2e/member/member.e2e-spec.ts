@@ -7,13 +7,13 @@ import {
     getProfileImagePath,
     getSavedMember,
 } from "../../modules/member/member";
-import {Member} from "../../../src/modules/member/entities/member.entity";
+import {MemberEntity} from "../../../src/modules/member/entities/member.entity";
 import {UpdateMemberDto} from "../../../src/modules/member/dto/update-member.dto";
 import {json} from "express";
 
 describe('MemberController (e2e)', () => {
-    const savedMemberInfo: Member = getSavedMember();
-    const createMemberInfo: Member = getCreateMemberData(false);
+    const savedMemberInfo: MemberEntity = getSavedMember();
+    const createMemberInfo: MemberEntity = getCreateMemberData(false);
     let createMemberTokenCode: string;
     let app: INestApplication;
 

@@ -1,16 +1,16 @@
 import {ApiProperty, getSchemaPath, PickType} from "@nestjs/swagger";
-import {TodoGroup} from "../entities/todoGroup.entity";
-import {Todo} from "../todo/entities/todo.entity";
+import {TodoGroupEntity} from "../entities/todoGroup.entity";
+import {TodoEntity} from "../todo/entities/todo.entity";
 
 export class todoGroupSelectResponse extends PickType(
-    TodoGroup,
+    TodoGroupEntity,
     [
         'idx', 'title', "order", "createdAt", "updatedAt"
     ] as const
 ) {
     @ApiProperty({
         type: "array",
-        items: { $ref: getSchemaPath(Todo) },
+        items: { $ref: getSchemaPath(TodoEntity) },
     })
-    todoList: Todo
+    todoList: TodoEntity
 }

@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {MemberRepository} from "./member.repository";
-import {Member} from "./entities/member.entity";
+import {MemberEntity} from "./entities/member.entity";
 import {CreateMemberDto} from "./dto/create-member-dto";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Message} from "../../../libs/message";
@@ -15,9 +15,9 @@ import {UpdateMemberDto} from "./dto/update-member.dto";
 import {encryptPassword} from "../../../libs/member";
 import {staticPath, filePath, testTokenCode} from "../../../config/config";
 import {Connection, DeleteResult, UpdateResult} from "typeorm";
-import {TodoGroup} from "../todoGroup/entities/todoGroup.entity";
+import {TodoGroupEntity} from "../todoGroup/entities/todoGroup.entity";
 import {TodoGroupRepository} from "../todoGroup/todoGroup.repository";
-import {Token} from "./entities/token.entity";
+import {TokenEntity} from "./entities/token.entity";
 
 @Injectable()
 export class MemberService {
@@ -29,7 +29,7 @@ export class MemberService {
     ) {}
 
     async auth(headers): Promise<void> {
-        const member: Member = new Member();
+        const member: MemberEntity = new MemberEntity();
         member.dataMigration({
             userAgent: headers["userAgent"],
             ip: headers["ip"]
@@ -38,25 +38,25 @@ export class MemberService {
         await member.decodeToken();
     }
 
-    async select(member): Promise<Member> {
+    async select(member): Promise<MemberEntity> {
         return this.memberRepository.select(member);
     }
 
-    async login(loginMemberDto: LoginMemberDto, headers): Promise<Member> {
-        const member: Member = new Member();
+    async login(loginMemberDto: LoginMemberDto, headers): Promise<MemberEntity> {
+        const member: MemberEntity = new MemberEntity();
         const {ip, "user-agent": userAgent} = headers;
         member.dataMigration(loginMemberDto);
 
         member.passwordEncrypt();
 
-        const loginResult: Member = await this.memberRepository.select(member, 'id, password');
+        const loginResult: MemberEntity = await this.memberRepository.select(member, 'id, password');
 
         if (!loginResult) {
             throw Message.WRONG_ID_OR_PASSWORD;
         }
 
         if(loginResult.id === 'tts'){
-            const token: Token = new Token();
+            const token: TokenEntity = new TokenEntity();
             token.dataMigration({idx: 0, code: testTokenCode, token: 'test'})
             member.tokenInfo = token;
             return member;
@@ -70,7 +70,7 @@ export class MemberService {
         const newToken: string = member.createToken();
         const code: string = await createKey<TokenRepository>(this.tokenRepository, 'code', 40);
 
-        const token: Token = (await this.tokenRepository.select(undefined, member)) ?? new Token();
+        const token: TokenEntity = (await this.tokenRepository.select(undefined, member)) ?? new TokenEntity();
 
         token.dataMigration({member, code, token: newToken});
 
@@ -81,16 +81,16 @@ export class MemberService {
         return member;
     };
 
-    async signUp(createMemberDto: CreateMemberDto): Promise<Member> {
+    async signUp(createMemberDto: CreateMemberDto): Promise<MemberEntity> {
         const queryRunner = this.connection.createQueryRunner();
-        const member = new Member();
+        const member = new MemberEntity();
         member.dataMigration(createMemberDto);
         member.passwordEncrypt();
 
         await queryRunner.connect();
         await queryRunner.startTransaction();
 
-        let resultMember: Member;
+        let resultMember: MemberEntity;
 
         try {
             resultMember = await this.memberRepository.signUp(queryRunner, member);
@@ -99,14 +99,14 @@ export class MemberService {
                 throw Message.SERVER_ERROR;
             }
 
-            const todoGroup: TodoGroup = new TodoGroup();
+            const todoGroup: TodoGroupEntity = new TodoGroupEntity();
 
             todoGroup.dataMigration({
                 title: "기본그룹",
                 member: resultMember
             });
 
-            const resultTodoGroup: TodoGroup = await this.todoGroupRepository.createTodoGroup(queryRunner, todoGroup);
+            const resultTodoGroup: TodoGroupEntity = await this.todoGroupRepository.createTodoGroup(queryRunner, todoGroup);
 
             if(!resultTodoGroup){
                 throw Message.SERVER_ERROR;
@@ -127,8 +127,8 @@ export class MemberService {
         return !(await this.memberRepository.duplicateCheck(key, value));
     }
 
-    async updateMember(updateMemberDto: UpdateMemberDto, member: Member): Promise<UpdateResult> {
-        const memberInfo: Member = await this.memberRepository.select(member, undefined,true);
+    async updateMember(updateMemberDto: UpdateMemberDto, member: MemberEntity): Promise<UpdateResult> {
+        const memberInfo: MemberEntity = await this.memberRepository.select(member, undefined,true);
 
         if(memberInfo.authType === 0) {
             updateMemberDto.originalPassword = encryptPassword(updateMemberDto.originalPassword);
@@ -153,7 +153,7 @@ export class MemberService {
         return updateResult;
     }
 
-    async signOut(member: Member): Promise<DeleteResult> {
+    async signOut(member: MemberEntity): Promise<DeleteResult> {
         const deleteResult: DeleteResult = await this.memberRepository.signOut(member);
 
         if(deleteResult.affected !== 1){
@@ -163,12 +163,12 @@ export class MemberService {
         return deleteResult;
     }
 
-    async updateImg(file: FileType, member: Member): Promise<string> {
+    async updateImg(file: FileType, member: MemberEntity): Promise<string> {
         const originalProfileImgKey = member.profileImgKey;
 
         const profileImgKey = filePath.profileImg + await createKey<MemberRepository>(this.memberRepository, 'profileImgKey', 16) + '_' + Date.now() + '.' + file.fileType;
 
-        const updateMember: Member = new Member();
+        const updateMember: MemberEntity = new MemberEntity();
 
         updateMember.dataMigration({
             profileImgKey: profileImgKey,
@@ -190,7 +190,7 @@ export class MemberService {
         return profileImgKey;
     }
 
-    async deleteImg(member: Member): Promise<void> {
+    async deleteImg(member: MemberEntity): Promise<void> {
         const originalProfileImgKey = member.profileImgKey;
 
         member.dataMigration({profileImgKey: null});

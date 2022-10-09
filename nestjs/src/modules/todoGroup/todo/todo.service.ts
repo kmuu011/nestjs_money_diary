@@ -1,8 +1,8 @@
 import {Injectable} from '@nestjs/common';
 import {SelectListResponseType} from "../../../common/type/type";
 import {TodoRepository} from "./todo.repository";
-import {Todo} from "./entities/todo.entity";
-import {TodoGroup} from "../entities/todoGroup.entity";
+import {TodoEntity} from "./entities/todo.entity";
+import {TodoGroupEntity} from "../entities/todoGroup.entity";
 import {CreateTodoDto} from "./dto/create-todo-dto";
 import {UpdateTodoDto} from "./dto/update-todo-dto";
 import {DeleteResult, UpdateResult} from "typeorm";
@@ -15,11 +15,11 @@ export class TodoService {
         @InjectRepository(TodoRepository) private readonly todoRepository: TodoRepository
     ) {}
 
-    async selectOne(todoGroup: TodoGroup, todoIdx: number): Promise<Todo> {
+    async selectOne(todoGroup: TodoGroupEntity, todoIdx: number): Promise<TodoEntity> {
         return await this.todoRepository.selectOne(todoGroup, todoIdx);
     }
 
-    async selectList(todoGroup: TodoGroup, page: number, count: number): Promise<SelectListResponseType<Todo>> {
+    async selectList(todoGroup: TodoGroupEntity, page: number, count: number): Promise<SelectListResponseType<TodoEntity>> {
         const result = await this.todoRepository.selectList(todoGroup, page, count);
 
         return {
@@ -31,8 +31,8 @@ export class TodoService {
         };
     }
 
-    async create(todoGroup: TodoGroup, createTodoDto: CreateTodoDto): Promise<Todo> {
-        const todo: Todo = new Todo();
+    async create(todoGroup: TodoGroupEntity, createTodoDto: CreateTodoDto): Promise<TodoEntity> {
+        const todo: TodoEntity = new TodoEntity();
 
         todo.dataMigration(createTodoDto);
         todo.todoGroup = todoGroup;
@@ -40,7 +40,7 @@ export class TodoService {
         return this.todoRepository.createTodo(todo)
     }
 
-    async update(todo: Todo, updateTodoDto: UpdateTodoDto): Promise<UpdateResult> {
+    async update(todo: TodoEntity, updateTodoDto: UpdateTodoDto): Promise<UpdateResult> {
         todo.dataMigration(updateTodoDto);
 
         const updateResult: UpdateResult = await this.todoRepository.updateTodo(todo, updateTodoDto);
@@ -52,7 +52,7 @@ export class TodoService {
         return updateResult;
     }
 
-    async delete(todo: Todo): Promise<DeleteResult> {
+    async delete(todo: TodoEntity): Promise<DeleteResult> {
         const deleteResult: DeleteResult = await this.todoRepository.deleteTodo(todo);
 
         if (deleteResult.affected !== 1) {

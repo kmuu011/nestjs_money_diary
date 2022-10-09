@@ -6,11 +6,11 @@ import {
     Entity, JoinColumn, ManyToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
-import {TodoGroup} from "../../entities/todoGroup.entity";
+import {TodoGroupEntity} from "../../entities/todoGroup.entity";
 import {ApiProperty} from "@nestjs/swagger";
 
 @Entity({name: 'todo'})
-export class Todo extends BaseEntity {
+export class TodoEntity extends BaseEntity {
     @IsNumber()
     @PrimaryGeneratedColumn()
     @Column({primary: true, type: "int", unique: true, unsigned: true})
@@ -19,13 +19,13 @@ export class Todo extends BaseEntity {
     })
     idx: number = undefined
 
-    @ManyToOne(() => TodoGroup, todoGroup => todoGroup.todoList, {
+    @ManyToOne(() => TodoGroupEntity, todoGroup => todoGroup.todoList, {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
         nullable: false
     })
     @JoinColumn()
-    todoGroup: TodoGroup = undefined;
+    todoGroup: TodoGroupEntity = undefined;
 
     @IsString()
     @Column({type: 'varchar', length: 300, comment: '할일 내용'})
@@ -56,7 +56,7 @@ export class Todo extends BaseEntity {
     completedAt: string = undefined;
 
     dataMigration(object: object): void {
-        for (let k in new Todo()) {
+        for (let k in new TodoEntity()) {
             if (object[k] === undefined) continue;
             this[k] = object[k];
         }

@@ -6,11 +6,11 @@ import {
     Entity, JoinColumn, OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
-import {Member} from "./member.entity";
+import {MemberEntity} from "./member.entity";
 import {ApiProperty} from "@nestjs/swagger";
 
-@Entity({name: 'member_token'})
-export class Token extends BaseEntity {
+@Entity({name: 'memberToken'})
+export class TokenEntity extends BaseEntity {
     @IsNumber()
     @PrimaryGeneratedColumn()
     @Column({primary: true, type: "int", unique: true, unsigned: true})
@@ -19,13 +19,13 @@ export class Token extends BaseEntity {
     })
     idx: number = undefined
 
-    @OneToOne(() => Member, member => member.tokenInfo, {
+    @OneToOne(() => MemberEntity, member => member.tokenInfo, {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
         nullable: false
     })
     @JoinColumn()
-    member: Member = undefined;
+    member: MemberEntity = undefined;
 
     @IsString()
     @Column({type: 'varchar', length: 1000, comment: '최근 사용 토큰'})
@@ -42,7 +42,7 @@ export class Token extends BaseEntity {
     code: string = undefined;
 
     dataMigration(object: object) : void {
-        for (let k in new Token()) {
+        for (let k in new TokenEntity()) {
             if (object[k] === undefined) continue;
             this[k] = object[k];
         }

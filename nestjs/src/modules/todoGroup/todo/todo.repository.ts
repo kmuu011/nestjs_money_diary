@@ -1,18 +1,18 @@
 import {DeleteResult, EntityRepository, Repository, UpdateResult} from "typeorm";
-import {Todo} from "./entities/todo.entity";
-import {TodoGroup} from "../entities/todoGroup.entity";
+import {TodoEntity} from "./entities/todo.entity";
+import {TodoGroupEntity} from "../entities/todoGroup.entity";
 import {getUpdateObject} from "../../../../libs/utils";
 import {UpdateTodoDto} from "./dto/update-todo-dto";
 
-@EntityRepository(Todo)
-export class TodoRepository extends Repository<Todo> {
+@EntityRepository(TodoEntity)
+export class TodoRepository extends Repository<TodoEntity> {
 
-    async selectOne(todoGroup: TodoGroup, todoIdx: number): Promise<Todo> {
+    async selectOne(todoGroup: TodoGroupEntity, todoIdx: number): Promise<TodoEntity> {
         return await this.findOne({
             where: {todoGroup, idx: todoIdx}
         });
     }
-    async selectList(todoGroup: TodoGroup, page?: number, count?: number): Promise<[Todo[], number]> {
+    async selectList(todoGroup: TodoGroupEntity, page?: number, count?: number): Promise<[TodoEntity[], number]> {
         let query = this.createQueryBuilder('t');
 
         if (page && count) {
@@ -27,11 +27,11 @@ export class TodoRepository extends Repository<Todo> {
             .getManyAndCount();
     }
 
-    async createTodo(todo: Todo): Promise<Todo> {
+    async createTodo(todo: TodoEntity): Promise<TodoEntity> {
         return await this.save(todo)
     }
 
-    async updateTodo(todo: Todo, updateTodoDto: UpdateTodoDto): Promise<UpdateResult> {
+    async updateTodo(todo: TodoEntity, updateTodoDto: UpdateTodoDto): Promise<UpdateResult> {
         const obj = getUpdateObject(["content"], todo, true);
 
         if (updateTodoDto.complete !== undefined) {
@@ -45,7 +45,7 @@ export class TodoRepository extends Repository<Todo> {
         return await this.update(todo.idx, obj);
     }
 
-    async deleteTodo(todo: Todo): Promise<DeleteResult> {
+    async deleteTodo(todo: TodoEntity): Promise<DeleteResult> {
         return await this.delete(todo.idx);
     }
 

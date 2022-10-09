@@ -1,17 +1,17 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {INestApplication} from '@nestjs/common';
 import * as request from 'supertest';
-import {Member} from "../../../../src/modules/member/entities/member.entity";
+import {MemberEntity} from "../../../../src/modules/member/entities/member.entity";
 import {getSavedMember} from "../../../modules/member/member";
-import {TodoGroup} from "../../../../src/modules/todoGroup/entities/todoGroup.entity";
+import {TodoGroupEntity} from "../../../../src/modules/todoGroup/entities/todoGroup.entity";
 import {AppModule} from "../../../../dist/src/app.module";
 import {getSavedTodoGroup} from "../../../modules/todoGroup/todoGroup";
-import {Todo} from "../../../../src/modules/todoGroup/todo/entities/todo.entity";
+import {TodoEntity} from "../../../../src/modules/todoGroup/todo/entities/todo.entity";
 
 describe('TodoGroupController (e2e)', () => {
-    const savedMemberInfo: Member = getSavedMember();
-    const savedTodoGroupInfo: TodoGroup = getSavedTodoGroup();
-    let createdTodoInfo: Todo;
+    const savedMemberInfo: MemberEntity = getSavedMember();
+    const savedTodoGroupInfo: TodoGroupEntity = getSavedTodoGroup();
+    let createdTodoInfo: TodoEntity;
     let app: INestApplication;
 
     beforeAll(async () => {

@@ -1,7 +1,7 @@
 import Buffer from "buffer";
-import {Member} from "../../modules/member/entities/member.entity";
-import {TodoGroup} from "../../modules/todoGroup/entities/todoGroup.entity";
-import {Todo} from "../../modules/todoGroup/todo/entities/todo.entity";
+import {MemberEntity} from "../../modules/member/entities/member.entity";
+import {TodoGroupEntity} from "../../modules/todoGroup/entities/todoGroup.entity";
+import {TodoEntity} from "../../modules/todoGroup/todo/entities/todo.entity";
 import {ApiProperty} from "@nestjs/swagger";
 
 export interface FileType {
@@ -45,9 +45,9 @@ export class SelectListResponseType<T> {
 }
 
 export interface LocalsType {
-    memberInfo?: Member;
-    todoGroupInfo?: TodoGroup;
-    todoInfo?: Todo;
+    memberInfo?: MemberEntity;
+    todoGroupInfo?: TodoGroupEntity;
+    todoInfo?: TodoEntity;
 }
 
 export class LoginResponseType {

@@ -14,9 +14,9 @@ import {Request} from "express";
 import {TodoGroupService} from "../todoGroup.service";
 import {TodoService} from "./todo.service";
 import {SelectQueryDto} from "../../../common/dto/select-query-dto";
-import {TodoGroup} from "../entities/todoGroup.entity";
+import {TodoGroupEntity} from "../entities/todoGroup.entity";
 import {CreateTodoDto} from "./dto/create-todo-dto";
-import {Todo} from "./entities/todo.entity";
+import {TodoEntity} from "./entities/todo.entity";
 import {UpdateTodoDto} from "./dto/update-todo-dto";
 import {ResponseBooleanType, SelectListResponseType} from "../../../common/type/type";
 
@@ -38,29 +38,29 @@ export class TodoController {
 
     @Get('/')
     @ApiOperation({summary: '할일 조회'})
-    @ApiOkResponseSelectList(Todo, '할일 조회 성공')
+    @ApiOkResponseSelectList(TodoEntity, '할일 조회 성공')
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
     @ApiParam({type: 'number', name: 'todoGroupIdx'})
     async selectTodolist(
         @Req() req: Request,
         @Query() query: SelectQueryDto
-    ): Promise<SelectListResponseType<Todo>> {
+    ): Promise<SelectListResponseType<TodoEntity>> {
         const {page, count} = query;
-        const todoGroupInfo: TodoGroup = req.locals.todoGroupInfo;
+        const todoGroupInfo: TodoGroupEntity = req.locals.todoGroupInfo;
 
         return await this.todoService.selectList(todoGroupInfo, page, count);
     }
 
     @Post('/')
     @ApiOperation({summary: '할일 등록'})
-    @ApiOkResponse({description: '할일 등록 성공', type: Todo})
+    @ApiOkResponse({description: '할일 등록 성공', type: TodoEntity})
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
     @ApiParam({type: 'number', name: 'todoGroupIdx'})
     async createTodo(
         @Req() req: Request,
         @Body() body: CreateTodoDto
-    ): Promise<Todo> {
-        const todoGroup: TodoGroup = req.locals.todoGroupInfo;
+    ): Promise<TodoEntity> {
+        const todoGroup: TodoGroupEntity = req.locals.todoGroupInfo;
 
         return await this.todoService.create(todoGroup, body);
     }
@@ -76,7 +76,7 @@ export class TodoController {
         @Req() req: Request,
         @Body() body: UpdateTodoDto
     ): Promise<ResponseBooleanType> {
-        const todoInfo: Todo = req.locals.todoInfo;
+        const todoInfo: TodoEntity = req.locals.todoInfo;
 
         await this.todoService.update(todoInfo, body);
 
@@ -93,7 +93,7 @@ export class TodoController {
     async deleteTodo(
         @Req() req: Request
     ): Promise<ResponseBooleanType> {
-        const todoInfo: Todo = req.locals.todoInfo;
+        const todoInfo: TodoEntity = req.locals.todoInfo;
 
         await this.todoService.delete(todoInfo);
 

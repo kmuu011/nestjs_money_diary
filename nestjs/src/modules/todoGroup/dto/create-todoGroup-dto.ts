@@ -1,7 +1,7 @@
-import {TodoGroup} from "../entities/todoGroup.entity";
+import {TodoGroupEntity} from "../entities/todoGroup.entity";
 import {PickType} from "@nestjs/swagger";
 
 export class CreateTodoGroupDto extends PickType(
-    TodoGroup,
+    TodoGroupEntity,
     ['title'] as const
 ) {}

@@ -1,12 +1,12 @@
 import {Injectable, CanActivate, ExecutionContext} from '@nestjs/common';
-import {Member} from "../../modules/member/entities/member.entity";
+import {MemberEntity} from "../../modules/member/entities/member.entity";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Message} from "../../../libs/message";
 import {TokenRepository} from "../../modules/member/token/token.repository";
 import * as utils from "../../../libs/utils";
 import {Request, Response} from "express";
 import { auth } from "../../../config/config";
-import {Token} from "../../modules/member/entities/token.entity";
+import {TokenEntity} from "../../modules/member/entities/token.entity";
 
 const serverType = process.env.NODE_ENV;
 
@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
         const res: Response = context.switchToHttp().getResponse();
         const { ip, "user-agent": userAgent, "token-code": tokenCode } = req.headers;
 
-        const member: Member = new Member();
+        const member: MemberEntity = new MemberEntity();
 
         const memberInfo = await this.tokenRepository.createQueryBuilder('t')
             .select([
@@ -53,7 +53,7 @@ export class AuthGuard implements CanActivate {
                 keepCheck: jwtPayload.keepCheck
             });
 
-            const token: Token = await this.tokenRepository.select(undefined, member);
+            const token: TokenEntity = await this.tokenRepository.select(undefined, member);
 
             const newToken: string = member.createToken();
             const code: string = await utils.createKey<TokenRepository>(this.tokenRepository, 'code', 40);
