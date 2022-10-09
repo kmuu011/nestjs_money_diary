@@ -75,7 +75,7 @@ describe('AccountController (e2e)', () => {
             const resultAccount: AccountEntity = response.body;
 
             expect(resultAccount.idx === createdAccountInfo.idx).toBeTruthy();
-            expect(resultAccount.title === createdAccountInfo.title).toBeTruthy();
+            expect(resultAccount.accountName === createdAccountInfo.accountName).toBeTruthy();
             expect(resultAccount.order === createdAccountInfo.order).toBeTruthy();
         });
 
@@ -86,7 +86,7 @@ describe('AccountController (e2e)', () => {
                 .set('user-agent', 'test-agent')
                 .set('token-code', savedMemberInfo.tokenInfo.code)
                 .send({
-                    title: '수정된 할일 그룹 제목',
+                    accountName: '수정된 할일 그룹 제목',
                     order: 3
                 })
                 .expect(200);

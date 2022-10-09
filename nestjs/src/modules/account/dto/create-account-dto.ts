@@ -3,5 +3,5 @@ import {AccountEntity} from "../entities/account.entity";
 
 export class CreateAccountDto extends PickType(
     AccountEntity,
-    ['title'] as const
+    ['accountName'] as const
 ) {}

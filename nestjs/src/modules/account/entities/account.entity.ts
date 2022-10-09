@@ -35,7 +35,21 @@ export class AccountEntity extends BaseEntity {
     @ApiProperty({
         example: '가계부 제목 1'
     })
-    title: string = undefined;
+    accountName: string = undefined;
+
+    @IsNumber()
+    @Column({type: 'bigint', unsigned: false, comment: '가계부 금액'})
+    @ApiProperty({
+        example: 0
+    })
+    totalAmount: number = undefined;
+
+    @IsNumber()
+    @Column({type: 'tinyint', comment: '가계부 금액 보이기 여부'})
+    @ApiProperty({
+        example: 0
+    })
+    invisibleAmount: number = undefined;
 
     @IsNumber()
     @Column({type: "tinyint", default: 1, comment: "순서"})

@@ -4,7 +4,7 @@ import {AccountEntity} from "../entities/account.entity";
 
 export class UpdateAccountDto extends PickType(
     AccountEntity,
-    ['title'] as const
+    ['accountName'] as const
 ) {
 
     @IsNumber()
@@ -13,4 +13,11 @@ export class UpdateAccountDto extends PickType(
         example: 1
     })
     readonly order: number;
+
+    @IsNumber()
+    @IsOptional()
+    @ApiPropertyOptional({
+        example: 1
+    })
+    readonly invisibleAmount: number;
 }

@@ -3,7 +3,9 @@ import {getSavedMember} from "../member/member";
 
 export const savedAccountData = {
     idx: 1,
-    title: '제 1 가계부',
+    accountName: '제 1 가계부',
+    totalAmount: 0,
+    invisibleAmount: 0,
     order: 1
 };
 
@@ -24,7 +26,10 @@ export const getCreateAccountData = (): AccountEntity => {
     account.dataMigration({
         idx: 13,
         member: getSavedMember(),
-        title: '제 2 가계부'
+        accountName: '제 2 가계부',
+        totalAmount: 0,
+        invisibleAmount: 0,
+        order: 1
     });
 
     return account;
