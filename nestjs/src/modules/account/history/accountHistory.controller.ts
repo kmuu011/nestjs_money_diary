@@ -21,7 +21,7 @@ import {ResponseBooleanType, SelectListResponseType} from "../../../common/type/
 
 import {AccountHistoryInterceptor} from "./accountHistory.interceptor";
 import {AccountInterceptor} from "../account.interceptor";
-import {ApiHeader, ApiOkResponse, ApiOperation, ApiParam, ApiTags} from "@nestjs/swagger";
+import {ApiCreatedResponse, ApiHeader, ApiOkResponse, ApiOperation, ApiParam, ApiTags} from "@nestjs/swagger";
 import {ApiOkResponseSelectList} from "../../../common/swagger/customDecorator";
 import {swagger} from "../../../../config/config";
 import {AccountHistoryService} from "./accountHistory.service";
@@ -53,7 +53,7 @@ export class AccountHistoryController {
 
     @Post('/')
     @ApiOperation({summary: '가계부 내역 등록'})
-    @ApiOkResponse({description: '가계부 내역 등록 성공', type: AccountHistoryEntity})
+    @ApiCreatedResponse({description: '가계부 내역 등록 성공', type: AccountHistoryEntity})
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     @ApiParam({type: 'number', name: 'accountIdx'})
     async createAccountHistory(

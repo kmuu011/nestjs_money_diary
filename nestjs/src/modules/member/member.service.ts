@@ -60,8 +60,8 @@ export class MemberService {
             token.dataMigration({
                 code: swagger.dummyUserInfo.tokenCode, token: 'test', member: loginResult
             });
-            member.tokenInfo = await this.tokenRepository.saveToken(token);
-            return member;
+            loginResult.tokenInfo = await this.tokenRepository.saveToken(token);
+            return loginResult;
         }
 
         member.dataMigration({

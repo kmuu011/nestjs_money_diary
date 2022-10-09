@@ -31,19 +31,19 @@ export class AccountHistoryService {
         };
     }
 
-    async create(account: AccountEntity, createTodoDto: CreateAccountHistoryDto): Promise<AccountHistoryEntity> {
+    async create(account: AccountEntity, createAccountHistoryDto: CreateAccountHistoryDto): Promise<AccountHistoryEntity> {
         const accountHistory: AccountHistoryEntity = new AccountHistoryEntity();
 
-        accountHistory.dataMigration(createTodoDto);
+        accountHistory.dataMigration(createAccountHistoryDto);
         accountHistory.account = account;
 
         return this.accountHistoryRepository.createAccountHistory(accountHistory);
     }
 
-    async update(accountHistory: AccountHistoryEntity, updateTodoDto: UpdateAccountHistoryDto): Promise<UpdateResult> {
-        accountHistory.dataMigration(updateTodoDto);
+    async update(accountHistory: AccountHistoryEntity, updateAccountHistoryDto: UpdateAccountHistoryDto): Promise<UpdateResult> {
+        accountHistory.dataMigration(updateAccountHistoryDto);
 
-        const updateResult: UpdateResult = await this.accountHistoryRepository.updateAccountHistory(accountHistory, updateTodoDto);
+        const updateResult: UpdateResult = await this.accountHistoryRepository.updateAccountHistory(accountHistory, updateAccountHistoryDto);
 
         if (updateResult.affected !== 1) {
             throw Message.SERVER_ERROR;

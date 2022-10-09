@@ -36,6 +36,36 @@ describe('MemberController (e2e)', () => {
     });
 
     describe('/member', () => {
+        it('/initial', async () => {
+            const loginResponse = await request(app.getHttpServer())
+                .post('/member/login')
+                .set('ip', '127.0.0.1')
+                .set('user-agent', 'test-agent')
+                .send({
+                    id: savedMemberInfo.id,
+                    password: savedMemberInfo.password,
+                    keepCheck: false
+                });
+
+            if(loginResponse.status !== 200){
+                await request(app.getHttpServer())
+                    .post('/member/signUp')
+                    .set('ip', '127.0.0.1')
+                    .set('user-agent', 'test-agent')
+                    .send(savedMemberInfo);
+
+                await request(app.getHttpServer())
+                    .post('/member/login')
+                    .set('ip', '127.0.0.1')
+                    .set('user-agent', 'test-agent')
+                    .send({
+                        id: savedMemberInfo.id,
+                        password: savedMemberInfo.password,
+                        keepCheck: false
+                    });
+            }
+        });
+
         it('/signUp (POST)', async () => {
             const response = await request(app.getHttpServer())
                 .post('/member/signUp')
@@ -45,7 +75,6 @@ describe('MemberController (e2e)', () => {
                 .expect(201);
 
             expect(response.body.result).toBeTruthy();
-
         });
 
         it('/login (POST)', async () => {
