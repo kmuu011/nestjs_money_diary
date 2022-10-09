@@ -1,24 +1,18 @@
+import {BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {IsDateString, IsNumber, IsString} from "class-validator";
-import {MemberEntity} from "../../member/entities/member.entity";
-
-import {
-    BaseEntity,
-    Column,
-    Entity, JoinColumn, ManyToOne, OneToMany,
-    PrimaryGeneratedColumn,
-} from 'typeorm';
-import {TodoEntity} from "../todo/entities/todo.entity";
 import {ApiProperty} from "@nestjs/swagger";
+import {MemberEntity} from "../../member/entities/member.entity";
+import {AccountHistoryEntity} from "../history/entities/accountHistory.entity";
 
-@Entity({name: 'todoGroup'})
-export class TodoGroupEntity extends BaseEntity {
+@Entity({name: 'account'})
+export class AccountEntity extends BaseEntity {
     @IsNumber()
     @PrimaryGeneratedColumn()
     @Column({primary: true, type: "int", unique: true, unsigned: true})
     @ApiProperty({
-        example: 1
+        example: '3'
     })
-    idx: number = undefined
+    idx: number = undefined;
 
     @ManyToOne(() => MemberEntity, member => member.todoGroupList, {
         onDelete: "CASCADE",
@@ -29,9 +23,9 @@ export class TodoGroupEntity extends BaseEntity {
     member: MemberEntity = undefined;
 
     @IsString()
-    @Column({type: 'varchar', length: 100, comment: '할일 그룹 제목'})
+    @Column({type: 'varchar', length: 100, comment: '가계부 제목'})
     @ApiProperty({
-        example: '할일 그룹'
+        example: '가계부 제목 1'
     })
     title: string = undefined;
 
@@ -41,13 +35,6 @@ export class TodoGroupEntity extends BaseEntity {
         example: 1
     })
     order: number = undefined;
-
-    @OneToMany(() => TodoEntity, todo => todo.todoGroup, {
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE"
-    })
-    @JoinColumn()
-    todoList: TodoEntity[];
 
     @IsDateString()
     @Column({type: "timestamp", default: () => "now", comment: "생성 일자"})
@@ -63,11 +50,20 @@ export class TodoGroupEntity extends BaseEntity {
     })
     updatedAt: string = undefined;
 
+    @OneToMany(() => AccountHistoryEntity,
+        accountHistory => accountHistory.account,
+        {
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE"
+        }
+    )
+    @JoinColumn()
+    accountHistoryList: AccountHistoryEntity[];
+
     dataMigration(object: object): void {
-        for (let k in new TodoGroupEntity()) {
+        for (let k in new AccountEntity()) {
             if (object[k] === undefined) continue;
             this[k] = object[k];
         }
     }
-
 }

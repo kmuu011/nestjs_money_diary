@@ -3,8 +3,8 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {Message} from "../../../libs/message";
 import {Request,} from "express";
 import {TodoGroupRepository} from "./todoGroup.repository";
-import {Member} from "../member/entities/member.entity";
-import {TodoGroup} from "./entities/todoGroup.entity";
+import {MemberEntity} from "../member/entities/member.entity";
+import {TodoGroupEntity} from "./entities/todoGroup.entity";
 
 @Injectable()
 export class TodoGroupInterceptor implements NestInterceptor {
@@ -14,10 +14,10 @@ export class TodoGroupInterceptor implements NestInterceptor {
 
     async intercept(context: ExecutionContext, next: CallHandler): Promise<any> {
         const req: Request = context.switchToHttp().getRequest();
-        const memberInfo: Member = req.locals.memberInfo;
+        const memberInfo: MemberEntity = req.locals.memberInfo;
         const todoGroupIdx: number = Number(req.params.todoGroupIdx);
 
-        const todoGroupInfo: TodoGroup = await this.todoGroupRepository.selectOne(memberInfo, todoGroupIdx);
+        const todoGroupInfo: TodoGroupEntity = await this.todoGroupRepository.selectOne(memberInfo, todoGroupIdx);
 
         if (!todoGroupInfo) {
             throw Message.NOT_EXIST('todoGroup');

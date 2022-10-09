@@ -13,11 +13,11 @@ import {
 import {TodoGroupService} from './todoGroup.service';
 import {Request} from "express";
 import {AuthGuard} from "../../common/guard/auth.guard";
-import {Member} from "../member/entities/member.entity";
+import {MemberEntity} from "../member/entities/member.entity";
 import {CreateTodoGroupDto} from "./dto/create-todoGroup-dto";
 import {SelectQueryDto} from "../../common/dto/select-query-dto";
 import {UpdateTodoGroupDto} from "./dto/update-todoGroup-dto";
-import {TodoGroup} from "./entities/todoGroup.entity";
+import {TodoGroupEntity} from "./entities/todoGroup.entity";
 import {ResponseBooleanType, SelectListResponseType} from "../../common/type/type";
 import {TodoGroupInterceptor} from "./todoGroup.interceptor";
 import {ApiCreatedResponse, ApiHeader, ApiOkResponse, ApiOperation, ApiTags} from "@nestjs/swagger";
@@ -38,9 +38,9 @@ export class TodoGroupController {
     async selectTodoGroupList(
         @Req() req: Request,
         @Query() query: SelectQueryDto
-    ): Promise<SelectListResponseType<TodoGroup>> {
+    ): Promise<SelectListResponseType<TodoGroupEntity>> {
         const {page, count} = query;
-        const member: Member = req.locals.memberInfo;
+        const member: MemberEntity = req.locals.memberInfo;
 
         return await this.todoGroupService.selectList(member, page, count);
     }
@@ -49,16 +49,16 @@ export class TodoGroupController {
     @ApiOperation({ summary: '할일 그룹 등록' })
     @ApiCreatedResponse({
         description: '할일 그룹 등록 성공',
-        type: TodoGroup
+        type: TodoGroupEntity
     })
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
     async createTodoGroup(
         @Req() req: Request,
         @Body() body: CreateTodoGroupDto
-    ): Promise<TodoGroup> {
-        const member: Member = req.locals.memberInfo;
+    ): Promise<TodoGroupEntity> {
+        const member: MemberEntity = req.locals.memberInfo;
 
-        const todoGroup: TodoGroup = await this.todoGroupService.create(member, body);
+        const todoGroup: TodoGroupEntity = await this.todoGroupService.create(member, body);
 
         delete todoGroup.member;
 
@@ -70,13 +70,13 @@ export class TodoGroupController {
     @ApiOperation({ summary: '할일 그룹 단일 조회' })
     @ApiOkResponse({
         description: '할일 그룹 단일 조회',
-        type: TodoGroup
+        type: TodoGroupEntity
     })
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
     async selectOneTodoGroup(
         @Req() req: Request,
         @Param('todoGroupIdx') todoGroupIdx: number,
-    ): Promise<TodoGroup> {
+    ): Promise<TodoGroupEntity> {
         return req.locals.todoGroupInfo;
     }
 

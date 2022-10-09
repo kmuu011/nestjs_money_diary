@@ -1,18 +1,18 @@
 import {DeleteResult, EntityRepository, QueryRunner, Repository, UpdateResult} from "typeorm";
-import {TodoGroup} from "./entities/todoGroup.entity";
-import {Member} from "../member/entities/member.entity";
+import {TodoGroupEntity} from "./entities/todoGroup.entity";
+import {MemberEntity} from "../member/entities/member.entity";
 import {getUpdateObject} from "../../../libs/utils";
 
-@EntityRepository(TodoGroup)
-export class TodoGroupRepository extends Repository<TodoGroup> {
+@EntityRepository(TodoGroupEntity)
+export class TodoGroupRepository extends Repository<TodoGroupEntity> {
 
-    async selectOne(member: Member, todoGroupIdx: number): Promise<TodoGroup> {
+    async selectOne(member: MemberEntity, todoGroupIdx: number): Promise<TodoGroupEntity> {
         return await this.findOne({
             where: {member, idx: todoGroupIdx}
         });
     }
 
-    async selectList(member: Member, page?: number, count?: number): Promise<[TodoGroup[], number]> {
+    async selectList(member: MemberEntity, page?: number, count?: number): Promise<[TodoGroupEntity[], number]> {
         let query = this.createQueryBuilder('tg');
 
         if(page && count){
@@ -27,7 +27,7 @@ export class TodoGroupRepository extends Repository<TodoGroup> {
             .getManyAndCount();
     }
 
-    async createTodoGroup(queryRunner: QueryRunner, todoGroup: TodoGroup): Promise<TodoGroup> {
+    async createTodoGroup(queryRunner: QueryRunner, todoGroup: TodoGroupEntity): Promise<TodoGroupEntity> {
         if(queryRunner){
             return await queryRunner.manager.save(todoGroup);
         }else {
@@ -35,13 +35,13 @@ export class TodoGroupRepository extends Repository<TodoGroup> {
         }
     }
 
-    async updateTodoGroup(todoGroup: TodoGroup): Promise<UpdateResult> {
+    async updateTodoGroup(todoGroup: TodoGroupEntity): Promise<UpdateResult> {
         const obj = getUpdateObject(["title", "order"], todoGroup, true);
 
         return await this.update(todoGroup.idx, obj);
     }
 
-    async deleteTodoGroup(todoGroup: TodoGroup): Promise<DeleteResult> {
+    async deleteTodoGroup(todoGroup: TodoGroupEntity): Promise<DeleteResult> {
         return await this.delete(todoGroup.idx);
     }
 

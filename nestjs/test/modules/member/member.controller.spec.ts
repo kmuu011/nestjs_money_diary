@@ -116,7 +116,7 @@ describe('Member Controller', () => {
             const createMemberDto: Member = getCreateMemberData(false);
 
             const req: Request = createRequest();
-            const member: Member = new Member();
+            const member: MemberEntity = new Member();
             member.idx = createMemberDto.idx;
 
             req.locals = {

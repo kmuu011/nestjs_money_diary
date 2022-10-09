@@ -16,7 +16,7 @@ import {MemberService} from './member.service';
 import {LoginMemberDto} from "./dto/login-member.dto";
 import {CreateMemberDto} from "./dto/create-member-dto";
 import {DuplicateCheckMemberDto} from "./dto/duplicate-check-member.dto";
-import {Member} from "./entities/member.entity"
+import {MemberEntity} from "./entities/member.entity"
 
 import {AuthGuard} from "../../common/guard/auth.guard";
 import {UpdateMemberDto} from "./dto/update-member.dto";
@@ -49,7 +49,7 @@ export class MemberController {
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
     async auth(
         @Req() req: Request
-    ): Promise<Member> {
+    ): Promise<MemberEntity> {
         const memberInfo = req.locals.memberInfo;
 
         // console.log(memberInfo);
@@ -68,7 +68,7 @@ export class MemberController {
         @Req() req: Request,
         @Body() loginMemberDto: LoginMemberDto
     ): Promise<LoginResponseType> {
-        const member: Member = await this.memberService.login(loginMemberDto, req.headers);
+        const member: MemberEntity = await this.memberService.login(loginMemberDto, req.headers);
 
         return {
             tokenCode: member.tokenInfo.code
@@ -248,7 +248,7 @@ export class MemberController {
         @Req() req: Request,
         @Res() res: Response
     ): Promise<void> {
-        const member: Member = req.locals.memberInfo;
+        const member: MemberEntity = req.locals.memberInfo;
         const profileImgKey = member.profileImgKey;
 
         res.download(staticPath + profileImgKey, 'test.jpg');

@@ -1,12 +1,12 @@
 import {EntityRepository, Repository} from "typeorm";
-import {Token} from "../entities/token.entity";
-import {Member} from "../entities/member.entity";
+import {TokenEntity} from "../entities/token.entity";
+import {MemberEntity} from "../entities/member.entity";
 
-@EntityRepository(Token)
-export class TokenRepository extends Repository<Token> {
+@EntityRepository(TokenEntity)
+export class TokenRepository extends Repository<TokenEntity> {
 
-    async select(code: string, member: Member): Promise<Token> {
-        const where: {code?: string, member?: Member} = {};
+    async select(code: string, member: MemberEntity): Promise<TokenEntity> {
+        const where: {code?: string, member?: MemberEntity} = {};
 
         if(code !== undefined){
             where.code = code;
@@ -22,7 +22,7 @@ export class TokenRepository extends Repository<Token> {
         });
     }
 
-    async saveToken(token: Token): Promise<Token> {
+    async saveToken(token: TokenEntity): Promise<TokenEntity> {
         return await this.save(token);
     }
 

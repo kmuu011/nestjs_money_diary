@@ -1,5 +1,5 @@
-import {IsBoolean, IsEmail, IsNumber, IsString, Length, NotContains} from "class-validator";
-import {Token} from "./token.entity";
+import {IsBoolean, IsDate, IsEmail, IsNumber, IsString, Length, NotContains} from "class-validator";
+import {TokenEntity} from "./token.entity";
 
 import {
     BaseEntity,
@@ -9,11 +9,14 @@ import {
 } from 'typeorm';
 import {JwtPayload} from "jsonwebtoken";
 import {createToken, decodeToken, encryptPassword} from "../../../../libs/member";
-import {TodoGroup} from "../../todoGroup/entities/todoGroup.entity";
+import {TodoGroupEntity} from "../../todoGroup/entities/todoGroup.entity";
 import {ApiProperty} from "@nestjs/swagger";
+import {AccountEntity} from "../../account/entities/account.entity";
+import {AccountHistoryCategoryEntity} from "../../account/history/category/accountHistoryCategory.entity";
+import {SaleKeywordEntity} from "../sale/keyword/entities/saleKeyword.entity";
 
 @Entity({name: 'member'})
-export class Member extends BaseEntity {
+export class MemberEntity extends BaseEntity {
     @IsNumber()
     @PrimaryGeneratedColumn()
     @Column({primary: true, type: "int", unique: true, unsigned: true})
@@ -123,12 +126,33 @@ export class Member extends BaseEntity {
     })
     keepCheck: boolean = undefined;
 
-    @OneToOne(() => Token, token => token.member)
-    @ApiProperty()
-    tokenInfo: Token;
+    @IsNumber()
+    @Column({type: 'tinyint', default: 10, comment: '할인 키워드 최대 개수'})
+    saleKeywordMaxCnt: number = undefined;
 
-    @OneToMany(() => TodoGroup, todoGroup => todoGroup.member)
-    todoGroupList: TodoGroup[];
+    @IsDate()
+    @Column({type: 'timestamp', nullable: true, comment: '메일 테스트 일자'})
+    mailingTestAt: string = undefined;
+
+    @OneToOne(() => TokenEntity, token => token.member)
+    @ApiProperty()
+    tokenInfo: TokenEntity;
+
+    @OneToMany(() => TodoGroupEntity, todoGroup => todoGroup.member)
+    todoGroupList: TodoGroupEntity[];
+
+    @OneToMany(() => AccountEntity, account => account.member)
+    accountList: AccountEntity[];
+
+    @OneToMany(() => AccountHistoryCategoryEntity,
+        accountHistoryCategory => accountHistoryCategory.member
+    )
+    accountHistoryCategoryList: AccountHistoryCategoryEntity[];
+
+    @OneToMany(() => SaleKeywordEntity,
+        saleKeyword => saleKeyword.member
+    )
+    saleKeywordList: SaleKeywordEntity[];
 
     passwordEncrypt(): void {
         if (this.passwordEncrypted !== true) {
@@ -158,8 +182,8 @@ export class Member extends BaseEntity {
         return decodeToken(this.tokenInfo.token);
     }
 
-    dataMigration(object: object) : void {
-        for (let k in new Member()) {
+    dataMigration(object: object): void {
+        for (let k in new MemberEntity()) {
             if (object[k] === undefined) continue;
             this[k] = object[k];
         }
