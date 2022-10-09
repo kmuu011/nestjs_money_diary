@@ -17,7 +17,7 @@ import {SelectQueryDto} from "../../common/dto/select-query-dto";
 import {ResponseBooleanType, SelectListResponseType} from "../../common/type/type";
 import {ApiCreatedResponse, ApiHeader, ApiOkResponse, ApiOperation, ApiTags} from "@nestjs/swagger";
 import {ApiOkResponseSelectList} from "../../common/swagger/customDecorator";
-import {testTokenCode} from "../../../config/config";
+import {swagger} from "../../../config/config";
 import {AccountSelectResponse} from "./swagger/customResponse";
 import {AccountService} from "./account.service";
 import {AccountEntity} from "./entities/account.entity";
@@ -34,7 +34,7 @@ export class AccountController {
     @Get()
     @ApiOperation({ summary: '가계부 조회' })
     @ApiOkResponseSelectList(AccountSelectResponse, '가계부 조회 성공')
-    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
+    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     async selectAccountList(
         @Req() req: Request,
         @Query() query: SelectQueryDto
@@ -51,7 +51,7 @@ export class AccountController {
         description: '가계부 등록 성공',
         type: AccountEntity
     })
-    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
+    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     async createAccount(
         @Req() req: Request,
         @Body() body: CreateAccountDto
@@ -72,7 +72,7 @@ export class AccountController {
         description: '가계부 단일 조회',
         type: AccountEntity
     })
-    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
+    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     async selectOneAccount(
         @Req() req: Request,
         @Param('accountIdx') accountIdx: number,
@@ -87,7 +87,7 @@ export class AccountController {
         description: '가계부 수정',
         type: ResponseBooleanType
     })
-    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
+    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     async updateAccount(
         @Req() req: Request,
         @Body() body: UpdateAccountDto,
@@ -107,7 +107,7 @@ export class AccountController {
         description: '가계부 삭제',
         type: ResponseBooleanType
     })
-    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
+    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     async deleteAccount(
         @Req() req: Request,
         @Param('accountIdx') accountIdx: number,

@@ -22,8 +22,8 @@ import {ResponseBooleanType, SelectListResponseType} from "../../common/type/typ
 import {TodoGroupInterceptor} from "./todoGroup.interceptor";
 import {ApiCreatedResponse, ApiHeader, ApiOkResponse, ApiOperation, ApiTags} from "@nestjs/swagger";
 import {ApiOkResponseSelectList} from "../../common/swagger/customDecorator";
-import {testTokenCode} from "../../../config/config";
 import {TodoGroupSelectResponse} from "./swagger/customResponse";
+import {swagger} from "../../../config/config";
 
 @Controller('/todoGroup')
 @UseGuards(AuthGuard)
@@ -34,7 +34,7 @@ export class TodoGroupController {
     @Get()
     @ApiOperation({ summary: '할일 그룹 조회' })
     @ApiOkResponseSelectList(TodoGroupSelectResponse, '할일 그룹 조회 성공')
-    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
+    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     async selectTodoGroupList(
         @Req() req: Request,
         @Query() query: SelectQueryDto
@@ -51,7 +51,7 @@ export class TodoGroupController {
         description: '할일 그룹 등록 성공',
         type: TodoGroupEntity
     })
-    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
+    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     async createTodoGroup(
         @Req() req: Request,
         @Body() body: CreateTodoGroupDto
@@ -72,7 +72,7 @@ export class TodoGroupController {
         description: '할일 그룹 단일 조회',
         type: TodoGroupEntity
     })
-    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
+    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     async selectOneTodoGroup(
         @Req() req: Request,
         @Param('todoGroupIdx') todoGroupIdx: number,
@@ -87,7 +87,7 @@ export class TodoGroupController {
         description: '할일 그룹 수정',
         type: ResponseBooleanType
     })
-    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
+    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     async updateTodoGroup(
         @Req() req: Request,
         @Body() body: UpdateTodoGroupDto,
@@ -107,7 +107,7 @@ export class TodoGroupController {
         description: '할일 그룹 삭제',
         type: ResponseBooleanType
     })
-    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
+    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     async deleteTodoGroup(
         @Req() req: Request,
         @Param('todoGroupIdx') todoGroupIdx: number,

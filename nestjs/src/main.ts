@@ -56,7 +56,6 @@ async function bootstrap() {
 
     app.useGlobalPipes(new ValidationPipe(validationOptions));
 
-
     // 예상 범위 밖의 예외 필터
     app.useGlobalFilters(new OutOfControlExceptionFilter());
 
