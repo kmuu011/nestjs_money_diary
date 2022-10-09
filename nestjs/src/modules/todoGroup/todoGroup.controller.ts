@@ -23,7 +23,7 @@ import {TodoGroupInterceptor} from "./todoGroup.interceptor";
 import {ApiCreatedResponse, ApiHeader, ApiOkResponse, ApiOperation, ApiTags} from "@nestjs/swagger";
 import {ApiOkResponseSelectList} from "../../common/swagger/customDecorator";
 import {testTokenCode} from "../../../config/config";
-import {todoGroupSelectResponse} from "./swagger/customResponse";
+import {TodoGroupSelectResponse} from "./swagger/customResponse";
 
 @Controller('/todoGroup')
 @UseGuards(AuthGuard)
@@ -33,7 +33,7 @@ export class TodoGroupController {
 
     @Get()
     @ApiOperation({ summary: '할일 그룹 조회' })
-    @ApiOkResponseSelectList(todoGroupSelectResponse, '할일 그룹 조회 성공')
+    @ApiOkResponseSelectList(TodoGroupSelectResponse, '할일 그룹 조회 성공')
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: testTokenCode}})
     async selectTodoGroupList(
         @Req() req: Request,

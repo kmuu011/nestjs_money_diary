@@ -6,8 +6,8 @@ import {Test, TestingModule} from "@nestjs/testing";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {typeOrmOptions} from "../../../config/config";
 import {TodoGroupRepository} from "../../../src/modules/todoGroup/todoGroup.repository";
-import {createRequest, createResponse} from "node-mocks-http";
-import {Request, Response} from "express";
+import {createRequest} from "node-mocks-http";
+import {Request} from "express";
 import {TokenRepository} from "../../../src/modules/member/token/token.repository";
 import {ResponseBooleanType, SelectListResponseType} from "../../../src/common/type/type";
 import {TodoGroupEntity} from "../../../src/modules/todoGroup/entities/todoGroup.entity";
@@ -80,7 +80,6 @@ describe('TodoGroup Controller', () => {
     describe('selectOneTodoGroup()', () => {
         it('할일 그룹 상세 조회', async () => {
             const req: Request = createRequest();
-            const res: Response = createResponse();
 
             req.locals = {
                 memberInfo: savedMemberInfo,

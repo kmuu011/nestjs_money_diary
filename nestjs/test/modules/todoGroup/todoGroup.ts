@@ -9,6 +9,7 @@ export const savedTodoGroupData = {
 
 export const getSavedTodoGroup = (): TodoGroupEntity => {
     const savedTodoGroup: TodoGroupEntity = new TodoGroupEntity();
+
     savedTodoGroup.dataMigration({
         ...savedTodoGroupData,
         member: getSavedMember()

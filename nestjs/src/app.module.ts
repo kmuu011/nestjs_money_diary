@@ -12,16 +12,17 @@ import {MemberRepository} from "./modules/member/member.repository";
 import {TokenRepository} from "./modules/member/token/token.repository";
 import {TodoGroupRepository} from "./modules/todoGroup/todoGroup.repository";
 import * as Sentry from '@sentry/node';
-import { SentryModule } from './sentry/sentry.module';
+import {SentryModule} from './sentry/sentry.module';
 import '@sentry/tracing';
-import { ServeStaticModule } from '@nestjs/serve-static';
+import {ServeStaticModule} from '@nestjs/serve-static';
 import {join} from "path";
+import {AccountModule} from "./modules/account/account.module";
 
 @Global()
 @Module({
     imports: [
         ServeStaticModule.forRoot({
-            rootPath: join(__dirname, '..','..', 'static'),
+            rootPath: join(__dirname, '..', '..', 'static'),
             exclude: ['/api*']
         }),
         SentryModule.forRoot(sentry),
@@ -32,6 +33,7 @@ import {join} from "path";
         ]),
         MemberModule,
         TodoGroupModule,
+        AccountModule
     ],
     exports: [
         TypeOrmModule.forFeature([
