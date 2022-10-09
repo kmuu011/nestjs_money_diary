@@ -1,29 +1,31 @@
 import {getSavedMember} from "../member/member";
 import {Test, TestingModule} from "@nestjs/testing";
-import {Member} from "../../../src/modules/member/entities/member.entity";
+import {MemberEntity} from "../../../src/modules/member/entities/member.entity";
 import {TodoGroupService} from "../../../src/modules/todoGroup/todoGroup.service";
-import {getRepositoryToken, TypeOrmModule} from "@nestjs/typeorm";
+import {TypeOrmModule} from "@nestjs/typeorm";
 import {typeOrmOptions} from "../../../config/config";
 import {TodoGroupRepository} from "../../../src/modules/todoGroup/todoGroup.repository";
-import {TodoGroup} from "../../../src/modules/todoGroup/entities/todoGroup.entity";
+import {TodoGroupEntity} from "../../../src/modules/todoGroup/entities/todoGroup.entity";
 import {getCreateTodoGroupData, getSavedTodoGroup} from "./todoGroup";
 import {SelectListResponseType} from "../../../src/common/type/type";
 import {CreateTodoGroupDto} from "../../../src/modules/todoGroup/dto/create-todoGroup-dto";
 import {UpdateTodoGroupDto} from "../../../src/modules/todoGroup/dto/update-todoGroup-dto";
 import {DeleteResult, UpdateResult} from "typeorm";
+import {TodoRepository} from "../../../src/modules/todoGroup/todo/todo.repository";
 
 describe('TodoGroup Service', () => {
-    const savedMemberInfo: Member = getSavedMember();
-    const savedTodoGroupInfo: TodoGroup = getSavedTodoGroup();
+    const savedMemberInfo: MemberEntity = getSavedMember();
+    const savedTodoGroupInfo: TodoGroupEntity = getSavedTodoGroup();
     let todoGroupService: TodoGroupService;
-    let createdTodoGroup: TodoGroup;
+    let createdTodoGroup: TodoGroupEntity;
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
             imports: [
                 TypeOrmModule.forRoot(typeOrmOptions),
                 TypeOrmModule.forFeature([
-                    TodoGroupRepository
+                    TodoGroupRepository,
+                    TodoRepository
                 ])
             ],
             providers: [
@@ -36,9 +38,9 @@ describe('TodoGroup Service', () => {
 
     describe('arrangeOrder()', () => {
         it('할일 그룹 순서 정렬', async () => {
-            const insertedDummyTodoGroupList: TodoGroup[] = [];
+            const insertedDummyTodoGroupList: TodoGroupEntity[] = [];
             const insertDummyCount: number = Math.ceil(Math.random()*10)+1;
-            const todoGroup: TodoGroup = getSavedTodoGroup();
+            const todoGroup: TodoGroupEntity = getSavedTodoGroup();
 
             for(let i=0 ; i<insertDummyCount ; i++){
                 todoGroup.idx = i+33;
@@ -46,7 +48,7 @@ describe('TodoGroup Service', () => {
             }
             todoGroup.idx = 2;
 
-            const todoGroupStatus: SelectListResponseType<TodoGroup> =
+            const todoGroupStatus: SelectListResponseType<TodoGroupEntity> =
                 await todoGroupService.selectList(savedMemberInfo, 1, 100);
 
             const totalCount: number = todoGroupStatus.totalCount;
@@ -54,7 +56,7 @@ describe('TodoGroup Service', () => {
 
             await todoGroupService.arrangeOrder(savedMemberInfo, todoGroup, randomOrder);
 
-            const orderChangedTodoGroupList: SelectListResponseType<TodoGroup> =
+            const orderChangedTodoGroupList: SelectListResponseType<TodoGroupEntity> =
                 await todoGroupService.selectList(savedMemberInfo, 1, 100);
 
             expect(orderChangedTodoGroupList.items.findIndex(t => t.order === randomOrder) === totalCount-randomOrder).toBeTruthy();
@@ -67,27 +69,27 @@ describe('TodoGroup Service', () => {
 
     describe('selectOne()', () => {
        it('할일 그룹 상세 조회', async () => {
-           const todoGroup: TodoGroup = await todoGroupService.selectOne(savedMemberInfo, savedTodoGroupInfo.idx);
+           const todoGroup: TodoGroupEntity = await todoGroupService.selectOne(savedMemberInfo, savedTodoGroupInfo.idx);
 
-           expect(todoGroup instanceof TodoGroup).toBeTruthy();
+           expect(todoGroup instanceof TodoGroupEntity).toBeTruthy();
        });
     });
 
     describe('selectList()', () => {
        it('할일 그룹 리스트 조회', async () => {
-           const todoGroupList: SelectListResponseType<TodoGroup>
+           const todoGroupList: SelectListResponseType<TodoGroupEntity>
                = await todoGroupService.selectList(savedMemberInfo, 1, 10);
 
-           expect(todoGroupList.items.every(t => t instanceof TodoGroup)).toBeTruthy();
+           expect(todoGroupList.items.every(t => t instanceof TodoGroupEntity)).toBeTruthy();
        });
     });
 
     describe('create()', () => {
        it('할일 그룹 등록', async () => {
            const createTodoGroupDto: CreateTodoGroupDto = getCreateTodoGroupData();
-           const insertResult: TodoGroup = await todoGroupService.create(savedMemberInfo, createTodoGroupDto);
+           const insertResult: TodoGroupEntity = await todoGroupService.create(savedMemberInfo, createTodoGroupDto);
 
-           expect(insertResult instanceof TodoGroup).toBeTruthy();
+           expect(insertResult instanceof TodoGroupEntity).toBeTruthy();
 
            createdTodoGroup = insertResult;
        });

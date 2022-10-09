@@ -2,10 +2,10 @@ import {Test, TestingModule} from "@nestjs/testing";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {createRequest} from "node-mocks-http";
 import {Request} from "express";
-import {TodoGroup} from "../../../../src/modules/todoGroup/entities/todoGroup.entity";
+import {TodoGroupEntity} from "../../../../src/modules/todoGroup/entities/todoGroup.entity";
 import {getSavedTodoGroup} from "../todoGroup";
-import {Todo} from "../../../../src/modules/todoGroup/todo/entities/todo.entity";
-import {getCreateTodoData, getSavedTodo} from "./todo";
+import {TodoEntity} from "../../../../src/modules/todoGroup/todo/entities/todo.entity";
+import {getCreateTodoData} from "./todo";
 import {TodoController} from "../../../../src/modules/todoGroup/todo/todo.controller";
 import {TodoService} from "../../../../src/modules/todoGroup/todo/todo.service";
 import {typeOrmOptions} from "../../../../config/config";
@@ -21,8 +21,8 @@ import {TodoGroupService} from "../../../../src/modules/todoGroup/todoGroup.serv
 describe('Todo Controller', () => {
     let todoController: TodoController;
     let todoService: TodoService;
-    let createdTodoInfo: Todo;
-    const savedTodoGroupInfo: TodoGroup = getSavedTodoGroup();
+    let createdTodoInfo: TodoEntity;
+    const savedTodoGroupInfo: TodoGroupEntity = getSavedTodoGroup();
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -53,10 +53,10 @@ describe('Todo Controller', () => {
                 todoGroupInfo: savedTodoGroupInfo
             };
 
-            const response: SelectListResponseType<Todo>
+            const response: SelectListResponseType<TodoEntity>
                 = await todoController.selectTodolist(req, getSelectQueryDto());
 
-            expect(response.items.every(v => v instanceof Todo)).toBeTruthy();
+            expect(response.items.every(v => v instanceof TodoEntity)).toBeTruthy();
         });
     });
 
@@ -70,9 +70,9 @@ describe('Todo Controller', () => {
 
             const createTodoDto: CreateTodoDto = getCreateTodoData();
 
-            const response: Todo = await todoController.createTodo(req, createTodoDto);
+            const response: TodoEntity = await todoController.createTodo(req, createTodoDto);
 
-            expect(response instanceof Todo).toBeTruthy();
+            expect(response instanceof TodoEntity).toBeTruthy();
 
             createdTodoInfo = response;
         });

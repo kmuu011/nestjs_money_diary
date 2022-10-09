@@ -7,9 +7,9 @@ import {TodoController} from "../../../../src/modules/todoGroup/todo/todo.contro
 import {TodoService} from "../../../../src/modules/todoGroup/todo/todo.service";
 import {TodoInterceptor} from "../../../../src/modules/todoGroup/todo/todo.interceptor";
 import {getSavedMember} from "../../member/member";
-import {Member} from "../../../../src/modules/member/entities/member.entity";
+import {MemberEntity} from "../../../../src/modules/member/entities/member.entity";
 import {getSavedTodo} from "./todo";
-import {Todo} from "../../../../src/modules/todoGroup/todo/entities/todo.entity";
+import {TodoEntity} from "../../../../src/modules/todoGroup/todo/entities/todo.entity";
 import {typeOrmOptions} from "../../../../config/config";
 import {TodoGroupRepository} from "../../../../src/modules/todoGroup/todoGroup.repository";
 import {TodoRepository} from "../../../../src/modules/todoGroup/todo/todo.repository";
@@ -17,12 +17,12 @@ import {getCallHandler, getExecutionContext} from "../../../common/const";
 import {TokenRepository} from "../../../../src/modules/member/token/token.repository";
 import {TodoGroupService} from "../../../../src/modules/todoGroup/todoGroup.service";
 import {getSavedTodoGroup} from "../todoGroup";
-import {TodoGroup} from "../../../../src/modules/todoGroup/entities/todoGroup.entity";
+import {TodoGroupEntity} from "../../../../src/modules/todoGroup/entities/todoGroup.entity";
 
 describe('Todo Interceptor', () => {
-    const savedMemberInfo: Member = getSavedMember();
-    const savedTodoInfo: Todo = getSavedTodo();
-    const savedTodoGroupInfo: TodoGroup = getSavedTodoGroup();
+    const savedMemberInfo: MemberEntity = getSavedMember();
+    const savedTodoInfo: TodoEntity = getSavedTodo();
+    const savedTodoGroupInfo: TodoGroupEntity = getSavedTodoGroup();
 
     let todoController: TodoController;
     let todoInterceptor: TodoInterceptor;
@@ -72,7 +72,7 @@ describe('Todo Interceptor', () => {
             await todoInterceptor
                 .intercept(executionContext, callHandler);
 
-            expect(req.locals.todoInfo instanceof Todo).toBeTruthy();
+            expect(req.locals.todoInfo instanceof TodoEntity).toBeTruthy();
         });
     });
 });

@@ -1,4 +1,4 @@
-import {Member} from "../../../src/modules/member/entities/member.entity";
+import {MemberEntity} from "../../../src/modules/member/entities/member.entity";
 import {Test, TestingModule} from "@nestjs/testing";
 import {getRepositoryToken, TypeOrmModule} from "@nestjs/typeorm";
 import {staticPath, typeOrmOptions} from "../../../config/config";
@@ -21,8 +21,8 @@ import {DeleteResult} from "typeorm";
 
 describe('Member Service', () => {
     let memberService: MemberService;
-    let savedMemberInfo: Member;
-    let createdMemberInfo: Member;
+    let savedMemberInfo: MemberEntity;
+    let createdMemberInfo: MemberEntity;
     let profileImgKey: string;
 
     beforeAll(async () => {
@@ -38,7 +38,7 @@ describe('Member Service', () => {
             providers: [
                 MemberService,
                 {
-                    provide: getRepositoryToken(Member),
+                    provide: getRepositoryToken(MemberEntity),
                     useValue: MemberService
                 }
             ]
@@ -53,7 +53,7 @@ describe('Member Service', () => {
 
             savedMemberInfo = await memberService.login(loginMemberDto, loginHeader);
 
-            expect(savedMemberInfo instanceof Member).toBeTruthy();
+            expect(savedMemberInfo instanceof MemberEntity).toBeTruthy();
         });
     });
 
@@ -63,7 +63,7 @@ describe('Member Service', () => {
 
             createdMemberInfo = await memberService.signUp(createMemberDto);
 
-            expect(createdMemberInfo instanceof Member).toBeTruthy();
+            expect(createdMemberInfo instanceof MemberEntity).toBeTruthy();
         });
     });
 

@@ -1,6 +1,6 @@
 import {TodoGroupController} from "../../../src/modules/todoGroup/todoGroup.controller";
 import {TodoGroupService} from "../../../src/modules/todoGroup/todoGroup.service";
-import {Member} from "../../../src/modules/member/entities/member.entity";
+import {MemberEntity} from "../../../src/modules/member/entities/member.entity";
 import {getSavedMember} from "../member/member";
 import {Test, TestingModule} from "@nestjs/testing";
 import {TypeOrmModule} from "@nestjs/typeorm";
@@ -10,16 +10,17 @@ import {createRequest, createResponse} from "node-mocks-http";
 import {Request, Response} from "express";
 import {getCallHandler, getExecutionContext} from "../../common/const";
 import {TokenRepository} from "../../../src/modules/member/token/token.repository";
-import {TodoGroup} from "../../../src/modules/todoGroup/entities/todoGroup.entity";
+import {TodoGroupEntity} from "../../../src/modules/todoGroup/entities/todoGroup.entity";
 import {getSavedTodoGroup} from "./todoGroup";
 import {TodoGroupInterceptor} from "../../../src/modules/todoGroup/todoGroup.interceptor";
 import {CallHandler, ExecutionContext} from "@nestjs/common";
+import {TodoRepository} from "../../../src/modules/todoGroup/todo/todo.repository";
 
 describe('TodoGroup Interceptor', () => {
     let todoGroupController: TodoGroupController;
     let todoGroupInterceptor: TodoGroupInterceptor;
-    const savedMemberInfo: Member = getSavedMember();
-    const savedTodoGroupInfo: TodoGroup = getSavedTodoGroup();
+    const savedMemberInfo: MemberEntity = getSavedMember();
+    const savedTodoGroupInfo: TodoGroupEntity = getSavedTodoGroup();
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -27,7 +28,8 @@ describe('TodoGroup Interceptor', () => {
                 TypeOrmModule.forRoot(typeOrmOptions),
                 TypeOrmModule.forFeature([
                     TokenRepository,
-                    TodoGroupRepository
+                    TodoGroupRepository,
+                    TodoRepository
                 ])
             ],
             controllers: [TodoGroupController],
@@ -65,7 +67,7 @@ describe('TodoGroup Interceptor', () => {
 
             const response = await todoGroupController.selectOneTodoGroup(req, savedTodoGroupInfo.idx);
 
-            expect(response instanceof TodoGroup).toBeTruthy();
+            expect(response instanceof TodoGroupEntity).toBeTruthy();
         });
     });
 });

@@ -1,4 +1,4 @@
-import {TodoGroup} from "../../../src/modules/todoGroup/entities/todoGroup.entity";
+import {TodoGroupEntity} from "../../../src/modules/todoGroup/entities/todoGroup.entity";
 import {getSavedMember} from "../member/member";
 
 export const savedTodoGroupData = {
@@ -7,8 +7,8 @@ export const savedTodoGroupData = {
     order: 1
 };
 
-export const getSavedTodoGroup = (): TodoGroup => {
-    const savedTodoGroup: TodoGroup = new TodoGroup();
+export const getSavedTodoGroup = (): TodoGroupEntity => {
+    const savedTodoGroup: TodoGroupEntity = new TodoGroupEntity();
     savedTodoGroup.dataMigration({
         ...savedTodoGroupData,
         member: getSavedMember()
@@ -17,8 +17,8 @@ export const getSavedTodoGroup = (): TodoGroup => {
     return savedTodoGroup
 };
 
-export const getCreateTodoGroupData = (): TodoGroup => {
-    const todoGroup = new TodoGroup();
+export const getCreateTodoGroupData = (): TodoGroupEntity => {
+    const todoGroup = new TodoGroupEntity();
 
     todoGroup.dataMigration({
         idx: 277,

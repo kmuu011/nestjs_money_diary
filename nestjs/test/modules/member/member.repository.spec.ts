@@ -1,5 +1,5 @@
 import {MemberRepository} from "../../../src/modules/member/member.repository";
-import {Member} from "../../../src/modules/member/entities/member.entity";
+import {MemberEntity} from "../../../src/modules/member/entities/member.entity";
 import {Test, TestingModule} from "@nestjs/testing";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {DeleteResult, UpdateResult} from "typeorm";
@@ -12,8 +12,8 @@ import {createRandomString} from "../../../libs/utils";
 
 describe('Member Repository', () => {
     let memberRepository: MemberRepository;
-    let savedMemberInfo: Member;
-    let createdMemberInfo: Member;
+    let savedMemberInfo: MemberEntity;
+    let createdMemberInfo: MemberEntity;
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -29,7 +29,7 @@ describe('Member Repository', () => {
 
         savedMemberInfo = getSavedMember(true);
 
-        const selectResult: Member = await memberRepository.select(savedMemberInfo, 'id, password', true);
+        const selectResult: MemberEntity = await memberRepository.select(savedMemberInfo, 'id, password', true);
 
         if(!selectResult){
             await memberRepository.signUp(undefined, savedMemberInfo);
@@ -38,19 +38,19 @@ describe('Member Repository', () => {
 
     describe('login()', () => {
         it('로그인 기능', async () => {
-            const loginResult: Member = await memberRepository.select(savedMemberInfo, 'id, password');
+            const loginResult: MemberEntity = await memberRepository.select(savedMemberInfo, 'id, password');
 
-            expect(loginResult instanceof Member).toBeTruthy();
+            expect(loginResult instanceof MemberEntity).toBeTruthy();
         });
     })
 
     describe('signUp()', () => {
         it('회원가입 기능', async () => {
-            const memberDto: Member = getCreateMemberData(true);
+            const memberDto: MemberEntity = getCreateMemberData(true);
 
-            const signUpResult: Member = await memberRepository.signUp(undefined, memberDto);
+            const signUpResult: MemberEntity = await memberRepository.signUp(undefined, memberDto);
 
-            expect(signUpResult instanceof Member).toBeTruthy();
+            expect(signUpResult instanceof MemberEntity).toBeTruthy();
 
             createdMemberInfo = signUpResult;
         });

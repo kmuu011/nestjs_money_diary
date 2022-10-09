@@ -5,13 +5,13 @@ import {AppModule} from "../../../dist/src/app.module";
 import {
     getSavedMember,
 } from "../../modules/member/member";
-import {Member} from "../../../src/modules/member/entities/member.entity";
+import {MemberEntity} from "../../../src/modules/member/entities/member.entity";
 import {getCreateTodoGroupData} from "../../modules/todoGroup/todoGroup";
-import {TodoGroup} from "../../../src/modules/todoGroup/entities/todoGroup.entity";
+import {TodoGroupEntity} from "../../../src/modules/todoGroup/entities/todoGroup.entity";
 
 describe('TodoGroupController (e2e)', () => {
-    const savedMemberInfo: Member = getSavedMember();
-    let createdTodoGroupInfo: TodoGroup;
+    const savedMemberInfo: MemberEntity = getSavedMember();
+    let createdTodoGroupInfo: TodoGroupEntity;
     let app: INestApplication;
 
     beforeAll(async () => {
@@ -72,7 +72,7 @@ describe('TodoGroupController (e2e)', () => {
                 .set('token-code', savedMemberInfo.tokenInfo.code)
                 .expect(200);
 
-            const resultTodoGroup: TodoGroup = response.body;
+            const resultTodoGroup: TodoGroupEntity = response.body;
 
             expect(resultTodoGroup.idx === createdTodoGroupInfo.idx).toBeTruthy();
             expect(resultTodoGroup.title === createdTodoGroupInfo.title).toBeTruthy();

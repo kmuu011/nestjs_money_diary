@@ -1,4 +1,4 @@
-import {Todo} from "../../../../src/modules/todoGroup/todo/entities/todo.entity";
+import {TodoEntity} from "../../../../src/modules/todoGroup/todo/entities/todo.entity";
 import {getSavedTodoGroup} from "../todoGroup";
 
 export const savedTodoData = {
@@ -6,8 +6,8 @@ export const savedTodoData = {
     content: '테스트 할일 1'
 };
 
-export const getSavedTodo = (): Todo => {
-    const savedTodo: Todo = new Todo();
+export const getSavedTodo = (): TodoEntity => {
+    const savedTodo: TodoEntity = new TodoEntity();
     savedTodo.dataMigration({
         ...savedTodoData,
         todoGroup: getSavedTodoGroup()
@@ -16,8 +16,8 @@ export const getSavedTodo = (): Todo => {
     return savedTodo;
 };
 
-export const getCreateTodoData = (): Todo => {
-    const todo = new Todo();
+export const getCreateTodoData = (): TodoEntity => {
+    const todo = new TodoEntity();
 
     todo.dataMigration({
         idx: 111,
