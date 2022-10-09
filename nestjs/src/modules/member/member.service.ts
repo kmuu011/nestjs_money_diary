@@ -17,7 +17,7 @@ import {staticPath, filePath, testTokenCode} from "../../../config/config";
 import {Connection, DeleteResult, UpdateResult} from "typeorm";
 import {TodoGroupEntity} from "../todoGroup/entities/todoGroup.entity";
 import {TodoGroupRepository} from "../todoGroup/todoGroup.repository";
-import {TokenEntity} from "./entities/token.entity";
+import {TokenEntity} from "./token/entities/token.entity";
 
 @Injectable()
 export class MemberService {

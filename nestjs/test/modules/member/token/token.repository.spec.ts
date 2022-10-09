@@ -3,7 +3,7 @@ import {MemberEntity} from "../../../../src/modules/member/entities/member.entit
 import {Test, TestingModule} from "@nestjs/testing";
 import {getRepositoryToken, TypeOrmModule} from "@nestjs/typeorm";
 import {typeOrmOptions} from "../../../../config/config";
-import {TokenEntity} from "../../../../src/modules/member/entities/token.entity";
+import {TokenEntity} from "../../../../src/modules/member/token/entities/token.entity";
 import {getSavedMember} from "../member";
 import {savedTokenInfo} from "./token";
 

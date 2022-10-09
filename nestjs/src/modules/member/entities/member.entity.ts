@@ -1,5 +1,5 @@
 import {IsBoolean, IsDate, IsEmail, IsNumber, IsString, Length, NotContains} from "class-validator";
-import {TokenEntity} from "./token.entity";
+import {TokenEntity} from "../token/entities/token.entity";
 
 import {
     BaseEntity,

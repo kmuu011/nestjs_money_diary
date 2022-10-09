@@ -1,4 +1,4 @@
-import {TokenEntity} from "../../../../src/modules/member/entities/token.entity";
+import {TokenEntity} from "../../../../src/modules/member/token/entities/token.entity";
 
 export const savedTokenInfo = {
     token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZHgiOjExMiwiaWQiOiJ0dHMxIiwibmlja25hbWUiOiJ0dHMxIiwidGltZSI6MTY1NTczNjc0NTMxNywiaWF0IjoxNjU1NzM2NzQ1LCJleHAiOjQ4MDkzMzY3NDV9.psvrnoEhCGEoNFeRk_URCE8ukmBRerw585NLbQyMnZw',
