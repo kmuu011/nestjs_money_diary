@@ -4,6 +4,7 @@ import {TodoGroupEntity} from "../../modules/todoGroup/entities/todoGroup.entity
 import {TodoEntity} from "../../modules/todoGroup/todo/entities/todo.entity";
 import {ApiProperty} from "@nestjs/swagger";
 import {AccountEntity} from "../../modules/account/entities/account.entity";
+import {AccountHistoryEntity} from "../../modules/account/history/entities/accountHistory.entity";
 
 export interface FileType {
     fileType: string;
@@ -50,6 +51,7 @@ export interface LocalsType {
     todoGroupInfo?: TodoGroupEntity;
     todoInfo?: TodoEntity;
     accountInfo?: AccountEntity;
+    accountHistoryInfo?: AccountHistoryEntity;
 }
 
 export class LoginResponseType {

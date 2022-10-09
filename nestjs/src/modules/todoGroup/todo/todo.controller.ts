@@ -41,7 +41,7 @@ export class TodoController {
     @ApiOkResponseSelectList(TodoEntity, '할일 조회 성공')
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     @ApiParam({type: 'number', name: 'todoGroupIdx'})
-    async selectTodolist(
+    async selectTodoList(
         @Req() req: Request,
         @Query() query: SelectQueryDto
     ): Promise<SelectListResponseType<TodoEntity>> {

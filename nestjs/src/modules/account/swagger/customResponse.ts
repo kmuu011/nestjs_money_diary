@@ -12,5 +12,5 @@ export class AccountSelectResponse extends PickType(
         type: "array",
         items: { $ref: getSchemaPath(AccountHistoryEntity) },
     })
-    accountHistoryList: AccountHistoryEntity
+    asd: AccountHistoryEntity
 }

@@ -54,7 +54,7 @@ describe('Todo Controller', () => {
             };
 
             const response: SelectListResponseType<TodoEntity>
-                = await todoController.selectTodolist(req, getSelectQueryDto());
+                = await todoController.selectTodoList(req, getSelectQueryDto());
 
             expect(response.items.every(v => v instanceof TodoEntity)).toBeTruthy();
         });

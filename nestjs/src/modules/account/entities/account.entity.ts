@@ -10,7 +10,7 @@ export class AccountEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     @Column({primary: true, type: "int", unique: true, unsigned: true})
     @ApiProperty({
-        example: '3'
+        example: 3
     })
     idx: number = undefined;
 
@@ -21,6 +21,14 @@ export class AccountEntity extends BaseEntity {
     })
     @JoinColumn()
     member: MemberEntity = undefined;
+
+    @OneToMany(() => AccountHistoryEntity,
+        accountHistory => accountHistory.account, {
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE"
+        })
+    @JoinColumn()
+    accountHistoryList: AccountHistoryEntity[];
 
     @IsString()
     @Column({type: 'varchar', length: 100, comment: '가계부 제목'})
@@ -49,16 +57,6 @@ export class AccountEntity extends BaseEntity {
         example: "2022-08-29T06:48:31.000Z"
     })
     updatedAt: string = undefined;
-
-    @OneToMany(() => AccountHistoryEntity,
-        accountHistory => accountHistory.account,
-        {
-            onDelete: "CASCADE",
-            onUpdate: "CASCADE"
-        }
-    )
-    @JoinColumn()
-    accountHistoryList: AccountHistoryEntity[];
 
     dataMigration(object: object): void {
         for (let k in new AccountEntity()) {

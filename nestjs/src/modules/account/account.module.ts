@@ -3,6 +3,7 @@ import {AccountController} from './account.controller';
 import {AccountService} from './account.service';
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {AccountRepository} from "./account.repository";
+import {AccountHistoryModule} from "./history/accountHistory.module";
 
 @Global()
 @Module({
@@ -10,6 +11,7 @@ import {AccountRepository} from "./account.repository";
         TypeOrmModule.forFeature([
             AccountRepository,
         ]),
+        AccountHistoryModule
     ],
     controllers: [AccountController],
     providers: [AccountService],
