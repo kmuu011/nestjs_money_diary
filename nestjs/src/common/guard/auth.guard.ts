@@ -6,7 +6,7 @@ import {TokenRepository} from "../../modules/member/token/token.repository";
 import * as utils from "../../../libs/utils";
 import {Request, Response} from "express";
 import { auth } from "../../../config/config";
-import {TokenEntity} from "../../modules/member/entities/token.entity";
+import {TokenEntity} from "../../modules/member/token/entities/token.entity";
 
 const serverType = process.env.NODE_ENV;
 

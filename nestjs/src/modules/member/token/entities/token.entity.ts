@@ -6,7 +6,7 @@ import {
     Entity, JoinColumn, OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
-import {MemberEntity} from "./member.entity";
+import {MemberEntity} from "../../entities/member.entity";
 import {ApiProperty} from "@nestjs/swagger";
 
 @Entity({name: 'memberToken'})

@@ -1,5 +1,5 @@
 import {EntityRepository, Repository} from "typeorm";
-import {TokenEntity} from "../entities/token.entity";
+import {TokenEntity} from "./entities/token.entity";
 import {MemberEntity} from "../entities/member.entity";
 
 @EntityRepository(TokenEntity)
