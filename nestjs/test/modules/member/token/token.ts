@@ -1,8 +1,9 @@
 import {TokenEntity} from "../../../../src/modules/member/token/entities/token.entity";
+import {swagger} from "../../../../config/config";
 
 export const savedTokenInfo = {
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZHgiOjExMiwiaWQiOiJ0dHMxIiwibmlja25hbWUiOiJ0dHMxIiwidGltZSI6MTY1NTczNjc0NTMxNywiaWF0IjoxNjU1NzM2NzQ1LCJleHAiOjQ4MDkzMzY3NDV9.psvrnoEhCGEoNFeRk_URCE8ukmBRerw585NLbQyMnZw',
-    code: 'hm9bj5u1laa1a1s3g2uiunduhh5lufbo'
+    token: swagger.dummyUserInfo.token,
+    code: swagger.dummyUserInfo.tokenCode
 }
 
 export const getTokenInfo = (where?) => {

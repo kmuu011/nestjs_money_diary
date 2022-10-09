@@ -22,7 +22,7 @@ import {ResponseBooleanType, SelectListResponseType} from "../../../common/type/
 
 import {TodoInterceptor} from "./todo.interceptor";
 import {TodoGroupInterceptor} from "../todoGroup.interceptor";
-import {ApiHeader, ApiOkResponse, ApiOperation, ApiParam, ApiTags} from "@nestjs/swagger";
+import {ApiCreatedResponse, ApiHeader, ApiOkResponse, ApiOperation, ApiParam, ApiTags} from "@nestjs/swagger";
 import {ApiOkResponseSelectList} from "../../../common/swagger/customDecorator";
 import {swagger} from "../../../../config/config";
 
@@ -53,7 +53,7 @@ export class TodoController {
 
     @Post('/')
     @ApiOperation({summary: '할일 등록'})
-    @ApiOkResponse({description: '할일 등록 성공', type: TodoEntity})
+    @ApiCreatedResponse({description: '할일 등록 성공', type: TodoEntity})
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     @ApiParam({type: 'number', name: 'todoGroupIdx'})
     async createTodo(
