@@ -87,7 +87,8 @@ describe('AccountController (e2e)', () => {
                 .set('token-code', savedMemberInfo.tokenInfo.code)
                 .send({
                     accountName: '수정된 할일 그룹 제목',
-                    order: 3
+                    order: 3,
+                    invisibleAmount: 1
                 })
                 .expect(200);
 

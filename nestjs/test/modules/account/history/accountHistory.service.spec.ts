@@ -66,13 +66,21 @@ describe('AccountHistory Service', () => {
         it('가계부 내역 수정', async () => {
             const updateAccountHistoryDto: UpdateAccountHistoryDto = {
                 content: "수정된 가계부 내역 내용",
-                amount: 1000,
-                type: 0
+                amount: 10000,
+                type: 1
             };
 
             const updateResult: UpdateResult = await accountHistoryService.update(createdAccountHistoryInfo, updateAccountHistoryDto);
+            const updatedAccountHistory: AccountHistoryEntity
+                = await accountHistoryService.selectOne(
+                createdAccountHistoryInfo.account,
+                createdAccountHistoryInfo.idx
+            );
 
             expect(updateResult.affected === 1).toBeTruthy();
+            expect(updatedAccountHistory.content === updateAccountHistoryDto.content).toBeTruthy();
+            expect(Number(updatedAccountHistory.amount) === updateAccountHistoryDto.amount).toBeTruthy();
+            expect(updatedAccountHistory.type === updateAccountHistoryDto.type).toBeTruthy();
         });
     });
 

@@ -32,8 +32,8 @@ describe('AccountHistory Repository', () => {
         accountRepository = module.get<AccountRepository>(AccountRepository);
         accountHistoryRepository = module.get<AccountHistoryRepository>(AccountHistoryRepository);
 
-        for(let i=0 ; i<4 ; i++){
-            savedAccountHistoryInfo.idx = i+1;
+        for (let i = 0; i < 4; i++) {
+            savedAccountHistoryInfo.idx = i + 1;
             const accountHistory: AccountHistoryEntity = await accountHistoryRepository.selectOne(savedAccountInfo, savedAccountHistoryInfo.idx);
 
             if (accountHistory) continue;
@@ -75,13 +75,19 @@ describe('AccountHistory Repository', () => {
         it('가계부 내역 수정', async () => {
             const updateAccountHistoryDto: UpdateAccountHistoryDto = {
                 content: '수정된 가계부 내역 내용',
-                amount: 1000,
-                type: 0
+                amount: 10000,
+                type: 1
             };
 
             const updateResult: UpdateResult
                 = await accountHistoryRepository.updateAccountHistory(createdAccountHistoryInfo, updateAccountHistoryDto);
+            const updatedAccountHistory: AccountHistoryEntity
+                = await accountHistoryRepository.selectOne(createdAccountHistoryInfo.account, createdAccountHistoryInfo.idx);
+
             expect(updateResult.affected === 1).toBeTruthy();
+            expect(updatedAccountHistory.content === updateAccountHistoryDto.content).toBeTruthy();
+            expect(Number(updatedAccountHistory.amount) === updateAccountHistoryDto.amount).toBeTruthy();
+            expect(updatedAccountHistory.type === updateAccountHistoryDto.type).toBeTruthy();
         });
     });
 
