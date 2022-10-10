@@ -23,6 +23,8 @@ export class AccountInterceptor implements NestInterceptor {
             throw Message.NOT_EXIST('account');
         }
 
+        accountInfo.member = memberInfo;
+
         req.locals.accountInfo = accountInfo;
 
         return next.handle();

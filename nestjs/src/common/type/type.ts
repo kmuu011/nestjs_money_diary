@@ -68,3 +68,8 @@ export class ResponseBooleanType {
     result: boolean;
 }
 
+export interface AccountIncomeOutcomeType {
+    outcome: number;
+    income: number;
+}
+

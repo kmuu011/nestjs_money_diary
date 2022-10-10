@@ -38,7 +38,7 @@ describe('AccountHistory Repository', () => {
 
             if (accountHistory) continue;
 
-            await accountHistoryRepository.createAccountHistory(savedAccountHistoryInfo);
+            await accountHistoryRepository.createAccountHistory(undefined, savedAccountHistoryInfo);
         }
 
         savedAccountHistoryInfo.idx = (getSavedAccountHistory()).idx;
@@ -63,7 +63,7 @@ describe('AccountHistory Repository', () => {
 
     describe('createAccountHistory()', () => {
         it('가계부 내역 등록', async () => {
-            const result: AccountHistoryEntity = await accountHistoryRepository.createAccountHistory(getCreateAccountHistoryData());
+            const result: AccountHistoryEntity = await accountHistoryRepository.createAccountHistory(undefined, getCreateAccountHistoryData());
 
             expect(result instanceof AccountHistoryEntity).toBeTruthy();
 

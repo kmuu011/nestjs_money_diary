@@ -8,12 +8,16 @@ import {getSavedMember} from "../member/member";
 import {AccountEntity} from "../../../src/modules/account/entities/account.entity";
 import {getCreateAccountData, getSavedAccount} from "./account";
 import {createRandomString} from "../../../libs/utils";
+import {AccountIncomeOutcomeType} from "../../../src/common/type/type";
+import {AccountHistoryEntity} from "../../../src/modules/account/history/entities/accountHistory.entity";
+import {AccountHistoryRepository} from "../../../src/modules/account/history/accountHistory.repository";
 
 describe('Account Repository', () => {
     const savedMemberInfo: MemberEntity = getSavedMember();
     const savedAccountInfo: AccountEntity = getSavedAccount();
 
     let accountRepository: AccountRepository;
+    let accountHistoryRepository: AccountHistoryRepository;
     let createdAccountInfo: AccountEntity;
 
     beforeAll(async () => {
@@ -21,12 +25,14 @@ describe('Account Repository', () => {
             imports: [
                 TypeOrmModule.forRoot(typeOrmOptions),
                 TypeOrmModule.forFeature([
-                    AccountRepository
+                    AccountRepository,
+                    AccountHistoryRepository
                 ])
             ],
         }).compile();
 
         accountRepository = module.get<AccountRepository>(AccountRepository);
+        accountHistoryRepository = module.get<AccountHistoryRepository>(AccountHistoryRepository);
 
         for(let i=0 ; i<4 ; i++){
             savedAccountInfo.idx = i+1;
@@ -57,6 +63,37 @@ describe('Account Repository', () => {
         });
     });
 
+    describe('selectTotalIncomeOutcome()', () => {
+        it('가계부 총 지출, 수입 조회', async () => {
+            const accountTotalIncomeOutcome: AccountIncomeOutcomeType
+                = await accountRepository
+                .selectTotalIncomeOutcome(
+                    undefined,
+                    savedAccountInfo.member,
+                    savedAccountInfo.idx
+                );
+
+            const accountHistoryList: [AccountHistoryEntity[], number]
+                = await accountHistoryRepository.selectList(savedAccountInfo);
+
+            const incomeOutcome: {
+                income: number,
+                outcome: number
+            } = accountHistoryList[0].reduce((obj, v) => {
+                if(v.type === 0) {
+                    obj.outcome += Number(v.amount);
+                }else{
+                    obj.income += Number(v.amount);
+                }
+
+                return obj;
+            }, {income: 0, outcome: 0});
+
+            expect(Number(accountTotalIncomeOutcome.income) === incomeOutcome.income).toBeTruthy();
+            expect(Number(accountTotalIncomeOutcome.outcome) === incomeOutcome.outcome).toBeTruthy();
+        });
+    });
+
     describe('create()', () => {
         it('가계부 등록', async () => {
             const createAccountData: AccountEntity = getCreateAccountData();
@@ -80,7 +117,7 @@ describe('Account Repository', () => {
             createdAccountInfo.accountName = newAccountName;
             createdAccountInfo.invisibleAmount = newInvisibleAmount;
 
-            const updateResult: UpdateResult = await accountRepository.updateAccount(createdAccountInfo);
+            const updateResult: UpdateResult = await accountRepository.updateAccount(undefined, createdAccountInfo);
             const updatedAccount: AccountEntity = await accountRepository.selectOne(savedMemberInfo, createdAccountInfo.idx);
 
             expect(updateResult.affected === 1).toBeTruthy();

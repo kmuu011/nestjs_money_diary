@@ -11,7 +11,9 @@ import {AccountHistoryRepository} from "./accountHistory.repository";
         ]),
     ],
     controllers: [AccountHistoryController],
-    providers: [AccountHistoryService],
+    providers: [
+        AccountHistoryService,
+    ],
 })
 
 export class AccountHistoryModule {}
