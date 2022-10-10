@@ -11,6 +11,7 @@ import {AccountService} from "../../../src/modules/account/account.service";
 import {AccountRepository} from "../../../src/modules/account/account.repository";
 import {CreateAccountDto} from "../../../src/modules/account/dto/create-account-dto";
 import {UpdateAccountDto} from "../../../src/modules/account/dto/update-account-dto";
+import {createRandomString} from "../../../libs/utils";
 
 describe('Account Service', () => {
     const savedMemberInfo: MemberEntity = getSavedMember();
@@ -96,9 +97,17 @@ describe('Account Service', () => {
     describe('update()', () => {
         it('가계부 수정', async () => {
             const updateAccountDto: UpdateAccountDto = getCreateAccountData();
+            const newAccountName: string = `수정된 가계부 ${createRandomString(6)}`;
+            const newInvisibleAmount: number = 1;
+            updateAccountDto.accountName = newAccountName;
+            updateAccountDto.invisibleAmount = newInvisibleAmount;
+
             const updateResult: UpdateResult = await accountService.update(savedMemberInfo, createdAccount, updateAccountDto);
+            const updatedAccount: AccountEntity = await accountService.selectOne(savedMemberInfo, createdAccount.idx);
 
             expect(updateResult.affected === 1).toBeTruthy();
+            expect(updatedAccount.accountName === newAccountName).toBeTruthy();
+            expect(updatedAccount.invisibleAmount === newInvisibleAmount).toBeTruthy();
         });
     });
 

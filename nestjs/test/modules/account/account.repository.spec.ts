@@ -7,6 +7,7 @@ import {AccountRepository} from "../../../src/modules/account/account.repository
 import {getSavedMember} from "../member/member";
 import {AccountEntity} from "../../../src/modules/account/entities/account.entity";
 import {getCreateAccountData, getSavedAccount} from "./account";
+import {createRandomString} from "../../../libs/utils";
 
 describe('Account Repository', () => {
     const savedMemberInfo: MemberEntity = getSavedMember();
@@ -73,9 +74,18 @@ describe('Account Repository', () => {
         it('가계부 수정', async () => {
             createdAccountInfo.order++;
 
+            const newAccountName: string = `수정된 가계부 ${createRandomString(6)}`;
+            const newInvisibleAmount: number = 1;
+
+            createdAccountInfo.accountName = newAccountName;
+            createdAccountInfo.invisibleAmount = newInvisibleAmount;
+
             const updateResult: UpdateResult = await accountRepository.updateAccount(createdAccountInfo);
+            const updatedAccount: AccountEntity = await accountRepository.selectOne(savedMemberInfo, createdAccountInfo.idx);
 
             expect(updateResult.affected === 1).toBeTruthy();
+            expect(updatedAccount.accountName === newAccountName).toBeTruthy();
+            expect(updatedAccount.invisibleAmount === newInvisibleAmount).toBeTruthy();
         });
     });
 

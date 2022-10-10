@@ -36,7 +36,7 @@ export class AccountRepository extends Repository<AccountEntity> {
     }
 
     async updateAccount(account: AccountEntity): Promise<UpdateResult> {
-        const obj = getUpdateObject(["title", "order"], account, true);
+        const obj = getUpdateObject(["accountName", "order", "invisibleAmount"], account, true);
 
         return await this.update(account.idx, obj);
     }

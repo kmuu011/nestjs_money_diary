@@ -15,6 +15,7 @@ import {CreateAccountDto} from "../../../src/modules/account/dto/create-account-
 import {getCreateAccountData, getSavedAccount} from "./account";
 import {UpdateAccountDto} from "../../../src/modules/account/dto/update-account-dto";
 import {getSelectQueryDto} from "../../common/const";
+import {createRandomString} from "../../../libs/utils";
 
 describe('Account Controller', () => {
     let accountController: AccountController;
@@ -93,6 +94,12 @@ describe('Account Controller', () => {
     describe('updateAccount()', () => {
         it('가계부 수정', async () => {
             const updateAccountDto: UpdateAccountDto = getCreateAccountData();
+
+            const newAccountName: string = `수정된 가계부 ${createRandomString(6)}`;
+            const newInvisibleAmount: number = 1;
+            updateAccountDto.accountName = newAccountName;
+            updateAccountDto.invisibleAmount = newInvisibleAmount;
+
             const req: Request = createRequest();
 
             req.locals = {
@@ -103,7 +110,11 @@ describe('Account Controller', () => {
             const response: ResponseBooleanType
                 = await accountController.updateAccount(req, updateAccountDto, createdAccount.idx);
 
+            const updatedAccount: AccountEntity = await accountService.selectOne(savedMemberInfo, createdAccount.idx);
+
             expect(response.result).toBeTruthy();
+            expect(updatedAccount.accountName === newAccountName).toBeTruthy();
+            expect(updatedAccount.invisibleAmount === newInvisibleAmount).toBeTruthy();
         });
     });
 

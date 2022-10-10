@@ -80,6 +80,7 @@ export class AccountService {
 
     async update(member: MemberEntity, account: AccountEntity, body: UpdateAccountDto): Promise<UpdateResult> {
         account.accountName = body.accountName;
+        account.invisibleAmount = body.invisibleAmount;
 
         const updateResult: UpdateResult = await this.accountRepository.updateAccount(account);
 

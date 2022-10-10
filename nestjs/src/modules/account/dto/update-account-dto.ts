@@ -6,18 +6,17 @@ export class UpdateAccountDto extends PickType(
     AccountEntity,
     ['accountName'] as const
 ) {
+    @IsNumber()
+    @IsOptional()
+    @ApiPropertyOptional({
+        example: 1
+    })
+    order: number;
 
     @IsNumber()
     @IsOptional()
     @ApiPropertyOptional({
         example: 1
     })
-    readonly order: number;
-
-    @IsNumber()
-    @IsOptional()
-    @ApiPropertyOptional({
-        example: 1
-    })
-    readonly invisibleAmount: number;
+    invisibleAmount: number;
 }
