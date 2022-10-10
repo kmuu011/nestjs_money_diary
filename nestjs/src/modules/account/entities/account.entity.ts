@@ -38,14 +38,14 @@ export class AccountEntity extends BaseEntity {
     accountName: string = undefined;
 
     @IsNumber()
-    @Column({type: 'bigint', unsigned: false, comment: '가계부 금액'})
+    @Column({type: 'bigint', unsigned: false, default: 0, comment: '가계부 금액'})
     @ApiProperty({
         example: 0
     })
     totalAmount: number = undefined;
 
     @IsNumber()
-    @Column({type: 'tinyint', comment: '가계부 금액 보이기 여부'})
+    @Column({type: 'tinyint', default:0, comment: '가계부 금액 보이기 여부'})
     @ApiProperty({
         example: 0
     })

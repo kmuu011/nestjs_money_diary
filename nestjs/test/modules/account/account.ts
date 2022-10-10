@@ -26,10 +26,7 @@ export const getCreateAccountData = (): AccountEntity => {
     account.dataMigration({
         idx: 13,
         member: getSavedMember(),
-        accountName: '제 2 가계부',
-        totalAmount: 0,
-        invisibleAmount: 0,
-        order: 1
+        accountName: '제 2 가계부'
     });
 
     return account;

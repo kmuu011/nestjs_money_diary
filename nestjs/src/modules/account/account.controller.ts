@@ -119,5 +119,4 @@ export class AccountController {
         return {result: true};
     }
 
-
 }

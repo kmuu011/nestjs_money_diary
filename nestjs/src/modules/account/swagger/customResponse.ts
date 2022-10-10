@@ -1,6 +1,5 @@
-import {ApiProperty, getSchemaPath, PickType} from "@nestjs/swagger";
+import {PickType} from "@nestjs/swagger";
 import {AccountEntity} from "../entities/account.entity";
-import {AccountHistoryEntity} from "../history/entities/accountHistory.entity";
 
 export class AccountSelectResponse extends PickType(
     AccountEntity,
@@ -9,10 +8,4 @@ export class AccountSelectResponse extends PickType(
         'invisibleAmount','totalAmount',
         'createdAt', 'updatedAt'
     ] as const
-) {
-    @ApiProperty({
-        type: "array",
-        items: { $ref: getSchemaPath(AccountHistoryEntity) },
-    })
-    asd: AccountHistoryEntity
-}
+) {}
