@@ -1,4 +1,4 @@
-import {DeleteResult, EntityRepository, Repository, UpdateResult} from "typeorm";
+import {DeleteResult, EntityRepository, QueryRunner, Repository, UpdateResult} from "typeorm";
 import {AccountHistoryEntity} from "./entities/accountHistory.entity";
 import {getUpdateObject} from "../../../../libs/utils";
 import {UpdateAccountHistoryDto} from "./dto/update-accountHistory-dto";
@@ -28,8 +28,12 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
             .getManyAndCount();
     }
 
-    async createAccountHistory(accountHistory: AccountHistoryEntity): Promise<AccountHistoryEntity> {
-        return await this.save(accountHistory)
+    async createAccountHistory(queryRunner: QueryRunner, accountHistory: AccountHistoryEntity): Promise<AccountHistoryEntity> {
+        if(queryRunner){
+            return await queryRunner.manager.save(accountHistory);
+        }else {
+            return await this.save(accountHistory)
+        }
     }
 
     async updateAccountHistory(accountHistory: AccountHistoryEntity, updateAccountHistoryDto: UpdateAccountHistoryDto): Promise<UpdateResult> {

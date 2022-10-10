@@ -3,7 +3,7 @@ import {Test, TestingModule} from "@nestjs/testing";
 import {MemberEntity} from "../../../src/modules/member/entities/member.entity";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {typeOrmOptions} from "../../../config/config";
-import {SelectListResponseType} from "../../../src/common/type/type";
+import {AccountIncomeOutcomeType, SelectListResponseType} from "../../../src/common/type/type";
 import {DeleteResult, UpdateResult} from "typeorm";
 import {AccountEntity} from "../../../src/modules/account/entities/account.entity";
 import {getCreateAccountData, getSavedAccount} from "./account";
@@ -11,10 +11,12 @@ import {AccountService} from "../../../src/modules/account/account.service";
 import {AccountRepository} from "../../../src/modules/account/account.repository";
 import {CreateAccountDto} from "../../../src/modules/account/dto/create-account-dto";
 import {UpdateAccountDto} from "../../../src/modules/account/dto/update-account-dto";
+import {createRandomString} from "../../../libs/utils";
 
 describe('Account Service', () => {
     const savedMemberInfo: MemberEntity = getSavedMember();
     const savedAccountInfo: AccountEntity = getSavedAccount();
+
     let accountService: AccountService;
     let createdAccount: AccountEntity;
 
@@ -23,7 +25,7 @@ describe('Account Service', () => {
             imports: [
                 TypeOrmModule.forRoot(typeOrmOptions),
                 TypeOrmModule.forFeature([
-                    AccountRepository
+                    AccountRepository,
                 ])
             ],
             providers: [
@@ -31,7 +33,7 @@ describe('Account Service', () => {
             ]
         }).compile();
 
-        accountService = module.get<AccountService>(AccountService)
+        accountService = module.get<AccountService>(AccountService);
     });
 
     describe('arrangeOrder()', () => {
@@ -62,6 +64,32 @@ describe('Account Service', () => {
             for(const t of insertedDummyAccountList){
                 await accountService.delete(savedMemberInfo, t);
             }
+        });
+    });
+
+    describe('accountIncomeOutcome()', () => {
+        it('가계부 현재 총 지출, 수입 조회', async () => {
+            const accountIncomeOutcome: AccountIncomeOutcomeType
+                = await accountService.selectIncomeOutcome(undefined, savedAccountInfo);
+
+            expect(accountIncomeOutcome.income !== undefined).toBeTruthy();
+            expect(accountIncomeOutcome.outcome!== undefined).toBeTruthy();
+        });
+    });
+
+    describe('resetTotalAmount()', () => {
+        it('가계부 금액 재설정', async () => {
+            await accountService.resetTotalAmount(undefined, savedAccountInfo);
+
+            const accountInfo: AccountEntity = await accountService.selectOne(savedMemberInfo, savedAccountInfo.idx);
+
+            const accountIncomeOutcome: AccountIncomeOutcomeType
+                = await accountService.selectIncomeOutcome(undefined, savedAccountInfo);
+
+            expect(
+                Number(accountInfo.totalAmount) ===
+                Number(accountIncomeOutcome.income) - Number(accountIncomeOutcome.outcome)
+            ).toBeTruthy();
         });
     });
 
@@ -96,9 +124,17 @@ describe('Account Service', () => {
     describe('update()', () => {
         it('가계부 수정', async () => {
             const updateAccountDto: UpdateAccountDto = getCreateAccountData();
+            const newAccountName: string = `수정된 가계부 ${createRandomString(6)}`;
+            const newInvisibleAmount: number = 1;
+            updateAccountDto.accountName = newAccountName;
+            updateAccountDto.invisibleAmount = newInvisibleAmount;
+
             const updateResult: UpdateResult = await accountService.update(savedMemberInfo, createdAccount, updateAccountDto);
+            const updatedAccount: AccountEntity = await accountService.selectOne(savedMemberInfo, createdAccount.idx);
 
             expect(updateResult.affected === 1).toBeTruthy();
+            expect(updatedAccount.accountName === newAccountName).toBeTruthy();
+            expect(updatedAccount.invisibleAmount === newInvisibleAmount).toBeTruthy();
         });
     });
 

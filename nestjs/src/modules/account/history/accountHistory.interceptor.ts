@@ -23,6 +23,8 @@ export class AccountHistoryInterceptor implements NestInterceptor {
             throw Message.NOT_EXIST('accountHistory');
         }
 
+        accountHistoryInfo.account = account;
+
         req.locals.accountHistoryInfo = accountHistoryInfo;
 
         return next.handle();

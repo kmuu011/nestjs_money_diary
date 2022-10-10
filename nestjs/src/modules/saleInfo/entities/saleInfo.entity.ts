@@ -2,7 +2,7 @@ import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {IsDateString, IsNumber, IsString} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 
-@Entity({name: 'saleKeyword'})
+@Entity({name: 'saleInfo'})
 export class SaleInfoEntity extends BaseEntity {
     @IsNumber()
     @PrimaryGeneratedColumn()

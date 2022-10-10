@@ -1,8 +1,8 @@
 import {Injectable} from '@nestjs/common';
 import {MemberEntity} from "../member/entities/member.entity";
-import {DeleteResult, UpdateResult} from "typeorm";
+import {DeleteResult, QueryRunner, UpdateResult} from "typeorm";
 import {Message} from "../../../libs/message";
-import {SelectListResponseType} from "../../common/type/type";
+import {AccountIncomeOutcomeType, SelectListResponseType} from "../../common/type/type";
 import {InjectRepository} from "@nestjs/typeorm";
 import {AccountRepository} from "./account.repository";
 import {AccountEntity} from "./entities/account.entity";
@@ -30,8 +30,8 @@ export class AccountService {
                 const targetIdx = accountList.findIndex(v => v.order === order);
 
                 splicedAccountList = [
-                    ...splicedAccountList.slice(0, targetIdx), 
-                    account, 
+                    ...splicedAccountList.slice(0, targetIdx),
+                    account,
                     ...splicedAccountList.slice(targetIdx, splicedAccountList.length)
                 ];
             }
@@ -40,11 +40,26 @@ export class AccountService {
         for (let i = 0; i < splicedAccountList.length; i++) {
             splicedAccountList[i].order = splicedAccountList.length - i;
 
-            const updateResult: UpdateResult = await this.accountRepository.updateAccount(splicedAccountList[i]);
+            const updateResult: UpdateResult = await this.accountRepository.updateAccount(undefined, splicedAccountList[i]);
 
             if (updateResult.affected !== 1) {
                 throw Message.SERVER_ERROR;
             }
+        }
+    }
+
+    async selectIncomeOutcome(queryRunner: QueryRunner, account: AccountEntity): Promise<AccountIncomeOutcomeType> {
+        return await this.accountRepository.selectTotalIncomeOutcome(queryRunner, account.member, account.idx);
+    }
+
+    async resetTotalAmount(queryRunner: QueryRunner, account: AccountEntity): Promise<void> {
+        const accountIncomeOutcome: AccountIncomeOutcomeType = await this.selectIncomeOutcome(queryRunner, account);
+        account.totalAmount = accountIncomeOutcome.income - accountIncomeOutcome.outcome;
+
+        const updateResult: UpdateResult = await this.accountRepository.updateAccount(queryRunner, account);
+
+        if (updateResult.affected !== 1) {
+            throw Message.SERVER_ERROR;
         }
     }
 
@@ -79,9 +94,10 @@ export class AccountService {
     }
 
     async update(member: MemberEntity, account: AccountEntity, body: UpdateAccountDto): Promise<UpdateResult> {
-        account.title = body.title;
+        account.accountName = body.accountName;
+        account.invisibleAmount = body.invisibleAmount;
 
-        const updateResult: UpdateResult = await this.accountRepository.updateAccount(account);
+        const updateResult: UpdateResult = await this.accountRepository.updateAccount(undefined, account);
 
         if (updateResult.affected !== 1) {
             throw Message.SERVER_ERROR;
