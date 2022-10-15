@@ -39,7 +39,7 @@ describe('AccountHistoryCategoryController (e2e)', () => {
                 .expect(200);
 
             const categoryList = response.body;
-            
+
             expect(categoryList.constructor === Array).toBeTruthy();
         });
 
