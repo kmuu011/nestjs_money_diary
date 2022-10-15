@@ -5,15 +5,13 @@ export const savedAccountHistoryData = {
     idx: 1,
     content: '테스트 가계부 내역 1',
     amount: "1000",
-    type: 0
+    type: 0,
+    account: getSavedAccount()
 };
 
 export const getSavedAccountHistory = (): AccountHistoryEntity => {
     const savedAccountHistory: AccountHistoryEntity = new AccountHistoryEntity();
-    savedAccountHistory.dataMigration({
-        ...savedAccountHistoryData,
-        account: getSavedAccount()
-    });
+    savedAccountHistory.dataMigration(savedAccountHistoryData);
 
     return savedAccountHistory;
 };
