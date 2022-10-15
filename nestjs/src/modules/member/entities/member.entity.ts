@@ -137,7 +137,7 @@ export class MemberEntity extends BaseEntity {
 
     @OneToOne(() => TokenEntity, token => token.member)
     @ApiProperty()
-    tokenInfo: TokenEntity;
+    tokenInfo: TokenEntity = undefined;
 
     @OneToMany(() => TodoGroupEntity, todoGroup => todoGroup.member)
     todoGroupList: TodoGroupEntity[];

@@ -6,16 +6,14 @@ export const savedAccountData = {
     accountName: '제 1 가계부',
     totalAmount: 0,
     invisibleAmount: 0,
-    order: 1
+    order: 1,
+    member: getSavedMember()
 };
 
 export const getSavedAccount = (): AccountEntity => {
     const savedAccount: AccountEntity = new AccountEntity();
 
-    savedAccount.dataMigration({
-        ...savedAccountData,
-        member: getSavedMember()
-    });
+    savedAccount.dataMigration(savedAccountData);
 
     return savedAccount;
 }

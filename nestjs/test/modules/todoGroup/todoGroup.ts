@@ -4,16 +4,14 @@ import {getSavedMember} from "../member/member";
 export const savedTodoGroupData = {
     idx: 1,
     title: '테스트 할일 그룹',
-    order: 1
+    order: 1,
+    member: getSavedMember()
 };
 
 export const getSavedTodoGroup = (): TodoGroupEntity => {
     const savedTodoGroup: TodoGroupEntity = new TodoGroupEntity();
 
-    savedTodoGroup.dataMigration({
-        ...savedTodoGroupData,
-        member: getSavedMember()
-    });
+    savedTodoGroup.dataMigration(savedTodoGroupData);
 
     return savedTodoGroup
 };

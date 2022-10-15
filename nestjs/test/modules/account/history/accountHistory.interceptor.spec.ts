@@ -18,6 +18,9 @@ import {AccountRepository} from "../../../../src/modules/account/account.reposit
 import {AccountHistoryRepository} from "../../../../src/modules/account/history/accountHistory.repository";
 import {AccountHistoryService} from "../../../../src/modules/account/history/accountHistory.service";
 import {AccountService} from "../../../../src/modules/account/account.service";
+import {
+    AccountHistoryCategoryRepository
+} from "../../../../src/modules/account/history/category/accountHistoryCategory.repository";
 
 describe('AccountHistory Interceptor', () => {
     const savedMemberInfo: MemberEntity = getSavedMember();
@@ -34,7 +37,8 @@ describe('AccountHistory Interceptor', () => {
                 TypeOrmModule.forFeature([
                     TokenRepository,
                     AccountRepository,
-                    AccountHistoryRepository
+                    AccountHistoryRepository,
+                    AccountHistoryCategoryRepository
                 ])
             ],
             controllers: [AccountHistoryController],

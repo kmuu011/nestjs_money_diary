@@ -9,11 +9,14 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {AccountHistoryRepository} from "./accountHistory.repository";
 import {AccountHistoryEntity} from "./entities/accountHistory.entity";
 import {AccountService} from "../account.service";
+import {AccountHistoryCategoryRepository} from "./category/accountHistoryCategory.repository";
+import {AccountHistoryCategoryEntity} from "./category/entities/accountHistoryCategory.entity";
 
 @Injectable()
 export class AccountHistoryService {
     constructor(
         @InjectRepository(AccountHistoryRepository) private readonly accountHistoryRepository: AccountHistoryRepository,
+        @InjectRepository(AccountHistoryCategoryRepository) private readonly accountHistoryCategoryRepository: AccountHistoryCategoryRepository,
         private readonly accountService: AccountService,
         private readonly connection: Connection
     ) {
@@ -36,6 +39,14 @@ export class AccountHistoryService {
     }
 
     async create(account: AccountEntity, createAccountHistoryDto: CreateAccountHistoryDto): Promise<AccountHistoryEntity> {
+        const categoryInfo: AccountHistoryCategoryEntity =
+            await this.accountHistoryCategoryRepository
+                .selectOne(account.member, createAccountHistoryDto.accountHistoryCategoryIdx);
+
+        if(!categoryInfo){
+            throw Message.NOT_EXIST('accountHistoryCategory');
+        }
+
         const queryRunner = this.connection.createQueryRunner();
 
         await queryRunner.connect();
@@ -45,6 +56,7 @@ export class AccountHistoryService {
 
         accountHistory.dataMigration(createAccountHistoryDto);
         accountHistory.account = account;
+        accountHistory.accountHistoryCategory = categoryInfo;
 
         let insertedAccountHistory: AccountHistoryEntity;
 

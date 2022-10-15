@@ -20,6 +20,9 @@ import {CreateMemberDto} from "../../../src/modules/member/dto/create-member-dto
 import {UpdateMemberDto} from "../../../src/modules/member/dto/update-member.dto";
 import {createRandomString} from "../../../libs/utils";
 import {DuplicateCheckMemberDto} from "../../../src/modules/member/dto/duplicate-check-member.dto";
+import {
+    AccountHistoryCategoryRepository
+} from "../../../src/modules/account/history/category/accountHistoryCategory.repository";
 
 describe('Member Controller', () => {
     let memberController: MemberController;
@@ -33,7 +36,8 @@ describe('Member Controller', () => {
                 TypeOrmModule.forFeature([
                     MemberRepository,
                     TokenRepository,
-                    TodoGroupRepository
+                    TodoGroupRepository,
+                    AccountHistoryCategoryRepository,
                 ])
             ],
             controllers: [MemberController],

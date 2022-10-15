@@ -3,12 +3,13 @@ import {DeleteResult, UpdateResult} from "typeorm";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {typeOrmOptions} from "../../../../config/config";
 import {AccountRepository} from "../../../../src/modules/account/account.repository";
-import {getCreateAccountHistoryData, getSavedAccountHistory} from "./accountHistory";
+import {getCreateAccountHistoryEntity, getSavedAccountHistory} from "./accountHistory";
 import {getSavedAccount} from "../account";
 import {AccountEntity} from "../../../../src/modules/account/entities/account.entity";
 import {AccountHistoryEntity} from "../../../../src/modules/account/history/entities/accountHistory.entity";
 import {AccountHistoryRepository} from "../../../../src/modules/account/history/accountHistory.repository";
 import {UpdateAccountHistoryDto} from "../../../../src/modules/account/history/dto/update-accountHistory-dto";
+import {savedAccountHistoryCategoryData} from "./category/accountHistoryCategory";
 
 describe('AccountHistory Repository', () => {
     const savedAccountInfo: AccountEntity = getSavedAccount();
@@ -63,7 +64,13 @@ describe('AccountHistory Repository', () => {
 
     describe('createAccountHistory()', () => {
         it('가계부 내역 등록', async () => {
-            const result: AccountHistoryEntity = await accountHistoryRepository.createAccountHistory(undefined, getCreateAccountHistoryData());
+            const accountHistory: AccountHistoryEntity = getCreateAccountHistoryEntity();
+
+            const result: AccountHistoryEntity = await accountHistoryRepository
+                .createAccountHistory(
+                    undefined,
+                    accountHistory
+                );
 
             expect(result instanceof AccountHistoryEntity).toBeTruthy();
 
@@ -76,7 +83,8 @@ describe('AccountHistory Repository', () => {
             const updateAccountHistoryDto: UpdateAccountHistoryDto = {
                 content: '수정된 가계부 내역 내용',
                 amount: 10000,
-                type: 1
+                type: 1,
+                accountHistoryCategoryIdx: savedAccountHistoryCategoryData.idx
             };
 
             const updateResult: UpdateResult

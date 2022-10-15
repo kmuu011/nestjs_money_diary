@@ -3,15 +3,13 @@ import {getSavedTodoGroup} from "../todoGroup";
 
 export const savedTodoData = {
     idx: 1,
-    content: '테스트 할일 1'
+    content: '테스트 할일 1',
+    todoGroup: getSavedTodoGroup()
 };
 
 export const getSavedTodo = (): TodoEntity => {
     const savedTodo: TodoEntity = new TodoEntity();
-    savedTodo.dataMigration({
-        ...savedTodoData,
-        todoGroup: getSavedTodoGroup()
-    });
+    savedTodo.dataMigration(savedTodoData);
 
     return savedTodo;
 };

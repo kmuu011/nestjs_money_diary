@@ -13,13 +13,13 @@ export const savedMemberData = {
     id: swagger.dummyUserInfo.id,
     password: swagger.dummyUserInfo.password,
     nickname: swagger.dummyUserInfo.nickname,
-    email: swagger.dummyUserInfo.email
+    email: swagger.dummyUserInfo.email,
+    tokenInfo: getTokenInfo()
 }
 
 export const getSavedMember = (encryptPassword?): MemberEntity => {
     const savedMember: MemberEntity = new MemberEntity();
     savedMember.dataMigration(savedMemberData);
-    savedMember.tokenInfo = getTokenInfo();
 
     if(encryptPassword){
         savedMember.passwordEncrypt();

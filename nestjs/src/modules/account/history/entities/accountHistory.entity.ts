@@ -1,4 +1,4 @@
-import {BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import {BaseEntity, Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn} from "typeorm";
 import {IsDateString, IsNumber, IsString} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 import {AccountEntity} from "../../entities/account.entity";
@@ -25,16 +25,16 @@ export class AccountHistoryEntity extends BaseEntity {
     @JoinColumn()
     account: AccountEntity = undefined;
 
-    // @OneToOne(() => AccountHistoryCategoryEntity,
-    //     accountHistoryCategory => accountHistoryCategory.accountHistory,
-    //     {
-    //         onDelete: "CASCADE",
-    //         onUpdate: "CASCADE",
-    //         nullable: false
-    //     }
-    // )
-    // @JoinColumn()
-    // accountHistoryCategory: AccountHistoryCategoryEntity = undefined;
+    @ManyToOne(() => AccountHistoryCategoryEntity,
+        accountHistoryCategory => accountHistoryCategory.accountHistory,
+        {
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE",
+            nullable: false
+        }
+    )
+    @JoinColumn()
+    accountHistoryCategory: AccountHistoryCategoryEntity = undefined;
 
     @IsNumber()
     @Column({type: "bigint", unsigned: true, comment: "금액"})
