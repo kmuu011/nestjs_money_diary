@@ -1,4 +1,14 @@
-import {BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToMany,
+    ManyToOne,
+    OneToMany,
+    OneToOne,
+    PrimaryGeneratedColumn
+} from "typeorm";
 import {IsDateString, IsNumber, IsString} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 import {AccountHistoryEntity} from "../../entities/accountHistory.entity";
@@ -25,10 +35,10 @@ export class AccountHistoryCategoryEntity extends BaseEntity {
     @JoinColumn()
     member: MemberEntity = undefined;
 
-    // @OneToOne(() => AccountHistoryEntity,
-    //     accountHistory => accountHistory.accountHistoryCategory
-    // )
-    // accountHistory: AccountHistoryEntity = undefined;
+    @OneToMany(() => AccountHistoryEntity,
+        accountHistory => accountHistory.accountHistoryCategory
+    )
+    accountHistory: AccountHistoryEntity;
 
     @IsNumber()
     @Column({

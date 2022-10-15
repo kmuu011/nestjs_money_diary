@@ -1,4 +1,4 @@
-import {getCreateAccountHistoryData, getSavedAccountHistory} from "./accountHistory";
+import {getCreateAccountHistoryDto, getSavedAccountHistory} from "./accountHistory";
 import {Test, TestingModule} from "@nestjs/testing";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {typeOrmOptions} from "../../../../config/config";
@@ -13,6 +13,10 @@ import {CreateAccountHistoryDto} from "../../../../src/modules/account/history/d
 import {UpdateAccountHistoryDto} from "../../../../src/modules/account/history/dto/update-accountHistory-dto";
 import {AccountRepository} from "../../../../src/modules/account/account.repository";
 import {AccountService} from "../../../../src/modules/account/account.service";
+import {savedAccountHistoryCategoryData} from "./category/accountHistoryCategory";
+import {
+    AccountHistoryCategoryRepository
+} from "../../../../src/modules/account/history/category/accountHistoryCategory.repository";
 
 describe('AccountHistory Service', () => {
     const savedAccountInfo: AccountEntity = getSavedAccount();
@@ -28,6 +32,7 @@ describe('AccountHistory Service', () => {
                 TypeOrmModule.forFeature([
                     AccountRepository,
                     AccountHistoryRepository,
+                    AccountHistoryCategoryRepository
                 ])
             ],
             providers: [
@@ -42,7 +47,11 @@ describe('AccountHistory Service', () => {
 
     describe('selectOne()', () => {
         it('가계부 내역 상세 조회', async () => {
-            const accountHistory: AccountHistoryEntity = await accountHistoryService.selectOne(savedAccountInfo, savedAccountHistoryInfo.idx);
+            const accountHistory: AccountHistoryEntity =
+                await accountHistoryService.selectOne(
+                    savedAccountInfo,
+                    savedAccountHistoryInfo.idx
+                );
 
             expect(accountHistory instanceof AccountHistoryEntity).toBeTruthy();
         });
@@ -59,10 +68,14 @@ describe('AccountHistory Service', () => {
 
     describe('create()', () => {
         it('가계부 내역 등록', async () => {
-            const createAccountHistoryDto: CreateAccountHistoryDto = getCreateAccountHistoryData();
+            const createAccountHistoryDto: CreateAccountHistoryDto = getCreateAccountHistoryDto();
 
             const insertResult: AccountHistoryEntity
-                = await accountHistoryService.create(savedAccountInfo, createAccountHistoryDto);
+                = await accountHistoryService.create(
+                savedAccountInfo,
+                createAccountHistoryDto
+            );
+
             createdAccountHistoryInfo = insertResult;
 
             const updatedAccountInfo: AccountEntity
@@ -85,7 +98,8 @@ describe('AccountHistory Service', () => {
             const updateAccountHistoryDto: UpdateAccountHistoryDto = {
                 content: "수정된 가계부 내역 내용",
                 amount: 10000,
-                type: 1
+                type: 1,
+                accountHistoryCategoryIdx: savedAccountHistoryCategoryData.idx
             };
 
             const updateResult: UpdateResult

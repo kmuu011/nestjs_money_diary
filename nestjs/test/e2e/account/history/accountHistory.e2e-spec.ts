@@ -7,6 +7,7 @@ import {AppModule} from "../../../../dist/src/app.module";
 import {AccountEntity} from "../../../../src/modules/account/entities/account.entity";
 import {getSavedAccount} from "../../../modules/account/account";
 import {AccountHistoryEntity} from "../../../../src/modules/account/history/entities/accountHistory.entity";
+import {savedAccountHistoryCategoryData} from "../../../modules/account/history/category/accountHistoryCategory";
 
 describe('AccountHistoryController (e2e)', () => {
     const savedMemberInfo: MemberEntity = getSavedMember();
@@ -59,7 +60,8 @@ describe('AccountHistoryController (e2e)', () => {
                 .send({
                     content: '순대국밥',
                     amount: 20000,
-                    type: 0
+                    type: 0,
+                    accountHistoryCategoryIdx: savedAccountHistoryCategoryData.idx
                 })
                 .expect(201);
 
@@ -78,7 +80,8 @@ describe('AccountHistoryController (e2e)', () => {
                 .send({
                     content: '수정된 가계부 내역',
                     amount: 10000,
-                    type: 0
+                    type: 0,
+                    accountHistoryCategoryIdx: savedAccountHistoryCategoryData.idx
                 })
                 .expect(200);
 
