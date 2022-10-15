@@ -24,8 +24,8 @@ describe('AccountHistory Interceptor', () => {
     const savedAccountHistoryInfo: AccountHistoryEntity = getSavedAccountHistory();
     const savedAccountInfo: AccountEntity = getSavedAccount();
 
-    let todoController: AccountHistoryController;
-    let todoInterceptor: AccountHistoryInterceptor;
+    let accountHistoryController: AccountHistoryController;
+    let accountHistoryInterceptor: AccountHistoryInterceptor;
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -48,8 +48,8 @@ describe('AccountHistory Interceptor', () => {
             ]
         }).compile();
 
-        todoController = module.get<AccountHistoryController>(AccountHistoryController);
-        todoInterceptor = module.get<AccountHistoryInterceptor>(AccountHistoryInterceptor);
+        accountHistoryController = module.get<AccountHistoryController>(AccountHistoryController);
+        accountHistoryInterceptor = module.get<AccountHistoryInterceptor>(AccountHistoryInterceptor);
     });
 
     describe('intercept()', () => {
@@ -69,7 +69,7 @@ describe('AccountHistory Interceptor', () => {
             const executionContext: ExecutionContext = getExecutionContext(req, res);
             const callHandler: CallHandler = getCallHandler();
 
-            await todoInterceptor
+            await accountHistoryInterceptor
                 .intercept(executionContext, callHandler);
 
             expect(req.locals.accountHistoryInfo instanceof AccountHistoryEntity).toBeTruthy();

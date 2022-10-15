@@ -6,7 +6,6 @@ import {AccountEntity} from "../entities/account.entity";
 
 @EntityRepository(AccountHistoryEntity)
 export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
-
     async selectOne(account: AccountEntity, accountHistoryIdx: number): Promise<AccountHistoryEntity> {
         return await this.findOne({
             where: {account, idx: accountHistoryIdx}
