@@ -64,7 +64,7 @@ export class AccountHistoryCategoryController {
         return await this.accountHistoryCategoryService.create(memberInfo, body);
     }
 
-    @Patch('/:accountHistoryIdx(\\d+)')
+    @Patch('/:accountHistoryCategoryIdx(\\d+)')
     @UseInterceptors(AccountHistoryCategoryInterceptor)
     @ApiOperation({summary: '가계부 내역 카테고리 수정'})
     @ApiOkResponse({description: '가계부 내역 카테고리 수정 성공', type: ResponseBooleanType})
@@ -81,7 +81,7 @@ export class AccountHistoryCategoryController {
         return {result: true};
     }
 
-    @Delete('/:accountHistoryIdx(\\d+)')
+    @Delete('/:accountHistoryCategoryIdx(\\d+)')
     @UseInterceptors(AccountHistoryCategoryInterceptor)
     @ApiOperation({summary: '가계부 내역 카테고리 삭제'})
     @ApiOkResponse({description: '가계부 내역 카테고리 삭제 성공', type: ResponseBooleanType})

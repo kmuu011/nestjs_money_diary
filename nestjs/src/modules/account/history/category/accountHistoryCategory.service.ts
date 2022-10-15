@@ -7,6 +7,7 @@ import {AccountHistoryCategoryEntity} from "./entities/accountHistoryCategory.en
 import {CreateAccountHistoryCategoryDto} from "./dto/create-accountHistoryCategory-dto";
 import {UpdateAccountHistoryCategoryDto} from "./dto/update-accountHistoryCategory-dto";
 import {Message} from "../../../../../libs/message";
+import {createColor} from "../../../../../libs/utils";
 
 @Injectable()
 export class AccountHistoryCategoryService {
@@ -37,6 +38,7 @@ export class AccountHistoryCategoryService {
 
         accountHistoryCategory.dataMigration(createAccountHistoryCategoryDto);
         accountHistoryCategory.member = member;
+        accountHistoryCategory.color = createColor();
 
         return await this.accountHistoryCategoryRepository
             .createAccountHistoryCategory(

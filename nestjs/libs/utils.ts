@@ -1,5 +1,8 @@
 import {BaseEntity, Repository} from "typeorm";
 
+const ranStr = 'qwertyuiopasdfghjklzxcvbnm0123456789';
+const colorRangeStr = '1234567890abcdef';
+
 const textReplace = (data, key, from, to): void => {
     if (data[key] === undefined || data[key] === null) return;
 
@@ -8,8 +11,8 @@ const textReplace = (data, key, from, to): void => {
     } else if (data[key].constructor === String) {
         data[key] = data[key].toString().replace(from, to);
     }
-};
 
+};
 const dataSortForTextReplace = (data, from, to): void => {
     if (data === undefined) return;
 
@@ -23,9 +26,8 @@ const dataSortForTextReplace = (data, from, to): void => {
             textReplace(data, k, from, to);
         }
     }
-};
 
-const ranStr = 'qwertyuiopasdfghjklzxcvbnm0123456789';
+};
 
 export const activeQuestionMark = (data): void => {
     dataSortForTextReplace(data, /\？/g, '?');
@@ -35,7 +37,7 @@ export const deActiveQuestionMark = (data): void => {
     dataSortForTextReplace(data, /\?/g, '？');
 }
 
-export const createRandomString = (length?: number) => {
+export const createRandomString = (length?: number): string => {
     length = length || 32;
 
     let ranString = '';
@@ -86,5 +88,15 @@ export const getUpdateObject = <T>(keys: string[], entity: T, includeUpdateAt: b
     }
 
     return obj;
+}
+
+export const createColor = (): string => {
+    let color: string = '';
+
+    for(let i=0 ; i<6 ; i++){
+        color += colorRangeStr[Math.floor(Math.random()*colorRangeStr.length)];
+    }
+
+    return color;
 }
 

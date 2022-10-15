@@ -1,17 +1,16 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {INestApplication} from '@nestjs/common';
 import * as request from 'supertest';
-import {MemberEntity} from "../../../../src/modules/member/entities/member.entity";
-import {getSavedMember} from "../../../modules/member/member";
-import {AppModule} from "../../../../dist/src/app.module";
-import {AccountEntity} from "../../../../src/modules/account/entities/account.entity";
-import {getSavedAccount} from "../../../modules/account/account";
-import {AccountHistoryEntity} from "../../../../src/modules/account/history/entities/accountHistory.entity";
+import {MemberEntity} from "../../../../../src/modules/member/entities/member.entity";
+import {getSavedMember} from "../../../../modules/member/member";
+import {
+    AccountHistoryCategoryEntity
+} from "../../../../../src/modules/account/history/category/entities/accountHistoryCategory.entity";
+import {AppModule} from "../../../../../src/app.module";
 
-describe('AccountHistoryController (e2e)', () => {
+describe('AccountHistoryCategoryController (e2e)', () => {
     const savedMemberInfo: MemberEntity = getSavedMember();
-    const savedAccountInfo: AccountEntity = getSavedAccount();
-    let createdAccountHistoryInfo: AccountHistoryEntity;
+    let createdAccountHistoryCategoryInfo: AccountHistoryCategoryEntity;
     let app: INestApplication;
 
     beforeAll(async () => {
@@ -30,55 +29,47 @@ describe('AccountHistoryController (e2e)', () => {
         await app.close();
     });
 
-    describe('/account/:accountIdx/history', () => {
+    describe('/account/history/category', () => {
         it('/ (GET)', async () => {
             const response = await request(app.getHttpServer())
-                .get('/account/'+ savedAccountInfo.idx
-                    +'/history?page=1&count=10')
+                .get('/account/history/category?type=0')
                 .set('ip', '127.0.0.1')
                 .set('user-agent', 'test-agent')
                 .set('token-code', savedMemberInfo.tokenInfo.code)
                 .expect(200);
 
-
-            const { items, page, count, totalCount, last } = response.body;
-
-            expect(items !== undefined).toBeTruthy();
-            expect(page !== undefined).toBeTruthy();
-            expect(count !== undefined).toBeTruthy();
-            expect(totalCount !== undefined).toBeTruthy();
-            expect(last !== undefined).toBeTruthy();
+            const categoryList = response.body;
+            
+            expect(categoryList.constructor === Array).toBeTruthy();
         });
 
         it('/ (POST)', async () => {
             const response = await request(app.getHttpServer())
-                .post('/account/'+ savedAccountInfo.idx + '/history')
+                .post('/account/history/category')
                 .set('ip', '127.0.0.1')
                 .set('user-agent', 'test-agent')
                 .set('token-code', savedMemberInfo.tokenInfo.code)
                 .send({
-                    content: '순대국밥',
-                    amount: 20000,
+                    name: '식비',
                     type: 0
                 })
                 .expect(201);
 
-            createdAccountHistoryInfo = response.body;
+            createdAccountHistoryCategoryInfo = response.body;
         });
     });
 
-    describe('/account/:accountIdx/history/:accountHistoryIdx', () => {
+    describe('/account/history/category', () => {
         it('/ (PATCH)', async () => {
             const response = await request(app.getHttpServer())
-                .patch('/account/'+ savedAccountInfo.idx
-                    + '/history/' + createdAccountHistoryInfo.idx)
+                .patch('/account/history/category/' + createdAccountHistoryCategoryInfo.idx)
                 .set('ip', '127.0.0.1')
                 .set('user-agent', 'test-agent')
                 .set('token-code', savedMemberInfo.tokenInfo.code)
                 .send({
-                    content: '수정된 가계부 내역',
-                    amount: 10000,
-                    type: 0
+                    name: '용돈',
+                    type: 1,
+                    color: '555555'
                 })
                 .expect(200);
 
@@ -87,8 +78,7 @@ describe('AccountHistoryController (e2e)', () => {
 
         it('/ (DELETE)', async () => {
             const response = await request(app.getHttpServer())
-                .delete('/account/'+ savedAccountInfo.idx
-                    + '/history/' + createdAccountHistoryInfo.idx)
+                .delete('/account/history/category/' + createdAccountHistoryCategoryInfo.idx)
                 .set('ip', '127.0.0.1')
                 .set('user-agent', 'test-agent')
                 .set('token-code', savedMemberInfo.tokenInfo.code)
@@ -97,6 +87,5 @@ describe('AccountHistoryController (e2e)', () => {
             expect(response.body.result).toBeTruthy();
         });
     });
-
 
 });

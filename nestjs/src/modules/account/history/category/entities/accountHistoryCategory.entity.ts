@@ -49,14 +49,14 @@ export class AccountHistoryCategoryEntity extends BaseEntity {
     type: number = undefined;
 
     @IsString()
-    @Column({type: "varchar", comment: "색상"})
+    @Column({type: "varchar", length: 10, comment: "색상"})
     @ApiProperty({
         example: 'f1f1f1'
     })
     color: string = undefined;
 
     @IsString()
-    @Column({type: "varchar", comment: "카테고리 명"})
+    @Column({type: "varchar", length: 10, comment: "카테고리 명"})
     @ApiProperty({
         example: '식비'
     })

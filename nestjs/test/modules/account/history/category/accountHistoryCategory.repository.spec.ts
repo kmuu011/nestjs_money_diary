@@ -10,7 +10,10 @@ import {
 import {MemberEntity} from "../../../../../src/modules/member/entities/member.entity";
 import {getSavedMember} from "../../../member/member";
 import {typeOrmOptions} from "../../../../../config/config";
-import {getCreateAccountHistoryCategoryData, getSavedAccountHistoryCategory} from "./accountHistoryCategory";
+import {
+    getCreateAccountHistoryCategoryData,
+    getSavedAccountHistoryCategory,
+} from "./accountHistoryCategory";
 import {
     UpdateAccountHistoryCategoryDto
 } from "../../../../../src/modules/account/history/category/dto/update-accountHistoryCategory-dto";
@@ -44,7 +47,8 @@ describe('AccountHistoryCategory Repository', () => {
         if (!accountHistoryCategory) {
             await accountHistoryCategoryRepository
                 .createAccountHistoryCategory(
-                    undefined, savedAccountHistoryCategoryInfo
+                    undefined,
+                    savedAccountHistoryCategoryInfo
                 );
         }
 

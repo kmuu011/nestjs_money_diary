@@ -37,8 +37,8 @@ export class AccountHistoryCategoryRepository extends Repository<AccountHistoryC
 
     async updateAccountHistoryCategory(
         accountHistoryCategory: AccountHistoryCategoryEntity,
-        updateAccountHistoryCategoryDto: UpdateAccountHistoryCategoryDto)
-        : Promise<UpdateResult> {
+        updateAccountHistoryCategoryDto: UpdateAccountHistoryCategoryDto
+    ): Promise<UpdateResult> {
         const obj = getUpdateObject(
             ["name", "color", "type", "default"],
             updateAccountHistoryCategoryDto,
