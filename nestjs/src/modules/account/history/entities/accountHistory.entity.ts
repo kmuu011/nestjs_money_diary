@@ -2,7 +2,7 @@ import {BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGene
 import {IsDateString, IsNumber, IsString} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 import {AccountEntity} from "../../entities/account.entity";
-import {AccountHistoryCategoryEntity} from "../category/accountHistoryCategory.entity";
+import {AccountHistoryCategoryEntity} from "../category/entities/accountHistoryCategory.entity";
 
 @Entity({name: 'accountHistory'})
 export class AccountHistoryEntity extends BaseEntity {

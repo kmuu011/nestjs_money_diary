@@ -12,7 +12,7 @@ import {createToken, decodeToken, encryptPassword} from "../../../../libs/member
 import {TodoGroupEntity} from "../../todoGroup/entities/todoGroup.entity";
 import {ApiProperty} from "@nestjs/swagger";
 import {AccountEntity} from "../../account/entities/account.entity";
-import {AccountHistoryCategoryEntity} from "../../account/history/category/accountHistoryCategory.entity";
+import {AccountHistoryCategoryEntity} from "../../account/history/category/entities/accountHistoryCategory.entity";
 import {SaleKeywordEntity} from "../sale/keyword/entities/saleKeyword.entity";
 import {swagger} from "../../../../config/config";
 

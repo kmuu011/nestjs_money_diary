@@ -27,7 +27,7 @@ import * as validator from "../../../libs/validator";
 import {FileType, LoginResponseType, ResponseBooleanType} from "../../common/type/type";
 import {Message} from "../../../libs/message";
 import {ApiBody, ApiConsumes, ApiCreatedResponse, ApiHeader, ApiOperation, ApiOkResponse, ApiTags} from "@nestjs/swagger";
-import {memberAuthResponse} from "./swagger/customResponse";
+import {MemberAuthResponse} from "./swagger/customResponse";
 
 const duplicateCheckKeys = ['id', 'nickname', 'email'];
 
@@ -44,7 +44,7 @@ export class MemberController {
     @ApiOperation({ summary: 'tokenCode 체크', description: 'tokenCode가 유효한지 체크' })
     @ApiOkResponse({
         description: '토큰 코드 체크 완료', status: 200,
-        type: memberAuthResponse
+        type: MemberAuthResponse
     })
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     async auth(

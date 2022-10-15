@@ -1,7 +1,7 @@
 import {PickType} from "@nestjs/swagger";
 import {MemberEntity} from "../entities/member.entity";
 
-export class memberAuthResponse extends PickType(
+export class MemberAuthResponse extends PickType(
     MemberEntity,
     [
         'idx', 'id', 'nickname', 'email',

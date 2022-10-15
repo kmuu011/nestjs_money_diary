@@ -8,7 +8,7 @@ import {AccountEntity} from "../../../../src/modules/account/entities/account.en
 import {getSavedAccount} from "../../../modules/account/account";
 import {AccountHistoryEntity} from "../../../../src/modules/account/history/entities/accountHistory.entity";
 
-describe('AccountHistoryController (e2e)', () => {
+describe('AccountHistoryCategoryController (e2e)', () => {
     const savedMemberInfo: MemberEntity = getSavedMember();
     const savedAccountInfo: AccountEntity = getSavedAccount();
     let createdAccountHistoryInfo: AccountHistoryEntity;

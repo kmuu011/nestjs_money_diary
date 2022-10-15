@@ -1,8 +1,8 @@
 import {BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn} from "typeorm";
 import {IsDateString, IsNumber, IsString} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
-import {AccountHistoryEntity} from "../entities/accountHistory.entity";
-import {MemberEntity} from "../../../member/entities/member.entity";
+import {AccountHistoryEntity} from "../../entities/accountHistory.entity";
+import {MemberEntity} from "../../../../member/entities/member.entity";
 
 @Entity({name: 'accountHistoryCategory'})
 export class AccountHistoryCategoryEntity extends BaseEntity {
@@ -32,10 +32,10 @@ export class AccountHistoryCategoryEntity extends BaseEntity {
 
     @IsNumber()
     @Column({
-            type: "tinyint",
-            comment: "고정 여부 (1: 회원가입시 자동생성된 카테고리)"
-        }
-    )
+        type: "tinyint",
+        comment: "고정 여부 (1: 회원가입시 자동생성된 카테고리)",
+        default: 0
+    })
     @ApiProperty({
         example: 1
     })

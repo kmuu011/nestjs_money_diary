@@ -26,7 +26,7 @@ import {ApiOkResponseSelectList} from "../../../common/swagger/customDecorator";
 import {swagger} from "../../../../config/config";
 import {AccountHistoryService} from "./accountHistory.service";
 
-@Controller('/account/:accountIdx(\\d+)/accountHistory')
+@Controller('/account/:accountIdx(\\d+)/history')
 @UseInterceptors(AccountInterceptor)
 @UseGuards(AuthGuard)
 @ApiTags('AccountHistory')
