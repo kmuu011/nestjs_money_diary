@@ -6,7 +6,7 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {Message} from "../../../libs/message";
 import {LoginMemberDto} from "./dto/login-member.dto";
 import {TokenRepository} from "./token/token.repository";
-import {createKey} from "../../../libs/utils";
+import {createColor, createKey} from "../../../libs/utils";
 
 import {writeFileSync, existsSync, unlinkSync} from "fs";
 
@@ -18,6 +18,20 @@ import {Connection, DeleteResult, UpdateResult} from "typeorm";
 import {TodoGroupEntity} from "../todoGroup/entities/todoGroup.entity";
 import {TodoGroupRepository} from "../todoGroup/todoGroup.repository";
 import {TokenEntity} from "./token/entities/token.entity";
+import {AccountHistoryCategoryRepository} from "../account/history/category/accountHistoryCategory.repository";
+import {AccountHistoryCategoryEntity} from "../account/history/category/entities/accountHistoryCategory.entity";
+
+const defaultCategoryList: {
+    name: string,
+    type: number
+}[] = [
+    {name: '기타', type: 0},
+    {name: '식비', type: 0},
+    {name: '교통비', type: 0},
+    {name: '기타', type: 1},
+    {name: '월급', type: 1},
+    {name: '저축', type: 1},
+]
 
 @Injectable()
 export class MemberService {
@@ -25,8 +39,10 @@ export class MemberService {
         @InjectRepository(MemberRepository) private readonly memberRepository: MemberRepository,
         @InjectRepository(TokenRepository) private readonly tokenRepository: TokenRepository,
         @InjectRepository(TodoGroupRepository) private readonly todoGroupRepository: TodoGroupRepository,
+        @InjectRepository(AccountHistoryCategoryRepository) private readonly accountHistoryCategoryRepository: AccountHistoryCategoryRepository,
         private readonly connection: Connection
-    ) {}
+    ) {
+    }
 
     async auth(headers): Promise<void> {
         const member: MemberEntity = new MemberEntity();
@@ -112,6 +128,22 @@ export class MemberService {
 
             if (!resultTodoGroup) {
                 throw Message.SERVER_ERROR;
+            }
+
+            for (const defaultCategory of defaultCategoryList) {
+                const category: AccountHistoryCategoryEntity = new AccountHistoryCategoryEntity();
+                category.dataMigration({
+                    ...defaultCategory,
+                    default: 1,
+                    color: createColor(),
+                    member
+                });
+
+                await this.accountHistoryCategoryRepository
+                    .createAccountHistoryCategory(
+                        queryRunner,
+                        category
+                    );
             }
 
             await queryRunner.commitTransaction();

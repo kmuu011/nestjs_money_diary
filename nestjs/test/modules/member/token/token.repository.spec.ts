@@ -1,7 +1,7 @@
 import {TokenRepository} from "../../../../src/modules/member/token/token.repository";
 import {MemberEntity} from "../../../../src/modules/member/entities/member.entity";
 import {Test, TestingModule} from "@nestjs/testing";
-import {getRepositoryToken, TypeOrmModule} from "@nestjs/typeorm";
+import {TypeOrmModule} from "@nestjs/typeorm";
 import {typeOrmOptions} from "../../../../config/config";
 import {TokenEntity} from "../../../../src/modules/member/token/entities/token.entity";
 import {getSavedMember} from "../member";
@@ -20,11 +20,7 @@ describe('Token Repository', () => {
                 ])
             ],
             providers: [
-                TokenRepository,
-                {
-                    provide: getRepositoryToken(TokenEntity),
-                    useValue: TokenRepository
-                }
+                TokenRepository
             ]
         }).compile();
 

@@ -1,6 +1,6 @@
 import {MemberEntity} from "../../../src/modules/member/entities/member.entity";
 import {Test, TestingModule} from "@nestjs/testing";
-import {getRepositoryToken, TypeOrmModule} from "@nestjs/typeorm";
+import {TypeOrmModule} from "@nestjs/typeorm";
 import {staticPath, typeOrmOptions} from "../../../config/config";
 import {
     getCreateMemberData, getLoginMemberDto, getProfileImageData, getUpdateMemberDto,
@@ -18,9 +18,19 @@ import {FileType} from "../../../src/common/type/type";
 import Buffer from "buffer";
 import {existsSync, readFileSync} from "fs";
 import {DeleteResult} from "typeorm";
+import {
+    AccountHistoryCategoryRepository
+} from "../../../src/modules/account/history/category/accountHistoryCategory.repository";
+import {
+    AccountHistoryCategoryService
+} from "../../../src/modules/account/history/category/accountHistoryCategory.service";
+import {
+    AccountHistoryCategoryEntity
+} from "../../../src/modules/account/history/category/entities/accountHistoryCategory.entity";
 
 describe('Member Service', () => {
     let memberService: MemberService;
+    let accountHistoryCategoryService: AccountHistoryCategoryService;
     let savedMemberInfo: MemberEntity;
     let createdMemberInfo: MemberEntity;
     let profileImgKey: string;
@@ -32,19 +42,18 @@ describe('Member Service', () => {
                 TypeOrmModule.forFeature([
                     MemberRepository,
                     TokenRepository,
-                    TodoGroupRepository
+                    TodoGroupRepository,
+                    AccountHistoryCategoryRepository,
                 ])
             ],
             providers: [
                 MemberService,
-                {
-                    provide: getRepositoryToken(MemberEntity),
-                    useValue: MemberService
-                }
+                AccountHistoryCategoryService
             ]
         }).compile()
 
-        memberService = module.get<MemberService>(MemberService)
+        memberService = module.get<MemberService>(MemberService);
+        accountHistoryCategoryService = module.get<AccountHistoryCategoryService>(AccountHistoryCategoryService);
     });
 
     describe('login()', () => {
@@ -63,7 +72,14 @@ describe('Member Service', () => {
 
             createdMemberInfo = await memberService.signUp(createMemberDto);
 
+            const outcomeCategoryList: AccountHistoryCategoryEntity[] =
+                await accountHistoryCategoryService.selectList(createdMemberInfo, 0);
+            const incomeCategoryList: AccountHistoryCategoryEntity[] =
+                await accountHistoryCategoryService.selectList(createdMemberInfo, 1);
+
             expect(createdMemberInfo instanceof MemberEntity).toBeTruthy();
+            expect(outcomeCategoryList.length === 3).toBeTruthy();
+            expect(incomeCategoryList.length === 3).toBeTruthy();
         });
     });
 
