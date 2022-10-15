@@ -44,7 +44,7 @@ export class AccountHistoryService {
                 .selectOne(account.member, createAccountHistoryDto.accountHistoryCategoryIdx);
 
         if(!categoryInfo){
-            throw Message.NOT_EXIST('accountHistoryCategory');
+            throw Message.NOT_EXIST('category');
         }
 
         const queryRunner = this.connection.createQueryRunner();
