@@ -38,7 +38,6 @@ export class AccountHistoryCategoryController {
         type: [AccountHistoryCategoryEntity]
     })
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
-    @ApiParam({type: 'number', name: 'accountIdx'})
     async selectAccountHistoryCategoryList(
         @Req() req: Request,
         @Query() query: SelectAccountHistoryCategoryDto
@@ -54,7 +53,6 @@ export class AccountHistoryCategoryController {
     @ApiOperation({summary: '가계부 내역 카테고리 등록'})
     @ApiCreatedResponse({description: '가계부 내역 카테고리 등록 성공', type: AccountHistoryCategoryEntity})
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
-    @ApiParam({type: 'number', name: 'accountIdx'})
     async createAccountHistoryCategory(
         @Req() req: Request,
         @Body() body: CreateAccountHistoryCategoryDto
