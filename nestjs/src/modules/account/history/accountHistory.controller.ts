@@ -12,7 +12,6 @@ import {
 import {AuthGuard} from "../../../common/guard/auth.guard";
 import {Request} from "express";
 import {AccountService} from "../account.service";
-import {SelectQueryDto} from "../../../common/dto/select-query-dto";
 import {AccountEntity} from "../entities/account.entity";
 import {CreateAccountHistoryDto} from "./dto/create-accountHistory-dto";
 import {AccountHistoryEntity} from "./entities/accountHistory.entity";
@@ -25,6 +24,7 @@ import {ApiCreatedResponse, ApiHeader, ApiOkResponse, ApiOperation, ApiParam, Ap
 import {ApiOkResponseSelectList} from "../../../common/swagger/customDecorator";
 import {swagger} from "../../../../config/config";
 import {AccountHistoryService} from "./accountHistory.service";
+import {SelectAccountHistoryDto} from "./dto/select-accountHistory-dto";
 
 @Controller('/account/:accountIdx(\\d+)/history')
 @UseInterceptors(AccountInterceptor)
@@ -43,12 +43,12 @@ export class AccountHistoryController {
     @ApiParam({type: 'number', name: 'accountIdx'})
     async selectAccountHistoryList(
         @Req() req: Request,
-        @Query() query: SelectQueryDto
+        @Query() query: SelectAccountHistoryDto
     ): Promise<SelectListResponseType<AccountHistoryEntity>> {
-        const {page, count} = query;
+        const {type, page, count, accountHistoryCategoryIdx} = query;
         const accountInfo: AccountEntity = req.locals.accountInfo;
 
-        return await this.accountHistoryService.selectList(accountInfo, page, count);
+        return await this.accountHistoryService.selectList(accountInfo, type, page, count, accountHistoryCategoryIdx);
     }
 
     @Post('/')

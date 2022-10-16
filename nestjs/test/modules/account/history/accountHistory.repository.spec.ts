@@ -9,7 +9,7 @@ import {AccountEntity} from "../../../../src/modules/account/entities/account.en
 import {AccountHistoryEntity} from "../../../../src/modules/account/history/entities/accountHistory.entity";
 import {AccountHistoryRepository} from "../../../../src/modules/account/history/accountHistory.repository";
 import {UpdateAccountHistoryDto} from "../../../../src/modules/account/history/dto/update-accountHistory-dto";
-import {savedAccountHistoryCategoryData} from "./category/accountHistoryCategory";
+import {getSavedAccountHistoryCategory, savedAccountHistoryCategoryData} from "./category/accountHistoryCategory";
 
 describe('AccountHistory Repository', () => {
     const savedAccountInfo: AccountEntity = getSavedAccount();
@@ -47,7 +47,9 @@ describe('AccountHistory Repository', () => {
 
     describe('selectOne()', () => {
         it('가계부 내역 상세 조회', async () => {
-            const result: AccountHistoryEntity = await accountHistoryRepository.selectOne(savedAccountInfo, savedAccountHistoryInfo.idx);
+            const result: AccountHistoryEntity =
+                await accountHistoryRepository
+                    .selectOne(savedAccountInfo, savedAccountHistoryInfo.idx);
 
             expect(result instanceof AccountHistoryEntity).toBeTruthy();
         });
@@ -55,7 +57,9 @@ describe('AccountHistory Repository', () => {
 
     describe('selectList()', () => {
         it('가계부 내역 목록 조회', async () => {
-            const result: [AccountHistoryEntity[], number] = await accountHistoryRepository.selectList(savedAccountInfo, 1, 10);
+            const result: [AccountHistoryEntity[], number] =
+                await accountHistoryRepository
+                    .selectList(savedAccountInfo, 0, 1, 10, getSavedAccountHistoryCategory());
 
             expect(result[0].every(v => v instanceof AccountHistoryEntity)).toBeTruthy();
             expect(typeof result[1] === "number").toBeTruthy();
@@ -66,25 +70,41 @@ describe('AccountHistory Repository', () => {
         it('가계부 내역 등록', async () => {
             const accountHistory: AccountHistoryEntity = getCreateAccountHistoryEntity();
 
-            const result: AccountHistoryEntity = await accountHistoryRepository
+            const createResult: AccountHistoryEntity = await accountHistoryRepository
                 .createAccountHistory(
                     undefined,
                     accountHistory
                 );
 
-            expect(result instanceof AccountHistoryEntity).toBeTruthy();
+            expect(createResult instanceof AccountHistoryEntity).toBeTruthy();
+            expect(Date.now() - new Date(createResult.createdAt).getTime()).toBeTruthy();
 
-            createdAccountHistoryInfo = result;
+            const fixedAt: string = '2021.06.06'
+
+            accountHistory.createdAt = new Date(fixedAt).toISOString();
+
+            const createFixedTimeResult: AccountHistoryEntity = await accountHistoryRepository
+                .createAccountHistory(
+                    undefined,
+                    accountHistory
+                );
+
+            expect(new Date(createFixedTimeResult.createdAt).getTime() === new Date(fixedAt).getTime()).toBeTruthy();
+
+            createdAccountHistoryInfo = createResult;
         });
     });
 
     describe('updateAccountHistory()', () => {
         it('가계부 내역 수정', async () => {
+            const fixedAt: string = '2021.01.01';
+
             const updateAccountHistoryDto: UpdateAccountHistoryDto = {
                 content: '수정된 가계부 내역 내용',
                 amount: 10000,
                 type: 1,
-                accountHistoryCategoryIdx: savedAccountHistoryCategoryData.idx
+                accountHistoryCategoryIdx: savedAccountHistoryCategoryData.idx,
+                createdAt: new Date(fixedAt).toISOString()
             };
 
             const updateResult: UpdateResult
@@ -96,6 +116,10 @@ describe('AccountHistory Repository', () => {
             expect(updatedAccountHistory.content === updateAccountHistoryDto.content).toBeTruthy();
             expect(Number(updatedAccountHistory.amount) === updateAccountHistoryDto.amount).toBeTruthy();
             expect(updatedAccountHistory.type === updateAccountHistoryDto.type).toBeTruthy();
+            expect(
+                new Date(updatedAccountHistory.createdAt).getTime()
+                === new Date(updateAccountHistoryDto.createdAt).getTime()
+            ).toBeTruthy();
         });
     });
 

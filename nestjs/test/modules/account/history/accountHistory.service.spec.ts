@@ -60,7 +60,8 @@ describe('AccountHistory Service', () => {
     describe('selectList()', () => {
         it('가계부 내역 리스트 조회', async () => {
             const accountHistoryList: SelectListResponseType<AccountHistoryEntity>
-                = await accountHistoryService.selectList(savedAccountInfo, 1, 10);
+                = await accountHistoryService
+                .selectList(savedAccountInfo, 0, 1, 10, savedAccountHistoryCategoryData.idx);
 
             expect(accountHistoryList.items.every(t => t instanceof AccountHistoryEntity)).toBeTruthy();
         });
@@ -68,15 +69,19 @@ describe('AccountHistory Service', () => {
 
     describe('create()', () => {
         it('가계부 내역 등록', async () => {
+            const fixedAt: string = '2021.03.06';
+
             const createAccountHistoryDto: CreateAccountHistoryDto = getCreateAccountHistoryDto();
 
-            const insertResult: AccountHistoryEntity
+            const createResult: AccountHistoryEntity
                 = await accountHistoryService.create(
                 savedAccountInfo,
                 createAccountHistoryDto
             );
 
-            createdAccountHistoryInfo = insertResult;
+            expect(Date.now() - new Date(createResult.createdAt).getTime()).toBeTruthy();
+
+            createdAccountHistoryInfo = createResult;
 
             const updatedAccountInfo: AccountEntity
                 = await accountService.selectOne(savedAccountInfo.member, savedAccountInfo.idx);
@@ -84,22 +89,37 @@ describe('AccountHistory Service', () => {
             const accountIncomeOutcome: AccountIncomeOutcomeType
                 = await accountService.selectIncomeOutcome(undefined, savedAccountInfo);
 
-            expect(insertResult instanceof AccountHistoryEntity).toBeTruthy();
-
+            expect(createResult instanceof AccountHistoryEntity).toBeTruthy();
             expect(
                 Number(updatedAccountInfo.totalAmount) ===
                 Number(accountIncomeOutcome.income) - Number(accountIncomeOutcome.outcome)
             ).toBeTruthy();
+
+            createAccountHistoryDto.createdAt = new Date(fixedAt).toISOString();
+
+            const createFixedTimeResult: AccountHistoryEntity = await accountHistoryService
+                .create(
+                    savedAccountInfo,
+                    createAccountHistoryDto
+                )
+
+            expect(
+                new Date(createFixedTimeResult.createdAt).getTime()
+                === new Date(createAccountHistoryDto.createdAt).getTime()
+            )
         });
     });
 
     describe('update()', () => {
         it('가계부 내역 수정', async () => {
+            const fixedAt: string = '2021.01.01';
+
             const updateAccountHistoryDto: UpdateAccountHistoryDto = {
                 content: "수정된 가계부 내역 내용",
                 amount: 10000,
                 type: 1,
-                accountHistoryCategoryIdx: savedAccountHistoryCategoryData.idx
+                accountHistoryCategoryIdx: savedAccountHistoryCategoryData.idx,
+                createdAt: new Date(fixedAt).toISOString()
             };
 
             const updateResult: UpdateResult
@@ -124,6 +144,11 @@ describe('AccountHistory Service', () => {
             expect(
                 Number(updatedAccountInfo.totalAmount) ===
                 Number(accountIncomeOutcome.income) - Number(accountIncomeOutcome.outcome)
+            ).toBeTruthy();
+
+            expect(
+                new Date(updatedAccountHistory.createdAt).getTime()
+                === new Date(updateAccountHistoryDto.createdAt).getTime()
             ).toBeTruthy();
         });
     });

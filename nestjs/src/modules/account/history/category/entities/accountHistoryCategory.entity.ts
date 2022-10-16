@@ -3,10 +3,8 @@ import {
     Column,
     Entity,
     JoinColumn,
-    ManyToMany,
     ManyToOne,
     OneToMany,
-    OneToOne,
     PrimaryGeneratedColumn
 } from "typeorm";
 import {IsDateString, IsNumber, IsString} from "class-validator";

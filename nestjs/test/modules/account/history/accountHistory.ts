@@ -2,6 +2,7 @@ import {AccountHistoryEntity} from "../../../../src/modules/account/history/enti
 import {getSavedAccount} from "../account";
 import {getSavedAccountHistoryCategory} from "./category/accountHistoryCategory";
 import {CreateAccountHistoryDto} from "../../../../src/modules/account/history/dto/create-accountHistory-dto";
+import {SelectAccountHistoryDto} from "../../../../src/modules/account/history/dto/select-accountHistory-dto";
 
 const savedCategoryInfo = getSavedAccountHistoryCategory();
 const savedAccountInfo = getSavedAccount();
@@ -42,6 +43,16 @@ export const getCreateAccountHistoryDto = (): CreateAccountHistoryDto => {
         content: '테스트 가계부 내역 1',
         amount: 1000,
         accountHistoryCategoryIdx: savedCategoryInfo.idx,
-        type: 0
+        type: 0,
+        createdAt: undefined
+    }
+}
+
+export const getSelectAccountHistoryDto = (): SelectAccountHistoryDto => {
+    return {
+        page: 1,
+        count: 10,
+        type: 0,
+        accountHistoryCategoryIdx: savedCategoryInfo.idx
     }
 }

@@ -34,6 +34,11 @@ export class AccountHistoryEntity extends BaseEntity {
         }
     )
     @JoinColumn()
+    @ApiProperty({
+        example: {
+            idx: 1
+        }
+    })
     accountHistoryCategory: AccountHistoryCategoryEntity = undefined;
 
     @IsNumber()
