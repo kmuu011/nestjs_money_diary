@@ -47,7 +47,9 @@ describe('AccountHistory Repository', () => {
 
     describe('selectOne()', () => {
         it('가계부 내역 상세 조회', async () => {
-            const result: AccountHistoryEntity = await accountHistoryRepository.selectOne(savedAccountInfo, savedAccountHistoryInfo.idx);
+            const result: AccountHistoryEntity =
+                await accountHistoryRepository
+                    .selectOne(savedAccountInfo, savedAccountHistoryInfo.idx);
 
             expect(result instanceof AccountHistoryEntity).toBeTruthy();
         });
@@ -55,7 +57,9 @@ describe('AccountHistory Repository', () => {
 
     describe('selectList()', () => {
         it('가계부 내역 목록 조회', async () => {
-            const result: [AccountHistoryEntity[], number] = await accountHistoryRepository.selectList(savedAccountInfo, 1, 10);
+            const result: [AccountHistoryEntity[], number] =
+                await accountHistoryRepository
+                    .selectList(savedAccountInfo, 0, 1, 10);
 
             expect(result[0].every(v => v instanceof AccountHistoryEntity)).toBeTruthy();
             expect(typeof result[1] === "number").toBeTruthy();

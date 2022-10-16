@@ -2,6 +2,7 @@ import {AccountHistoryEntity} from "../../../../src/modules/account/history/enti
 import {getSavedAccount} from "../account";
 import {getSavedAccountHistoryCategory} from "./category/accountHistoryCategory";
 import {CreateAccountHistoryDto} from "../../../../src/modules/account/history/dto/create-accountHistory-dto";
+import {SelectAccountHistoryDto} from "../../../../src/modules/account/history/dto/select-accountHistory-dto";
 
 const savedCategoryInfo = getSavedAccountHistoryCategory();
 const savedAccountInfo = getSavedAccount();
@@ -44,5 +45,13 @@ export const getCreateAccountHistoryDto = (): CreateAccountHistoryDto => {
         accountHistoryCategoryIdx: savedCategoryInfo.idx,
         type: 0,
         createdAt: undefined
+    }
+}
+
+export const getSelectAccountHistoryDto = (): SelectAccountHistoryDto => {
+    return {
+        page: 1,
+        count: 10,
+        type: 0
     }
 }

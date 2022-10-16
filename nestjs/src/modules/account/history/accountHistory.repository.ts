@@ -12,25 +12,39 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
         });
     }
 
-    async selectList(account: AccountEntity, page?: number, count?: number): Promise<[AccountHistoryEntity[], number]> {
-        let query = this.createQueryBuilder('t');
+    async selectList(account: AccountEntity, type?: number, page?: number, count?: number): Promise<[AccountHistoryEntity[], number]> {
+        let query = this.createQueryBuilder('h');
+        const where: {
+            account: AccountEntity,
+            type?: number
+        } = {account};
 
         if (page && count) {
             query = query
-                .skip((page - 1)*count)
+                .skip((page - 1) * count)
                 .take(count);
         }
 
+        if (type) {
+            where.type = type;
+        }
+
         return await query
-            .where({account})
-            .orderBy('createdAt', 'DESC')
+            .where(where)
+            .leftJoinAndSelect('h.accountHistoryCategory', 'c')
+            .select([
+                'h.idx', 'h.content', 'h.amount', 'h.type',
+                'c.idx',
+                'h.createdAt', 'h.updatedAt'
+            ])
+            .orderBy('h.createdAt', 'DESC')
             .getManyAndCount();
     }
 
     async createAccountHistory(queryRunner: QueryRunner, accountHistory: AccountHistoryEntity): Promise<AccountHistoryEntity> {
-        if(queryRunner){
+        if (queryRunner) {
             return await queryRunner.manager.save(accountHistory);
-        }else {
+        } else {
             return await this.save(accountHistory)
         }
     }

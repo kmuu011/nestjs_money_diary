@@ -4,7 +4,6 @@ import {createRequest} from "node-mocks-http";
 import {Request} from "express";
 import {typeOrmOptions} from "../../../../config/config";
 import {ResponseBooleanType, SelectListResponseType} from "../../../../src/common/type/type";
-import {getSelectQueryDto} from "../../../common/const";
 import {TokenRepository} from "../../../../src/modules/member/token/token.repository";
 import {getSavedAccount} from "../account";
 import {AccountHistoryController} from "../../../../src/modules/account/history/accountHistory.controller";
@@ -15,12 +14,15 @@ import {AccountRepository} from "../../../../src/modules/account/account.reposit
 import {AccountHistoryRepository} from "../../../../src/modules/account/history/accountHistory.repository";
 import {AccountService} from "../../../../src/modules/account/account.service";
 import {CreateAccountHistoryDto} from "../../../../src/modules/account/history/dto/create-accountHistory-dto";
-import {getCreateAccountHistoryDto} from "./accountHistory";
+import {getCreateAccountHistoryDto, getSelectAccountHistoryDto} from "./accountHistory";
 import {UpdateAccountHistoryDto} from "../../../../src/modules/account/history/dto/update-accountHistory-dto";
 import {
     AccountHistoryCategoryRepository
 } from "../../../../src/modules/account/history/category/accountHistoryCategory.repository";
 import {savedAccountHistoryCategoryData} from "./category/accountHistoryCategory";
+import {
+    AccountHistoryCategoryEntity
+} from "../../../../src/modules/account/history/category/entities/accountHistoryCategory.entity";
 
 describe('AccountHistory Controller', () => {
     let accountHistoryController: AccountHistoryController;
@@ -59,9 +61,10 @@ describe('AccountHistory Controller', () => {
             };
 
             const response: SelectListResponseType<AccountHistoryEntity>
-                = await accountHistoryController.selectAccountHistoryList(req, getSelectQueryDto());
+                = await accountHistoryController.selectAccountHistoryList(req, getSelectAccountHistoryDto());
 
             expect(response.items.every(v => v instanceof AccountHistoryEntity)).toBeTruthy();
+            expect(response.items.every(v => v.accountHistoryCategory instanceof AccountHistoryCategoryEntity)).toBeTruthy();
         });
     });
 

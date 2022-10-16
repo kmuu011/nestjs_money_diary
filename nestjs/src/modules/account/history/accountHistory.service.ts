@@ -26,8 +26,8 @@ export class AccountHistoryService {
         return await this.accountHistoryRepository.selectOne(account, accountHistoryIdx);
     }
 
-    async selectList(account: AccountEntity, page: number, count: number): Promise<SelectListResponseType<AccountHistoryEntity>> {
-        const result = await this.accountHistoryRepository.selectList(account, page, count);
+    async selectList(account: AccountEntity, type: number, page: number, count: number): Promise<SelectListResponseType<AccountHistoryEntity>> {
+        const result = await this.accountHistoryRepository.selectList(account, type, page, count);
 
         return {
             items: result[0],
