@@ -42,6 +42,7 @@ export const getCreateAccountHistoryDto = (): CreateAccountHistoryDto => {
         content: '테스트 가계부 내역 1',
         amount: 1000,
         accountHistoryCategoryIdx: savedCategoryInfo.idx,
-        type: 0
+        type: 0,
+        createdAt: undefined
     }
 }

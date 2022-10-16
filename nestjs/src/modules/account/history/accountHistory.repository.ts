@@ -36,7 +36,7 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
     }
 
     async updateAccountHistory(accountHistory: AccountHistoryEntity, updateAccountHistoryDto: UpdateAccountHistoryDto): Promise<UpdateResult> {
-        const obj = getUpdateObject(["content", "amount", "type"], updateAccountHistoryDto, true);
+        const obj = getUpdateObject(["content", "amount", "type", "createdAt"], updateAccountHistoryDto, true);
 
         return await this.update(accountHistory.idx, obj);
     }
