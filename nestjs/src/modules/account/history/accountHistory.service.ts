@@ -26,8 +26,21 @@ export class AccountHistoryService {
         return await this.accountHistoryRepository.selectOne(account, accountHistoryIdx);
     }
 
-    async selectList(account: AccountEntity, type: number, page: number, count: number): Promise<SelectListResponseType<AccountHistoryEntity>> {
-        const result = await this.accountHistoryRepository.selectList(account, type, page, count);
+    async selectList(
+        account: AccountEntity, type: number, page: number, count: number,
+        accountHistoryCategoryIdx?: number
+    ): Promise<SelectListResponseType<AccountHistoryEntity>> {
+        let categoryInfo;
+        if (accountHistoryCategoryIdx) {
+            categoryInfo = await this.accountHistoryCategoryRepository
+                .selectOne(account.member, accountHistoryCategoryIdx);
+
+            if (!categoryInfo) {
+                throw Message.NOT_EXIST('category');
+            }
+        }
+
+        const result = await this.accountHistoryRepository.selectList(account, type, page, count, categoryInfo);
 
         return {
             items: result[0],
@@ -43,7 +56,7 @@ export class AccountHistoryService {
             await this.accountHistoryCategoryRepository
                 .selectOne(account.member, createAccountHistoryDto.accountHistoryCategoryIdx);
 
-        if(!categoryInfo){
+        if (!categoryInfo) {
             throw Message.NOT_EXIST('category');
         }
 

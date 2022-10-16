@@ -3,6 +3,7 @@ import {AccountHistoryEntity} from "./entities/accountHistory.entity";
 import {getUpdateObject} from "../../../../libs/utils";
 import {UpdateAccountHistoryDto} from "./dto/update-accountHistory-dto";
 import {AccountEntity} from "../entities/account.entity";
+import {AccountHistoryCategoryEntity} from "./category/entities/accountHistoryCategory.entity";
 
 @EntityRepository(AccountHistoryEntity)
 export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
@@ -12,11 +13,15 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
         });
     }
 
-    async selectList(account: AccountEntity, type?: number, page?: number, count?: number): Promise<[AccountHistoryEntity[], number]> {
+    async selectList(
+        account: AccountEntity, type?: number, page?: number, count?: number,
+        category?: AccountHistoryCategoryEntity
+    ): Promise<[AccountHistoryEntity[], number]> {
         let query = this.createQueryBuilder('h');
         const where: {
             account: AccountEntity,
-            type?: number
+            type?: number,
+            accountHistoryCategory?: AccountHistoryCategoryEntity
         } = {account};
 
         if (page && count) {
@@ -27,6 +32,10 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
 
         if (type) {
             where.type = type;
+        }
+
+        if(category){
+            where.accountHistoryCategory = category;
         }
 
         return await query

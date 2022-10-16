@@ -60,7 +60,8 @@ describe('AccountHistory Service', () => {
     describe('selectList()', () => {
         it('가계부 내역 리스트 조회', async () => {
             const accountHistoryList: SelectListResponseType<AccountHistoryEntity>
-                = await accountHistoryService.selectList(savedAccountInfo, 0, 1, 10);
+                = await accountHistoryService
+                .selectList(savedAccountInfo, 0, 1, 10, savedAccountHistoryCategoryData.idx);
 
             expect(accountHistoryList.items.every(t => t instanceof AccountHistoryEntity)).toBeTruthy();
         });

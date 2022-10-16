@@ -45,10 +45,10 @@ export class AccountHistoryController {
         @Req() req: Request,
         @Query() query: SelectAccountHistoryDto
     ): Promise<SelectListResponseType<AccountHistoryEntity>> {
-        const {type, page, count} = query;
+        const {type, page, count, accountHistoryCategoryIdx} = query;
         const accountInfo: AccountEntity = req.locals.accountInfo;
 
-        return await this.accountHistoryService.selectList(accountInfo, type, page, count);
+        return await this.accountHistoryService.selectList(accountInfo, type, page, count, accountHistoryCategoryIdx);
     }
 
     @Post('/')

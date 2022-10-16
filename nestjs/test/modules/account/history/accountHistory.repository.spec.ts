@@ -9,7 +9,7 @@ import {AccountEntity} from "../../../../src/modules/account/entities/account.en
 import {AccountHistoryEntity} from "../../../../src/modules/account/history/entities/accountHistory.entity";
 import {AccountHistoryRepository} from "../../../../src/modules/account/history/accountHistory.repository";
 import {UpdateAccountHistoryDto} from "../../../../src/modules/account/history/dto/update-accountHistory-dto";
-import {savedAccountHistoryCategoryData} from "./category/accountHistoryCategory";
+import {getSavedAccountHistoryCategory, savedAccountHistoryCategoryData} from "./category/accountHistoryCategory";
 
 describe('AccountHistory Repository', () => {
     const savedAccountInfo: AccountEntity = getSavedAccount();
@@ -59,7 +59,7 @@ describe('AccountHistory Repository', () => {
         it('가계부 내역 목록 조회', async () => {
             const result: [AccountHistoryEntity[], number] =
                 await accountHistoryRepository
-                    .selectList(savedAccountInfo, 0, 1, 10);
+                    .selectList(savedAccountInfo, 0, 1, 10, getSavedAccountHistoryCategory());
 
             expect(result[0].every(v => v instanceof AccountHistoryEntity)).toBeTruthy();
             expect(typeof result[1] === "number").toBeTruthy();
