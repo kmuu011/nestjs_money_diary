@@ -34,7 +34,7 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
             where.type = type;
         }
 
-        if(category){
+        if (category) {
             where.accountHistoryCategory = category;
         }
 
@@ -46,7 +46,7 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
                 'c.idx',
                 'h.createdAt', 'h.updatedAt'
             ])
-            .orderBy('h.createdAt', 'DESC')
+            .orderBy('h.idx', 'DESC')
             .getManyAndCount();
     }
 

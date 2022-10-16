@@ -19,8 +19,7 @@ export class AccountHistoryService {
         @InjectRepository(AccountHistoryCategoryRepository) private readonly accountHistoryCategoryRepository: AccountHistoryCategoryRepository,
         private readonly accountService: AccountService,
         private readonly connection: Connection
-    ) {
-    }
+    ) {}
 
     async selectOne(account: AccountEntity, accountHistoryIdx: number): Promise<AccountHistoryEntity> {
         return await this.accountHistoryRepository.selectOne(account, accountHistoryIdx);

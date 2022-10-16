@@ -7,10 +7,11 @@ export class SelectAccountHistoryDto extends PickType(
     ['page', 'count'] as const
 ) {
     @IsNumber()
+    @IsOptional()
     @ApiPropertyOptional({
         example: 0
     })
-    type: number = 1;
+    type: number;
 
     @IsOptional()
     @IsNumber()
