@@ -23,9 +23,9 @@ export class AccountService {
             splicedAccountList.splice(accountList.findIndex(v => v.idx === account.idx), 1);
 
             if (order === 1) {
-                splicedAccountList.push(account);
-            } else if (order === accountList.length) {
                 splicedAccountList.unshift(account);
+            } else if (order === accountList.length) {
+                splicedAccountList.push(account);
             } else {
                 const targetIdx = accountList.findIndex(v => v.order === order);
 
@@ -38,7 +38,7 @@ export class AccountService {
         }
 
         for (let i = 0; i < splicedAccountList.length; i++) {
-            splicedAccountList[i].order = splicedAccountList.length - i;
+            splicedAccountList[i].order = i+1;
 
             const updateResult: UpdateResult = await this.accountRepository.updateAccount(undefined, splicedAccountList[i]);
 
