@@ -29,7 +29,7 @@ export class AccountRepository extends Repository<AccountEntity> {
 
         return await query
             .where({member})
-            .orderBy('`order`', "DESC")
+            .orderBy('`order`', "ASC")
             .getManyAndCount();
     }
 
