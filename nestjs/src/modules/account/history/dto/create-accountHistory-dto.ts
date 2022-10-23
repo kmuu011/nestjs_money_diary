@@ -1,6 +1,6 @@
 import {ApiProperty, ApiPropertyOptional, PickType} from "@nestjs/swagger";
 import {AccountHistoryEntity} from "../entities/accountHistory.entity";
-import {IsDateString, IsNumber} from "class-validator";
+import {IsDateString, IsNumber, IsOptional} from "class-validator";
 
 export class CreateAccountHistoryDto extends PickType(
     AccountHistoryEntity,
@@ -16,5 +16,6 @@ export class CreateAccountHistoryDto extends PickType(
     @ApiPropertyOptional({
         example: '2011-12-31T15:00:00.000Z'
     })
+    @IsOptional()
     createdAt: string;
 }
