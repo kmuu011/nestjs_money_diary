@@ -43,7 +43,7 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
             .leftJoinAndSelect('h.accountHistoryCategory', 'c')
             .select([
                 'h.idx', 'h.content', 'h.amount', 'h.type',
-                'c.idx',
+                'c.idx', 'c.name',
                 'h.createdAt', 'h.updatedAt'
             ])
             .orderBy('h.idx', 'DESC')

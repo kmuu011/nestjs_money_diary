@@ -36,7 +36,8 @@ export class AccountHistoryEntity extends BaseEntity {
     @JoinColumn()
     @ApiProperty({
         example: {
-            idx: 1
+            idx: 1,
+            name: "식비"
         }
     })
     accountHistoryCategory: AccountHistoryCategoryEntity = undefined;
