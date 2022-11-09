@@ -102,6 +102,21 @@ describe('AccountHistory Controller', () => {
         });
     });
 
+    describe('selectOneAccountHistory()', () => {
+        it('가계부 내역 상세 조회', async () => {
+            const req: Request = createRequest();
+
+            req.locals = {
+                accountHistoryInfo: createdAccountHistoryInfo
+            };
+
+            const response: AccountHistoryEntity
+                = await accountHistoryController.selectOneAccountHistory(req);
+
+            expect(response instanceof AccountHistoryEntity).toBeTruthy();
+        });
+    });
+
     describe('updateAccountHistory()', () => {
         it('가계부 내역 수정', async () => {
             const fixedAt: string = '2021.01.01';

@@ -8,9 +8,17 @@ import {AccountHistoryCategoryEntity} from "./category/entities/accountHistoryCa
 @EntityRepository(AccountHistoryEntity)
 export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
     async selectOne(account: AccountEntity, accountHistoryIdx: number): Promise<AccountHistoryEntity> {
-        return await this.findOne({
-            where: {account, idx: accountHistoryIdx}
-        });
+        const query = this.createQueryBuilder('h')
+            .where({account, idx: accountHistoryIdx})
+            .leftJoinAndSelect('h.accountHistoryCategory', 'c')
+            .select([
+                'h.idx', 'h.content', 'h.amount', 'h.type',
+                'c.idx', 'c.name',
+                'h.createdAt', 'h.updatedAt'
+            ])
+            .getOne();
+
+        return await query;
     }
 
     async selectList(
@@ -59,7 +67,18 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
     }
 
     async updateAccountHistory(accountHistory: AccountHistoryEntity, updateAccountHistoryDto: UpdateAccountHistoryDto): Promise<UpdateResult> {
-        const obj = getUpdateObject(["content", "amount", "type", "createdAt"], updateAccountHistoryDto, true);
+        const obj = getUpdateObject(
+            [
+                "content", "amount", "type", "accountHistoryCategory", "createdAt"
+            ],
+            {
+                ...updateAccountHistoryDto,
+                accountHistoryCategory: {idx: updateAccountHistoryDto.accountHistoryCategoryIdx}
+            },
+            true
+        );
+
+        console.log(obj)
 
         return await this.update(accountHistory.idx, obj);
     }

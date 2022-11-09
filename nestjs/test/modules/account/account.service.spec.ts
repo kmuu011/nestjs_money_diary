@@ -46,6 +46,7 @@ describe('Account Service', () => {
                 account.idx = i+33;
                 insertedDummyAccountList.push(await accountService.create(savedMemberInfo, account));
             }
+
             account.idx = 2;
 
             const accountStatus: SelectListResponseType<AccountEntity> =
@@ -59,7 +60,7 @@ describe('Account Service', () => {
             const orderChangedAccountList: SelectListResponseType<AccountEntity> =
                 await accountService.selectList(savedMemberInfo, 1, 100);
 
-            expect(orderChangedAccountList.items.findIndex(t => t.order === randomOrder) === totalCount-randomOrder).toBeTruthy();
+            expect(orderChangedAccountList.items.findIndex(t => t.order === randomOrder) === randomOrder-1).toBeTruthy();
 
             for(const t of insertedDummyAccountList){
                 await accountService.delete(savedMemberInfo, t);
