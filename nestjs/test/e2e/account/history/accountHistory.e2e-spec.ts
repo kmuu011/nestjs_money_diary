@@ -70,6 +70,18 @@ describe('AccountHistoryController (e2e)', () => {
     });
 
     describe('/account/:accountIdx/history/:accountHistoryIdx', () => {
+        it('/ (GET)', async () => {
+            const response = await request(app.getHttpServer())
+                .get('/account/'+ savedAccountInfo.idx
+                    + '/history/' + createdAccountHistoryInfo.idx)
+                .set('ip', '127.0.0.1')
+                .set('user-agent', 'test-agent')
+                .set('token-code', savedMemberInfo.tokenInfo.code)
+                .expect(200);
+
+            expect(response !== undefined).toBeTruthy();
+        });
+
         it('/ (PATCH)', async () => {
             const response = await request(app.getHttpServer())
                 .patch('/account/'+ savedAccountInfo.idx

@@ -65,6 +65,21 @@ export class AccountHistoryController {
         return await this.accountHistoryService.create(account, body);
     }
 
+    @Get('/:accountHistoryIdx(\\d+)')
+    @UseInterceptors(AccountHistoryInterceptor)
+    @ApiOperation({summary: '가계부 내역 상세 조회'})
+    @ApiOkResponse({description: '가계부 내역 상세 조회 성공', type: AccountHistoryEntity})
+    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
+    @ApiParam({type: 'number', name: 'accountIdx'})
+    @ApiParam({type: 'number', name: 'accountHistoryIdx'})
+    async selectOneAccountHistory(
+        @Req() req: Request
+    ): Promise<AccountHistoryEntity> {
+        const accountHistoryInfo: AccountHistoryEntity = req.locals.accountHistoryInfo;
+
+        return accountHistoryInfo;
+    }
+
     @Patch('/:accountHistoryIdx(\\d+)')
     @UseInterceptors(AccountHistoryInterceptor)
     @ApiOperation({summary: '가계부 내역 수정'})
