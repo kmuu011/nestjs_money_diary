@@ -49,6 +49,30 @@ export class SelectListResponseType<T> {
     last: number;
 }
 
+export class CursorSelectListResponseType<T> {
+    items: T[];
+
+    @ApiProperty({
+        example: 12
+    })
+    cursorIdx: number;
+
+    @ApiProperty({
+        example: 10
+    })
+    count: number;
+
+    @ApiProperty({
+        example: 32
+    })
+    totalCount: number;
+
+    @ApiProperty({
+        example: 4
+    })
+    last: number;
+}
+
 export interface LocalsType {
     memberInfo?: MemberEntity;
     todoGroupInfo?: TodoGroupEntity;

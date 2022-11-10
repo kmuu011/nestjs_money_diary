@@ -16,7 +16,7 @@ import {AccountEntity} from "../entities/account.entity";
 import {CreateAccountHistoryDto} from "./dto/create-accountHistory-dto";
 import {AccountHistoryEntity} from "./entities/accountHistory.entity";
 import {UpdateAccountHistoryDto} from "./dto/update-accountHistory-dto";
-import {ResponseBooleanType, SelectListResponseType} from "../../../common/type/type";
+import {CursorSelectListResponseType, ResponseBooleanType, SelectListResponseType} from "../../../common/type/type";
 
 import {AccountHistoryInterceptor} from "./accountHistory.interceptor";
 import {AccountInterceptor} from "../account.interceptor";
@@ -44,11 +44,11 @@ export class AccountHistoryController {
     async selectAccountHistoryList(
         @Req() req: Request,
         @Query() query: SelectAccountHistoryDto
-    ): Promise<SelectListResponseType<AccountHistoryEntity>> {
-        const {type, page, count, accountHistoryCategoryIdx} = query;
+    ): Promise<CursorSelectListResponseType<AccountHistoryEntity>> {
+        const {type, cursorIdx, count, accountHistoryCategoryIdx} = query;
         const accountInfo: AccountEntity = req.locals.accountInfo;
 
-        return await this.accountHistoryService.selectList(accountInfo, type, page, count, accountHistoryCategoryIdx);
+        return await this.accountHistoryService.selectList(accountInfo, type, cursorIdx, count, accountHistoryCategoryIdx);
     }
 
     @Post('/')

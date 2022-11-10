@@ -1,4 +1,13 @@
-import {DeleteResult, EntityRepository, QueryRunner, Repository, UpdateResult} from "typeorm";
+import {
+    DeleteResult,
+    EntityRepository,
+    FindOperator,
+    LessThan,
+    MoreThan,
+    QueryRunner,
+    Repository,
+    UpdateResult
+} from "typeorm";
 import {AccountHistoryEntity} from "./entities/accountHistory.entity";
 import {getUpdateObject} from "../../../../libs/utils";
 import {UpdateAccountHistoryDto} from "./dto/update-accountHistory-dto";
@@ -22,19 +31,20 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
     }
 
     async selectList(
-        account: AccountEntity, type?: number, page?: number, count?: number,
+        account: AccountEntity, type?: number, cursorIdx?: number, count?: number,
         category?: AccountHistoryCategoryEntity
     ): Promise<[AccountHistoryEntity[], number]> {
         let query = this.createQueryBuilder('h');
+
         const where: {
             account: AccountEntity,
             type?: number,
-            accountHistoryCategory?: AccountHistoryCategoryEntity
+            accountHistoryCategory?: AccountHistoryCategoryEntity,
+            idx?: FindOperator<number>
         } = {account};
 
-        if (page && count) {
+        if (count) {
             query = query
-                .skip((page - 1) * count)
                 .take(count);
         }
 
@@ -44,6 +54,10 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
 
         if (category) {
             where.accountHistoryCategory = category;
+        }
+
+        if (cursorIdx) {
+            where.idx = LessThan(cursorIdx);
         }
 
         return await query
@@ -77,8 +91,6 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
             },
             true
         );
-
-        console.log(obj)
 
         return await this.update(accountHistory.idx, obj);
     }

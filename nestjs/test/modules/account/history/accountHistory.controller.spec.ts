@@ -3,7 +3,11 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {createRequest} from "node-mocks-http";
 import {Request} from "express";
 import {typeOrmOptions} from "../../../../config/config";
-import {ResponseBooleanType, SelectListResponseType} from "../../../../src/common/type/type";
+import {
+    CursorSelectListResponseType,
+    ResponseBooleanType,
+    SelectListResponseType
+} from "../../../../src/common/type/type";
 import {TokenRepository} from "../../../../src/modules/member/token/token.repository";
 import {getSavedAccount} from "../account";
 import {AccountHistoryController} from "../../../../src/modules/account/history/accountHistory.controller";
@@ -60,7 +64,7 @@ describe('AccountHistory Controller', () => {
                 accountInfo: savedAccountInfo
             };
 
-            const response: SelectListResponseType<AccountHistoryEntity>
+            const response: CursorSelectListResponseType<AccountHistoryEntity>
                 = await accountHistoryController.selectAccountHistoryList(req, getSelectAccountHistoryDto());
 
             expect(response.items.every(v => v instanceof AccountHistoryEntity)).toBeTruthy();

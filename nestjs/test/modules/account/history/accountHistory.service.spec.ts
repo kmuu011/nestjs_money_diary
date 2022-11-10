@@ -2,7 +2,11 @@ import {getCreateAccountHistoryDto, getSavedAccountHistory} from "./accountHisto
 import {Test, TestingModule} from "@nestjs/testing";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {typeOrmOptions} from "../../../../config/config";
-import {AccountIncomeOutcomeType, SelectListResponseType} from "../../../../src/common/type/type";
+import {
+    AccountIncomeOutcomeType,
+    CursorSelectListResponseType,
+    SelectListResponseType
+} from "../../../../src/common/type/type";
 import {DeleteResult, UpdateResult} from "typeorm";
 import {getSavedAccount} from "../account";
 import {AccountEntity} from "../../../../src/modules/account/entities/account.entity";
@@ -59,9 +63,9 @@ describe('AccountHistory Service', () => {
 
     describe('selectList()', () => {
         it('가계부 내역 리스트 조회', async () => {
-            const accountHistoryList: SelectListResponseType<AccountHistoryEntity>
+            const accountHistoryList: CursorSelectListResponseType<AccountHistoryEntity>
                 = await accountHistoryService
-                .selectList(savedAccountInfo, 0, 1, 10, savedAccountHistoryCategoryData.idx);
+                .selectList(savedAccountInfo, 0, 0, 10, savedAccountHistoryCategoryData.idx);
 
             expect(accountHistoryList.items.every(t => t instanceof AccountHistoryEntity)).toBeTruthy();
         });
