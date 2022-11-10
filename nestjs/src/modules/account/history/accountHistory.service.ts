@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {SelectListResponseType} from "../../../common/type/type";
+import {CursorSelectListResponseType, SelectListResponseType} from "../../../common/type/type";
 import {AccountEntity} from "../entities/account.entity";
 import {CreateAccountHistoryDto} from "./dto/create-accountHistory-dto";
 import {UpdateAccountHistoryDto} from "./dto/update-accountHistory-dto";
@@ -26,9 +26,9 @@ export class AccountHistoryService {
     }
 
     async selectList(
-        account: AccountEntity, type: number, page: number, count: number,
+        account: AccountEntity, type: number, cursorIdx: number, count: number,
         accountHistoryCategoryIdx?: number
-    ): Promise<SelectListResponseType<AccountHistoryEntity>> {
+    ): Promise<CursorSelectListResponseType<AccountHistoryEntity>> {
         let categoryInfo;
         if (accountHistoryCategoryIdx) {
             categoryInfo = await this.accountHistoryCategoryRepository
@@ -39,11 +39,13 @@ export class AccountHistoryService {
             }
         }
 
-        const result = await this.accountHistoryRepository.selectList(account, type, page, count, categoryInfo);
+        if(cursorIdx === -1) cursorIdx = undefined;
+
+        const result = await this.accountHistoryRepository.selectList(account, type, cursorIdx, count, categoryInfo);
 
         return {
             items: result[0],
-            page,
+            cursorIdx,
             count,
             totalCount: result[1],
             last: Math.ceil(result[1] / count) || 1

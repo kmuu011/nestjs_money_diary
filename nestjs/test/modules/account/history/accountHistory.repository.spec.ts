@@ -59,7 +59,7 @@ describe('AccountHistory Repository', () => {
         it('가계부 내역 목록 조회', async () => {
             const result: [AccountHistoryEntity[], number] =
                 await accountHistoryRepository
-                    .selectList(savedAccountInfo, 0, 1, 10, getSavedAccountHistoryCategory());
+                    .selectList(savedAccountInfo, 0, 0, 10, getSavedAccountHistoryCategory());
 
             expect(result[0].every(v => v instanceof AccountHistoryEntity)).toBeTruthy();
             expect(typeof result[1] === "number").toBeTruthy();
