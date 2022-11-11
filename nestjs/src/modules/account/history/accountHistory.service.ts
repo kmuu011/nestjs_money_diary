@@ -26,7 +26,7 @@ export class AccountHistoryService {
     }
 
     async selectList(
-        account: AccountEntity, type: number, cursorIdx: number, count: number,
+        account: AccountEntity, type: number, cursor: number, count: number,
         accountHistoryCategoryIdx?: number
     ): Promise<CursorSelectListResponseType<AccountHistoryEntity>> {
         let categoryInfo;
@@ -39,13 +39,13 @@ export class AccountHistoryService {
             }
         }
 
-        if(cursorIdx === -1) cursorIdx = undefined;
+        if(cursor === -1) cursor = undefined;
 
-        const result = await this.accountHistoryRepository.selectList(account, type, cursorIdx, count, categoryInfo);
+        const result = await this.accountHistoryRepository.selectList(account, type, cursor, count, categoryInfo);
 
         return {
             items: result[0],
-            cursorIdx,
+            cursor,
             count,
             totalCount: result[1],
             last: Math.ceil(result[1] / count) || 1

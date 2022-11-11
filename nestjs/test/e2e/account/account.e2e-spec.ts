@@ -39,10 +39,10 @@ describe('AccountController (e2e)', () => {
                 .set('token-code', savedMemberInfo.tokenInfo.code)
                 .expect(200);
 
-            const { items, page, count, totalCount, last } = response.body;
+            const { items, cursor, count, totalCount, last } = response.body;
 
             expect(items !== undefined).toBeTruthy();
-            expect(page !== undefined).toBeTruthy();
+            expect(cursor !== undefined).toBeTruthy();
             expect(count !== undefined).toBeTruthy();
             expect(totalCount !== undefined).toBeTruthy();
             expect(last !== undefined).toBeTruthy();

@@ -4,7 +4,7 @@ import {CursorSelectQueryDto} from "../../../../common/dto/cursor-select-query-d
 
 export class SelectAccountHistoryDto extends PickType(
     CursorSelectQueryDto,
-    ['cursorIdx', 'count'] as const
+    ['cursor', 'count'] as const
 ) {
     @IsNumber()
     @IsOptional()

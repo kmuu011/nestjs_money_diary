@@ -3,7 +3,6 @@ import {
     EntityRepository,
     FindOperator,
     LessThan,
-    MoreThan,
     QueryRunner,
     Repository,
     UpdateResult
@@ -31,10 +30,22 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
     }
 
     async selectList(
-        account: AccountEntity, type?: number, cursorIdx?: number, count?: number,
+        account: AccountEntity, type?: number, cursor?: number, count?: number,
         category?: AccountHistoryCategoryEntity
     ): Promise<[AccountHistoryEntity[], number]> {
-        let query = this.createQueryBuilder('h');
+        let query = this.createQueryBuilder('h')
+            .leftJoinAndSelect('h.accountHistoryCategory', 'c')
+            .select([
+                'h.idx', 'h.content', 'h.amount', 'h.type',
+                'c.idx', 'c.name',
+                'h.createdAt', 'h.updatedAt'
+            ])
+            .orderBy('h.idx', 'DESC');
+
+        if(count){
+            query = query
+                .take(count);
+        }
 
         const where: {
             account: AccountEntity,
@@ -42,11 +53,6 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
             accountHistoryCategory?: AccountHistoryCategoryEntity,
             idx?: FindOperator<number>
         } = {account};
-
-        if (count) {
-            query = query
-                .take(count);
-        }
 
         if (type) {
             where.type = type;
@@ -56,20 +62,19 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
             where.accountHistoryCategory = category;
         }
 
-        if (cursorIdx) {
-            where.idx = LessThan(cursorIdx);
+        const totalCount = await query
+            .where(where)
+            .getCount();
+
+        if (cursor) {
+            where.idx = LessThan(cursor);
         }
 
-        return await query
+        const list = await query
             .where(where)
-            .leftJoinAndSelect('h.accountHistoryCategory', 'c')
-            .select([
-                'h.idx', 'h.content', 'h.amount', 'h.type',
-                'c.idx', 'c.name',
-                'h.createdAt', 'h.updatedAt'
-            ])
-            .orderBy('h.idx', 'DESC')
-            .getManyAndCount();
+            .getMany();
+
+        return [list, totalCount];
     }
 
     async createAccountHistory(queryRunner: QueryRunner, accountHistory: AccountHistoryEntity): Promise<AccountHistoryEntity> {
