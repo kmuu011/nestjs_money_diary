@@ -42,10 +42,9 @@ describe('AccountHistoryController (e2e)', () => {
                 .expect(200);
 
 
-            const { items, page, count, totalCount, last } = response.body;
+            const { items, count, totalCount, last } = response.body;
 
             expect(items !== undefined).toBeTruthy();
-            expect(page !== undefined).toBeTruthy();
             expect(count !== undefined).toBeTruthy();
             expect(totalCount !== undefined).toBeTruthy();
             expect(last !== undefined).toBeTruthy();
