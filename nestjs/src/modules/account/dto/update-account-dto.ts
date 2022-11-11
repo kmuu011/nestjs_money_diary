@@ -1,11 +1,14 @@
-import {IsNumber, IsOptional} from "class-validator";
-import {ApiPropertyOptional, PickType} from "@nestjs/swagger";
-import {AccountEntity} from "../entities/account.entity";
+import {IsNumber, IsOptional, IsString} from "class-validator";
+import {ApiPropertyOptional} from "@nestjs/swagger";
 
-export class UpdateAccountDto extends PickType(
-    AccountEntity,
-    ['accountName'] as const
-) {
+export class UpdateAccountDto {
+    @IsString()
+    @IsOptional()
+    @ApiPropertyOptional({
+        example: '제 91 가계부'
+    })
+    accountName: string;
+
     @IsNumber()
     @IsOptional()
     @ApiPropertyOptional({
