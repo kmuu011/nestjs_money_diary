@@ -1,6 +1,6 @@
 import {
     DeleteResult,
-    EntityRepository,
+    EntityRepository, MoreThan,
     QueryRunner,
     Repository, SelectQueryBuilder,
     UpdateResult
@@ -18,19 +18,31 @@ export class AccountRepository extends Repository<AccountEntity> {
         });
     }
 
-    async selectList(member: MemberEntity, page?: number, count?: number): Promise<[AccountEntity[], number]> {
-        let query: SelectQueryBuilder<AccountEntity> = this.createQueryBuilder('a');
+    async selectList(member: MemberEntity, cursor?: number, count?: number): Promise<[AccountEntity[], number]> {
+        const where = {
+            member,
+            order: MoreThan(cursor || 0)
+        };
 
-        if (page && count) {
-            query = query
-                .skip((page - 1) * count)
-                .take(count);
+        let query: SelectQueryBuilder<AccountEntity> =
+            this.createQueryBuilder('a')
+                .orderBy('`order`', "ASC");
+
+        if(count){
+            query = query.take(count);
         }
 
-        return await query
-            .where({member})
-            .orderBy('`order`', "ASC")
-            .getManyAndCount();
+        const list = await query
+            .where(where)
+            .getMany();
+
+        delete where.order;
+
+        const totalCount = await query
+            .where(where)
+            .getCount();
+
+        return [list, totalCount]
     }
 
     async selectTotalIncomeOutcome(queryRunner: QueryRunner, member: MemberEntity, accountIdx: number): Promise<AccountIncomeOutcomeType> {

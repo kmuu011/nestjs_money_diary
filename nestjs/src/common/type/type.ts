@@ -55,7 +55,7 @@ export class CursorSelectListResponseType<T> {
     @ApiProperty({
         example: 12
     })
-    cursorIdx: number;
+    cursor: number;
 
     @ApiProperty({
         example: 10

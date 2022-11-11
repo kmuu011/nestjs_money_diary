@@ -9,12 +9,12 @@ import {AccountRepository} from "../../../src/modules/account/account.repository
 import {createRequest} from "node-mocks-http";
 import {Request} from "express";
 import {TokenRepository} from "../../../src/modules/member/token/token.repository";
-import {ResponseBooleanType, SelectListResponseType} from "../../../src/common/type/type";
+import {CursorSelectListResponseType, ResponseBooleanType} from "../../../src/common/type/type";
 import {AccountEntity} from "../../../src/modules/account/entities/account.entity";
 import {CreateAccountDto} from "../../../src/modules/account/dto/create-account-dto";
 import {getCreateAccountData, getSavedAccount} from "./account";
 import {UpdateAccountDto} from "../../../src/modules/account/dto/update-account-dto";
-import {getSelectQueryDto} from "../../common/const";
+import {getCursorSelectQueryDto} from "../../common/const";
 import {createRandomString} from "../../../libs/utils";
 
 describe('Account Controller', () => {
@@ -51,8 +51,8 @@ describe('Account Controller', () => {
                 memberInfo: savedMemberInfo
             };
 
-            const response: SelectListResponseType<AccountEntity>
-                = await accountController.selectAccountList(req, getSelectQueryDto());
+            const response: CursorSelectListResponseType<AccountEntity>
+                = await accountController.selectAccountList(req, getCursorSelectQueryDto());
 
             expect(response.items.every(v => v instanceof AccountEntity)).toBeTruthy();
         });

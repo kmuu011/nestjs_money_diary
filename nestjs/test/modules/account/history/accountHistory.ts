@@ -50,7 +50,7 @@ export const getCreateAccountHistoryDto = (): CreateAccountHistoryDto => {
 
 export const getSelectAccountHistoryDto = (): SelectAccountHistoryDto => {
     return {
-        cursorIdx: 0,
+        cursor: 0,
         count: 10,
         type: 0,
         accountHistoryCategoryIdx: savedCategoryInfo.idx

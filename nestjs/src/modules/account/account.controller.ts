@@ -14,7 +14,7 @@ import {Request} from "express";
 import {AuthGuard} from "../../common/guard/auth.guard";
 import {MemberEntity} from "../member/entities/member.entity";
 import {SelectQueryDto} from "../../common/dto/select-query-dto";
-import {ResponseBooleanType, SelectListResponseType} from "../../common/type/type";
+import {CursorSelectListResponseType, ResponseBooleanType, SelectListResponseType} from "../../common/type/type";
 import {ApiCreatedResponse, ApiHeader, ApiOkResponse, ApiOperation, ApiTags} from "@nestjs/swagger";
 import {ApiOkResponseSelectList} from "../../common/swagger/customDecorator";
 import {swagger} from "../../../config/config";
@@ -24,6 +24,7 @@ import {AccountEntity} from "./entities/account.entity";
 import {CreateAccountDto} from "./dto/create-account-dto";
 import {UpdateAccountDto} from "./dto/update-account-dto";
 import {AccountInterceptor} from "./account.interceptor";
+import {CursorSelectQueryDto} from "../../common/dto/cursor-select-query-dto";
 
 @Controller('/account')
 @UseGuards(AuthGuard)
@@ -37,12 +38,12 @@ export class AccountController {
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
     async selectAccountList(
         @Req() req: Request,
-        @Query() query: SelectQueryDto
-    ): Promise<SelectListResponseType<AccountEntity>> {
-        const {page, count} = query;
+        @Query() query: CursorSelectQueryDto
+    ): Promise<CursorSelectListResponseType<AccountEntity>> {
+        const {cursor, count} = query;
         const member: MemberEntity = req.locals.memberInfo;
 
-        return await this.accountService.selectList(member, page, count);
+        return await this.accountService.selectList(member, cursor, count);
     }
 
     @Post()

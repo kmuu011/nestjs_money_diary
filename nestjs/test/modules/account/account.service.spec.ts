@@ -3,7 +3,10 @@ import {Test, TestingModule} from "@nestjs/testing";
 import {MemberEntity} from "../../../src/modules/member/entities/member.entity";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {typeOrmOptions} from "../../../config/config";
-import {AccountIncomeOutcomeType, SelectListResponseType} from "../../../src/common/type/type";
+import {
+    AccountIncomeOutcomeType,
+    CursorSelectListResponseType,
+} from "../../../src/common/type/type";
 import {DeleteResult, UpdateResult} from "typeorm";
 import {AccountEntity} from "../../../src/modules/account/entities/account.entity";
 import {getCreateAccountData, getSavedAccount} from "./account";
@@ -49,16 +52,16 @@ describe('Account Service', () => {
 
             account.idx = 2;
 
-            const accountStatus: SelectListResponseType<AccountEntity> =
-                await accountService.selectList(savedMemberInfo, 1, 100);
+            const accountStatus: CursorSelectListResponseType<AccountEntity> =
+                await accountService.selectList(savedMemberInfo, 0, 100);
 
             const totalCount: number = accountStatus.totalCount;
             const randomOrder: number = Math.ceil(Math.random()*totalCount)+1;
 
             await accountService.arrangeOrder(savedMemberInfo, account, randomOrder);
 
-            const orderChangedAccountList: SelectListResponseType<AccountEntity> =
-                await accountService.selectList(savedMemberInfo, 1, 100);
+            const orderChangedAccountList: CursorSelectListResponseType<AccountEntity> =
+                await accountService.selectList(savedMemberInfo, 0, 100);
 
             expect(orderChangedAccountList.items.findIndex(t => t.order === randomOrder) === randomOrder-1).toBeTruthy();
 
@@ -104,8 +107,8 @@ describe('Account Service', () => {
 
     describe('selectList()', () => {
         it('가계부 리스트 조회', async () => {
-            const accountList: SelectListResponseType<AccountEntity>
-                = await accountService.selectList(savedMemberInfo, 1, 10);
+            const accountList: CursorSelectListResponseType<AccountEntity>
+                = await accountService.selectList(savedMemberInfo, 0, 10);
 
             expect(accountList.items.every(t => t instanceof AccountEntity)).toBeTruthy();
         });
