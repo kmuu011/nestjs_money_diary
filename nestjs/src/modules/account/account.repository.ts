@@ -32,7 +32,7 @@ export class AccountRepository extends Repository<AccountEntity> {
             order: MoreThan(startCursor)
         };
 
-        if(endCursor){
+        if (endCursor) {
             where.order = Between(startCursor, endCursor);
         }
 
@@ -40,7 +40,7 @@ export class AccountRepository extends Repository<AccountEntity> {
             this.createQueryBuilder('a')
                 .orderBy('`order`', "ASC");
 
-        if(!endCursor && count){
+        if (!endCursor && count) {
             query = query.take(count);
         }
 
@@ -64,12 +64,22 @@ export class AccountRepository extends Repository<AccountEntity> {
 
         const finalQuery = queryBuilder
             .leftJoinAndSelect('a.accountHistoryList', 'h')
-            .where("a.memberIdx = :memberIdx", {memberIdx: member.idx})
-            .where("h.accountIdx = :accountIdx", {accountIdx})
+            .where("a.memberIdx = :memberIdx " +
+                "AND h.accountIdx = :accountIdx", {memberIdx: member.idx, accountIdx})
             .select("SUM(IF(h.type = 0, h.amount, 0))", "outcome")
             .addSelect("SUM(IF(h.type = 1, h.amount, 0))", "income");
 
         return await finalQuery.getRawOne();
+    }
+
+    async selectTotalAmount(member: MemberEntity): Promise<number> {
+        const queryBuilder: SelectQueryBuilder<AccountEntity> =
+            this.createQueryBuilder('a')
+                .where('a.memberIdx = :memberIdx ' +
+                    'AND a.invisibleAmount = 0', {memberIdx: member.idx})
+                .select("SUM(a.totalAmount)", "totalAmountOfAllAccount");
+
+        return (await queryBuilder.getRawOne()).totalAmountOfAllAccount;
     }
 
     async createAccount(queryRunner: QueryRunner, account: AccountEntity): Promise<AccountEntity> {

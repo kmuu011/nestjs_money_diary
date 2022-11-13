@@ -1,11 +1,17 @@
 import {ApiProperty, ApiPropertyOptional, PickType} from "@nestjs/swagger";
 import {AccountHistoryEntity} from "../entities/accountHistory.entity";
-import {IsDateString, IsNumber} from "class-validator";
+import {IsDateString, IsNumber, IsString} from "class-validator";
 
 export class UpdateAccountHistoryDto extends PickType(
     AccountHistoryEntity,
-    ['content', 'amount', 'type'] as const
+    ['amount', 'type'] as const
 ) {
+    @IsString()
+    @ApiPropertyOptional({
+        example: '식비'
+    })
+    content: string;
+
     @IsNumber()
     @ApiProperty({
         example: 3
