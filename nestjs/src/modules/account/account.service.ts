@@ -67,12 +67,17 @@ export class AccountService {
         return await this.accountRepository.selectOne(member, accountIdx);
     }
 
-    async selectList(member: MemberEntity, cursor: number, count: number): Promise<CursorSelectListResponseType<AccountEntity>> {
-        const result = await this.accountRepository.selectList(member, cursor, count);
+    async selectList(
+        member: MemberEntity,
+        startCursor: number,
+        endCursor: number,
+        count: number
+    ): Promise<CursorSelectListResponseType<AccountEntity>> {
+        const result = await this.accountRepository.selectList(member, startCursor, endCursor, count);
 
         return {
             items: result[0],
-            cursor,
+            startCursor,
             count,
             totalCount: result[1],
             last: Math.ceil(result[1] / count) || 1

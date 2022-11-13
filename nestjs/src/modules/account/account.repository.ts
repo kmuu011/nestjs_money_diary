@@ -1,6 +1,7 @@
 import {
+    Between,
     DeleteResult,
-    EntityRepository, MoreThan,
+    EntityRepository, LessThanOrEqual, MoreThan,
     QueryRunner,
     Repository, SelectQueryBuilder,
     UpdateResult
@@ -18,17 +19,28 @@ export class AccountRepository extends Repository<AccountEntity> {
         });
     }
 
-    async selectList(member: MemberEntity, cursor?: number, count?: number): Promise<[AccountEntity[], number]> {
+    async selectList(
+        member: MemberEntity,
+        startCursor?: number,
+        endCursor?: number,
+        count?: number
+    ): Promise<[AccountEntity[], number]> {
+        startCursor = startCursor || 0;
+
         const where = {
             member,
-            order: MoreThan(cursor || 0)
+            order: MoreThan(startCursor)
         };
+
+        if(endCursor){
+            where.order = Between(startCursor, endCursor);
+        }
 
         let query: SelectQueryBuilder<AccountEntity> =
             this.createQueryBuilder('a')
                 .orderBy('`order`', "ASC");
 
-        if(count){
+        if(!endCursor && count){
             query = query.take(count);
         }
 

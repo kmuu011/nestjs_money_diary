@@ -53,7 +53,7 @@ describe('Account Service', () => {
             account.idx = 2;
 
             const accountStatus: CursorSelectListResponseType<AccountEntity> =
-                await accountService.selectList(savedMemberInfo, 0, 100);
+                await accountService.selectList(savedMemberInfo, 0, undefined, 100);
 
             const totalCount: number = accountStatus.totalCount;
             const randomOrder: number = Math.ceil(Math.random()*totalCount)+1;
@@ -61,7 +61,7 @@ describe('Account Service', () => {
             await accountService.arrangeOrder(savedMemberInfo, account, randomOrder);
 
             const orderChangedAccountList: CursorSelectListResponseType<AccountEntity> =
-                await accountService.selectList(savedMemberInfo, 0, 100);
+                await accountService.selectList(savedMemberInfo, 0, undefined,100);
 
             expect(orderChangedAccountList.items.findIndex(t => t.order === randomOrder) === randomOrder-1).toBeTruthy();
 
@@ -108,7 +108,7 @@ describe('Account Service', () => {
     describe('selectList()', () => {
         it('가계부 리스트 조회', async () => {
             const accountList: CursorSelectListResponseType<AccountEntity>
-                = await accountService.selectList(savedMemberInfo, 0, 10);
+                = await accountService.selectList(savedMemberInfo, 0, undefined, 10);
 
             expect(accountList.items.every(t => t instanceof AccountEntity)).toBeTruthy();
         });

@@ -7,7 +7,14 @@ export class CursorSelectQueryDto {
     @ApiPropertyOptional({
         example: 12
     })
-    cursor: number = 0;
+    startCursor: number = 0;
+
+    @IsOptional()
+    @IsNumber()
+    @ApiPropertyOptional({
+        example: 2
+    })
+    endCursor?: number = 0;
 
     @IsOptional()
     @IsNumber()

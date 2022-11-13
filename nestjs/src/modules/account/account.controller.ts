@@ -40,10 +40,10 @@ export class AccountController {
         @Req() req: Request,
         @Query() query: CursorSelectQueryDto
     ): Promise<CursorSelectListResponseType<AccountEntity>> {
-        const {cursor, count} = query;
+        const {startCursor, endCursor, count} = query;
         const member: MemberEntity = req.locals.memberInfo;
 
-        return await this.accountService.selectList(member, cursor, count);
+        return await this.accountService.selectList(member, startCursor, endCursor, count);
     }
 
     @Post()

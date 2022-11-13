@@ -51,10 +51,19 @@ describe('Account Controller', () => {
                 memberInfo: savedMemberInfo
             };
 
-            const response: CursorSelectListResponseType<AccountEntity>
-                = await accountController.selectAccountList(req, getCursorSelectQueryDto());
+            const response: CursorSelectListResponseType<AccountEntity> =
+                await accountController.selectAccountList(req, getCursorSelectQueryDto());
+
+            const endCursor: number = response.items[1].order;
+
+            const responseWithEndCursor: CursorSelectListResponseType<AccountEntity> =
+                await accountController.selectAccountList(req, {
+                    ...getCursorSelectQueryDto(),
+                    endCursor
+                });
 
             expect(response.items.every(v => v instanceof AccountEntity)).toBeTruthy();
+            expect(responseWithEndCursor.items.length === 2).toBeTruthy();
         });
     });
 
