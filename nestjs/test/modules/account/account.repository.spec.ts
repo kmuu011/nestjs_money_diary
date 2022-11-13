@@ -94,6 +94,15 @@ describe('Account Repository', () => {
         });
     });
 
+    describe('selectTotalAmount()', () => {
+        it('모든 가계부의 금액 합산 조회', async () => {
+            const totalAmountOfAllAccount = await accountRepository
+                .selectTotalAmount(savedMemberInfo);
+
+            expect(!isNaN(totalAmountOfAllAccount*10)).toBeTruthy();
+        });
+    });
+
     describe('create()', () => {
         it('가계부 등록', async () => {
             const createAccountData: AccountEntity = getCreateAccountData();

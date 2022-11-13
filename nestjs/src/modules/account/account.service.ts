@@ -2,12 +2,13 @@ import {Injectable} from '@nestjs/common';
 import {MemberEntity} from "../member/entities/member.entity";
 import {DeleteResult, QueryRunner, UpdateResult} from "typeorm";
 import {Message} from "../../../libs/message";
-import {AccountIncomeOutcomeType, CursorSelectListResponseType} from "../../common/type/type";
+import {AccountIncomeOutcomeType} from "../../common/type/type";
 import {InjectRepository} from "@nestjs/typeorm";
 import {AccountRepository} from "./account.repository";
 import {AccountEntity} from "./entities/account.entity";
 import {UpdateAccountDto} from "./dto/update-account-dto";
 import {CreateAccountDto} from "./dto/create-account-dto";
+import {AccountCursorSelectListResponseType} from "./type/type";
 
 @Injectable()
 export class AccountService {
@@ -72,15 +73,17 @@ export class AccountService {
         startCursor: number,
         endCursor: number,
         count: number
-    ): Promise<CursorSelectListResponseType<AccountEntity>> {
+    ): Promise<AccountCursorSelectListResponseType<AccountEntity>> {
         const result = await this.accountRepository.selectList(member, startCursor, endCursor, count);
+        const totalAmount = await this.accountRepository.selectTotalAmount(member);
 
         return {
             items: result[0],
             startCursor,
             count,
             totalCount: result[1],
-            last: Math.ceil(result[1] / count) || 1
+            last: Math.ceil(result[1] / count) || 1,
+            totalAmount
         };
     }
 

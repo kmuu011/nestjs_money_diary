@@ -13,7 +13,7 @@ import {
 import {Request} from "express";
 import {AuthGuard} from "../../common/guard/auth.guard";
 import {MemberEntity} from "../member/entities/member.entity";
-import {CursorSelectListResponseType, ResponseBooleanType} from "../../common/type/type";
+import {ResponseBooleanType} from "../../common/type/type";
 import {ApiCreatedResponse, ApiHeader, ApiOkResponse, ApiOperation, ApiTags} from "@nestjs/swagger";
 import {ApiOkResponseSelectList} from "../../common/swagger/customDecorator";
 import {swagger} from "../../../config/config";
@@ -24,6 +24,7 @@ import {CreateAccountDto} from "./dto/create-account-dto";
 import {UpdateAccountDto} from "./dto/update-account-dto";
 import {AccountInterceptor} from "./account.interceptor";
 import {CursorSelectQueryDto} from "../../common/dto/cursor-select-query-dto";
+import {AccountCursorSelectListResponseType} from "./type/type";
 
 @Controller('/account')
 @UseGuards(AuthGuard)
@@ -38,7 +39,7 @@ export class AccountController {
     async selectAccountList(
         @Req() req: Request,
         @Query() query: CursorSelectQueryDto
-    ): Promise<CursorSelectListResponseType<AccountEntity>> {
+    ): Promise<AccountCursorSelectListResponseType<AccountEntity>> {
         const {startCursor, endCursor, count} = query;
         const member: MemberEntity = req.locals.memberInfo;
 
