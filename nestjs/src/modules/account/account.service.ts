@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {MemberEntity} from "../member/entities/member.entity";
 import {DeleteResult, QueryRunner, UpdateResult} from "typeorm";
 import {Message} from "../../../libs/message";
-import {AccountIncomeOutcomeType, CursorSelectListResponseType, SelectListResponseType} from "../../common/type/type";
+import {AccountIncomeOutcomeType, CursorSelectListResponseType} from "../../common/type/type";
 import {InjectRepository} from "@nestjs/typeorm";
 import {AccountRepository} from "./account.repository";
 import {AccountEntity} from "./entities/account.entity";

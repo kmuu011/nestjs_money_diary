@@ -13,8 +13,7 @@ import {
 import {Request} from "express";
 import {AuthGuard} from "../../common/guard/auth.guard";
 import {MemberEntity} from "../member/entities/member.entity";
-import {SelectQueryDto} from "../../common/dto/select-query-dto";
-import {CursorSelectListResponseType, ResponseBooleanType, SelectListResponseType} from "../../common/type/type";
+import {CursorSelectListResponseType, ResponseBooleanType} from "../../common/type/type";
 import {ApiCreatedResponse, ApiHeader, ApiOkResponse, ApiOperation, ApiTags} from "@nestjs/swagger";
 import {ApiOkResponseSelectList} from "../../common/swagger/customDecorator";
 import {swagger} from "../../../config/config";

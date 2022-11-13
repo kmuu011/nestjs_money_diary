@@ -1,7 +1,7 @@
 import {
     Between,
     DeleteResult,
-    EntityRepository, LessThanOrEqual, MoreThan,
+    EntityRepository, MoreThan,
     QueryRunner,
     Repository, SelectQueryBuilder,
     UpdateResult
