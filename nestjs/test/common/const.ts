@@ -10,9 +10,9 @@ export const getSelectQueryDto = (page?: number, count?: number): SelectQueryDto
     }
 }
 
-export const getCursorSelectQueryDto = (cursor?: number, count?: number): CursorSelectQueryDto => {
+export const getCursorSelectQueryDto = (startCursor?: number, count?: number): CursorSelectQueryDto => {
     return {
-        cursor: cursor || 0,
+        startCursor: startCursor || 0,
         count: count || 10
     }
 }

@@ -30,7 +30,7 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
     }
 
     async selectList(
-        account: AccountEntity, type?: number, cursor?: number, count?: number,
+        account: AccountEntity, type?: number, startCursor?: number, count?: number,
         category?: AccountHistoryCategoryEntity
     ): Promise<[AccountHistoryEntity[], number]> {
         let query = this.createQueryBuilder('h')
@@ -66,8 +66,8 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
             .where(where)
             .getCount();
 
-        if (cursor) {
-            where.idx = LessThan(cursor);
+        if (startCursor) {
+            where.idx = LessThan(startCursor);
         }
 
         const list = await query
