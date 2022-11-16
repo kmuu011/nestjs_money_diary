@@ -21,27 +21,33 @@ export class AccountService {
         let splicedAccountList = [...accountList];
 
         if (account) {
-            splicedAccountList.splice(accountList.findIndex(v => v.idx === account.idx), 1);
+            const newList = [];
 
-            if (order === 1) {
-                splicedAccountList.unshift(account);
-            } else if (order === accountList.length) {
-                splicedAccountList.push(account);
-            } else {
-                const targetIdx = accountList.findIndex(v => v.order === order);
+            const splicedAccount = splicedAccountList
+                .splice(splicedAccountList.findIndex(v => v.idx === account.idx), 1);
 
-                splicedAccountList = [
-                    ...splicedAccountList.slice(0, targetIdx),
-                    account,
-                    ...splicedAccountList.slice(targetIdx, splicedAccountList.length)
-                ];
+            if(order === 1){
+                splicedAccountList.unshift(splicedAccount[0]);
+            }else if(order === accountList.length){
+                splicedAccountList.push(splicedAccount[0]);
+            }else {
+                for (let i = 0; i < splicedAccountList.length; i++) {
+                    if (newList.length + 1 === order) {
+                        newList.push(splicedAccount[0]);
+                    }
+
+                    newList.push(splicedAccountList[i]);
+                }
+                splicedAccountList = newList;
             }
         }
 
         for (let i = 0; i < splicedAccountList.length; i++) {
             splicedAccountList[i].order = i+1;
 
-            const updateResult: UpdateResult = await this.accountRepository.updateAccount(undefined, splicedAccountList[i]);
+            const updateResult: UpdateResult =
+                await this.accountRepository
+                .updateAccount(undefined, splicedAccountList[i]);
 
             if (updateResult.affected !== 1) {
                 throw Message.SERVER_ERROR;
