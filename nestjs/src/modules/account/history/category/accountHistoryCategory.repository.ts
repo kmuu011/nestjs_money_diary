@@ -15,12 +15,29 @@ export class AccountHistoryCategoryRepository extends Repository<AccountHistoryC
         });
     }
 
-    async selectList(member: MemberEntity, type: number): Promise<AccountHistoryCategoryEntity[]> {
-        let query = this.createQueryBuilder('c');
+    async selectList(
+        member: MemberEntity,
+        type: number,
+        name?: string
+    ): Promise<AccountHistoryCategoryEntity[]> {
+        const where:{
+            member: MemberEntity,
+            type: number,
+            name?: string
+        } = {
+            member,
+            type
+        };
+
+        if(name){
+            where.name = name;
+        }
+
+        const query = this.createQueryBuilder('c');
 
         return await query
-            .where({member, type})
-            .orderBy('createdAt', 'DESC')
+            .where(where)
+            .orderBy('`order`', "ASC")
             .getMany();
     }
 
@@ -40,7 +57,7 @@ export class AccountHistoryCategoryRepository extends Repository<AccountHistoryC
         updateAccountHistoryCategoryDto: UpdateAccountHistoryCategoryDto
     ): Promise<UpdateResult> {
         const obj = getUpdateObject(
-            ["name", "color", "type", "default"],
+            ["name", "color", "type", "order"],
             updateAccountHistoryCategoryDto,
             true
         );

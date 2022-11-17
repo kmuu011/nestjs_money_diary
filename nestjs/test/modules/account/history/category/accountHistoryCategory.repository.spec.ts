@@ -91,8 +91,8 @@ describe('AccountHistoryCategory Repository', () => {
         it('가계부 내역 카테고리 수정', async () => {
             const updateAccountHistoryCategoryDto: UpdateAccountHistoryCategoryDto = {
                 name: '용돈',
-                type: 1,
-                color: 'aaaaaa'
+                color: 'aaaaaa',
+                order: 2
             };
 
             const updateResult: UpdateResult
@@ -112,7 +112,7 @@ describe('AccountHistoryCategory Repository', () => {
             expect(updateResult.affected === 1).toBeTruthy();
             expect(updatedAccountHistoryCategory.name === updateAccountHistoryCategoryDto.name).toBeTruthy();
             expect(updatedAccountHistoryCategory.color === updateAccountHistoryCategoryDto.color).toBeTruthy();
-            expect(updatedAccountHistoryCategory.type === updateAccountHistoryCategoryDto.type).toBeTruthy();
+            expect(updatedAccountHistoryCategory.order === updateAccountHistoryCategoryDto.order).toBeTruthy();
         });
     });
 

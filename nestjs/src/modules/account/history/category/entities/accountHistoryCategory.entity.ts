@@ -70,6 +70,13 @@ export class AccountHistoryCategoryEntity extends BaseEntity {
     })
     name: string = undefined;
 
+    @IsNumber()
+    @Column({type: "tinyint", default: 1, comment: "순서"})
+    @ApiProperty({
+        example: 1
+    })
+    order: number = undefined;
+
     @IsDateString()
     @Column({type: "timestamp", default: () => "now", comment: "생성 일자"})
     @ApiProperty({
