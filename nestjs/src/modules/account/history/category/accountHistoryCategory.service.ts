@@ -13,8 +13,7 @@ import {createColor} from "../../../../../libs/utils";
 export class AccountHistoryCategoryService {
     constructor(
         @InjectRepository(AccountHistoryCategoryRepository) private readonly accountHistoryCategoryRepository: AccountHistoryCategoryRepository,
-    ) {
-    }
+    ) {}
 
     async duplicateChecker(
         member: MemberEntity,
@@ -65,7 +64,6 @@ export class AccountHistoryCategoryService {
                 splicedAccountHistoryCategoryList = newList;
             }
         }
-
 
         for (let i = 0; i < splicedAccountHistoryCategoryList.length; i++) {
             splicedAccountHistoryCategoryList[i].order = i + 1;
@@ -147,7 +145,7 @@ export class AccountHistoryCategoryService {
             &&
             (await this.duplicateChecker(
                 accountHistoryCategory.member,
-                updateAccountHistoryCategoryDto.type,
+                accountHistoryCategory.type,
                 updateAccountHistoryCategoryDto.name
             )).isDuplicate
         ) {

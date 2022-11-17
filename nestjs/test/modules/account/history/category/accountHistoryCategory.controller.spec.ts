@@ -93,9 +93,10 @@ describe('AccountHistoryCategory Controller', () => {
         it('가계부 내역 카테고리 수정', async () => {
             const updateAccountHistoryCategoryDto: UpdateAccountHistoryCategoryDto = {
                 name: "용돈",
-                type: 1,
-                color: "333333"
+                color: "333333",
+                order: 2
             };
+
             const req: Request = createRequest();
 
             req.locals = {

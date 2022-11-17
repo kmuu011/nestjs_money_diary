@@ -19,16 +19,16 @@ export const getSavedAccountHistoryCategory = (): AccountHistoryCategoryEntity =
     return savedAccountHistoryCategory;
 };
 
-export const getCreateAccountHistoryCategoryData = (): AccountHistoryCategoryEntity => {
+export const getCreateAccountHistoryCategoryData = (idx?: number): AccountHistoryCategoryEntity => {
     const accountHistoryCategory = new AccountHistoryCategoryEntity();
 
     accountHistoryCategory.dataMigration({
-        idx: 111,
+        idx: idx || 111,
         member: getSavedMember(),
         default: 0,
         type: 0,
         color: 'f1f1f1',
-        name: '식비'
+        name: '테스트 카테고리'
     });
 
     return accountHistoryCategory;

@@ -23,13 +23,29 @@ import {
 import {
     UpdateAccountHistoryCategoryDto
 } from "../../../../../src/modules/account/history/category/dto/update-accountHistoryCategory-dto";
+import {HttpException} from "@nestjs/common";
 
 describe('AccountHistoryCategory Service', () => {
-    const savedMemberInfo: MemberEntity= getSavedMember();
+    const savedMemberInfo: MemberEntity = getSavedMember();
     const savedAccountHistoryCategoryInfo: AccountHistoryCategoryEntity = getSavedAccountHistoryCategory();
 
     let accountHistoryCategoryService: AccountHistoryCategoryService;
     let createdAccountHistoryCategoryInfo: AccountHistoryCategoryEntity;
+
+    const orderUpdater = async (i, targetCategory): Promise<void> => {
+        const updateDto: UpdateAccountHistoryCategoryDto = {
+            order: i+1
+        };
+
+        await accountHistoryCategoryService
+            .update(targetCategory, updateDto);
+
+        const updatedList: AccountHistoryCategoryEntity[] =
+            await accountHistoryCategoryService.selectList(savedMemberInfo, 0);
+
+        expect(updatedList[updatedList.findIndex(v => v.idx === targetCategory.idx)].order === updateDto.order)
+            .toBeTruthy();
+    }
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -47,9 +63,46 @@ describe('AccountHistoryCategory Service', () => {
         accountHistoryCategoryService = module.get<AccountHistoryCategoryService>(AccountHistoryCategoryService);
     });
 
+    describe('arrangeOrder()', () => {
+        it('가계부 내역 카테고리 순서 변경', async () => {
+            const dummyCategoryList: AccountHistoryCategoryEntity[] = [];
+
+            for(let i=0 ; i<4 ; i++){
+                const insertedCategory:AccountHistoryCategoryEntity = await accountHistoryCategoryService.create(
+                    savedMemberInfo,
+                    {
+                        type: 0,
+                        name: "category" + i
+                    }
+                );
+
+                dummyCategoryList.push(insertedCategory)
+            }
+
+            const totalCategoryList: AccountHistoryCategoryEntity[] =
+                await accountHistoryCategoryService.selectList(savedMemberInfo, 0);
+            const targetCategory: AccountHistoryCategoryEntity =
+                totalCategoryList[1];
+
+            for(let i=0 ; i<totalCategoryList.length ; i++){
+                await orderUpdater(i, targetCategory);
+            }
+
+            for(let i=totalCategoryList.length-1 ; i>=0 ; i--){
+                await orderUpdater(i, targetCategory);
+            }
+
+            for(const item of dummyCategoryList){
+                await accountHistoryCategoryService.delete(item);
+            }
+
+            expect(true).toBeTruthy();
+        });
+    });
+
     describe('selectOne()', () => {
         it('가계부 내역 카테고리 상세 조회', async () => {
-            const accountHistoryCategory: AccountHistoryCategoryEntity = 
+            const accountHistoryCategory: AccountHistoryCategoryEntity =
                 await accountHistoryCategoryService.selectOne(
                     savedMemberInfo,
                     savedAccountHistoryCategoryInfo.idx
@@ -68,6 +121,7 @@ describe('AccountHistoryCategory Service', () => {
                     0
                 );
 
+
             expect(accountHistoryCategoryList.every(t => t instanceof AccountHistoryCategoryEntity)).toBeTruthy();
         });
     });
@@ -82,14 +136,45 @@ describe('AccountHistoryCategory Service', () => {
 
             expect(insertResult instanceof AccountHistoryCategoryEntity).toBeTruthy();
         });
+
+        it('가계부 내역 카테고리 동일 이름 등록시 에러', async () => {
+            const createAccountHistoryDto: CreateAccountHistoryCategoryDto = getCreateAccountHistoryCategoryData(113);
+
+            try {
+                await accountHistoryCategoryService.create(savedMemberInfo, createAccountHistoryDto);
+            } catch (e) {
+                expect(e).toBeInstanceOf(HttpException);
+            }
+        });
+    });
+
+    describe('duplicateChecker()', () => {
+        it('가계부 내역 카테고리 중복 체크', async () => {
+            const duplicateResult: boolean = (await accountHistoryCategoryService
+                .duplicateChecker(
+                    savedMemberInfo,
+                    createdAccountHistoryCategoryInfo.type,
+                    createdAccountHistoryCategoryInfo.name
+                )).isDuplicate;
+
+            const notDuplicateResult: boolean = (await accountHistoryCategoryService
+                .duplicateChecker(
+                    savedMemberInfo,
+                    createdAccountHistoryCategoryInfo.type,
+                    createdAccountHistoryCategoryInfo.name + 'asdasd'
+                )).isDuplicate;
+
+            expect(duplicateResult).toBeTruthy();
+            expect(notDuplicateResult).toBeFalsy();
+        });
     });
 
     describe('update()', () => {
         it('가계부 내역 카테고리 수정', async () => {
             const updateAccountHistoryCategoryDto: UpdateAccountHistoryCategoryDto = {
                 name: "용돈",
-                type: 1,
-                color: "333333"
+                color: "333333",
+                order: 2
             };
 
             const updateResult: UpdateResult
@@ -100,6 +185,34 @@ describe('AccountHistoryCategory Service', () => {
                 );
 
             expect(updateResult.affected === 1).toBeTruthy();
+        });
+
+        it('동일한 카테고리 명으로 수정시 에러', async () => {
+            const dummyAccountHistoryCategoryDto: CreateAccountHistoryCategoryDto = {
+                name: "테스트",
+                type: 0
+            };
+
+            const insertedAccountHistoryCategory: AccountHistoryCategoryEntity =
+                await accountHistoryCategoryService.create(savedMemberInfo, dummyAccountHistoryCategoryDto);
+
+            const updateAccountHistoryCategoryDto: UpdateAccountHistoryCategoryDto = {
+                name: "테스트",
+                color: "333333",
+                order: 2
+            };
+
+            try {
+                await accountHistoryCategoryService
+                    .update(
+                        createdAccountHistoryCategoryInfo,
+                        updateAccountHistoryCategoryDto
+                    );
+            } catch (e) {
+                expect(e).toBeInstanceOf(HttpException);
+            }
+
+            await accountHistoryCategoryService.delete(insertedAccountHistoryCategory);
         });
     });
 
