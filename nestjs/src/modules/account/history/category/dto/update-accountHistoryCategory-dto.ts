@@ -1,8 +1,9 @@
 import {ApiPropertyOptional} from "@nestjs/swagger";
-import {IsNotEmpty, IsNumber, IsOptional, IsString} from "class-validator";
+import {IsNotEmpty, IsNumber, IsOptional, IsString, Length} from "class-validator";
 
 export class UpdateAccountHistoryCategoryDto {
     @IsString()
+    @Length(1, 10)
     @IsOptional()
     @ApiPropertyOptional({
         example: '교통비'
