@@ -13,7 +13,8 @@ import {createColor} from "../../../../../libs/utils";
 export class AccountHistoryCategoryService {
     constructor(
         @InjectRepository(AccountHistoryCategoryRepository) private readonly accountHistoryCategoryRepository: AccountHistoryCategoryRepository,
-    ) {}
+    ) {
+    }
 
     async duplicateChecker(
         member: MemberEntity,
@@ -55,8 +56,8 @@ export class AccountHistoryCategoryService {
             } else if (order === accountHistoryCategoryList.length) {
                 splicedAccountHistoryCategoryList.push(accountHistoryCategory);
             } else {
-                for(let i=0 ; i<splicedAccountHistoryCategoryList.length ; i++){
-                    if(newList.length+1 === order){
+                for (let i = 0; i < splicedAccountHistoryCategoryList.length; i++) {
+                    if (newList.length + 1 === order) {
                         newList.push(splicedAccountHistoryCategory[0]);
                     }
                     newList.push(splicedAccountHistoryCategoryList[i]);
@@ -129,6 +130,8 @@ export class AccountHistoryCategoryService {
         updateAccountHistoryCategoryDto: UpdateAccountHistoryCategoryDto
     ): Promise<UpdateResult> {
         if (
+            updateAccountHistoryCategoryDto?.name !== undefined
+            &&
             accountHistoryCategory.name === '기타'
             &&
             (
@@ -139,8 +142,10 @@ export class AccountHistoryCategoryService {
         ) {
             throw Message.CUSTOM_ERROR('기본 카테고리는 변경할 수 없습니다.');
         }
-
+        
         if (
+            updateAccountHistoryCategoryDto?.name !== undefined
+            &&
             accountHistoryCategory.name !== updateAccountHistoryCategoryDto.name
             &&
             (await this.duplicateChecker(
