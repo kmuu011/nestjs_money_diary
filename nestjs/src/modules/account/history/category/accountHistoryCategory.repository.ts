@@ -8,28 +8,52 @@ import {MemberEntity} from "../../../member/entities/member.entity";
 export class AccountHistoryCategoryRepository extends Repository<AccountHistoryCategoryEntity> {
     async selectOne(
         member: MemberEntity,
-        accountHistoryCategoryIdx: number
+        accountHistoryCategoryIdx?: number,
+        type?: number,
+        name?: string
     ): Promise<AccountHistoryCategoryEntity> {
+        const where: {
+            member: MemberEntity,
+            idx?: number,
+            type?: number,
+            name?: string
+        } = {
+            member,
+        };
+
+        if (accountHistoryCategoryIdx !== undefined) {
+            where.idx = accountHistoryCategoryIdx
+        }
+
+        if (type !== undefined) {
+            where.type = type;
+        }
+
+        if (name !== undefined) {
+            where.name = name;
+        }
+
         return await this.findOne({
-            where: {member, idx: accountHistoryCategoryIdx}
+            where
         });
     }
 
     async selectList(
         member: MemberEntity,
         type: number,
-        name?: string
+        name?: string,
     ): Promise<AccountHistoryCategoryEntity[]> {
-        const where:{
+        const where: {
             member: MemberEntity,
             type: number,
-            name?: string
+            name?: string,
+
         } = {
             member,
             type
         };
 
-        if(name){
+        if (name !== undefined) {
             where.name = name;
         }
 
@@ -66,9 +90,15 @@ export class AccountHistoryCategoryRepository extends Repository<AccountHistoryC
     }
 
     async deleteAccountHistoryCategory(
+        queryRunner: QueryRunner,
         accountHistoryCategory: AccountHistoryCategoryEntity
     ): Promise<DeleteResult> {
-        return await this.delete(accountHistoryCategory.idx);
+        return await queryRunner.manager
+            .createQueryBuilder()
+            .delete()
+            .from(AccountHistoryCategoryEntity)
+            .where("idx = :idx", {idx: accountHistoryCategory.idx})
+            .execute();
     }
 
 }

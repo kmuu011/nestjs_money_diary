@@ -29,7 +29,8 @@ import {UpdateAccountHistoryCategoryDto} from "./dto/update-accountHistoryCatego
 export class AccountHistoryCategoryController {
     constructor(
         private readonly accountHistoryCategoryService: AccountHistoryCategoryService
-    ) {}
+    ) {
+    }
 
     @Get('/')
     @ApiOperation({summary: '가계부 내역 카테고리 조회'})
