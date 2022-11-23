@@ -1,18 +1,21 @@
 import {Injectable} from '@nestjs/common';
 import {AccountHistoryCategoryRepository} from "./accountHistoryCategory.repository";
 import {InjectRepository} from "@nestjs/typeorm";
-import {DeleteResult, UpdateResult} from "typeorm";
+import {Connection, DeleteResult, UpdateResult} from "typeorm";
 import {MemberEntity} from "../../../member/entities/member.entity";
 import {AccountHistoryCategoryEntity} from "./entities/accountHistoryCategory.entity";
 import {CreateAccountHistoryCategoryDto} from "./dto/create-accountHistoryCategory-dto";
 import {UpdateAccountHistoryCategoryDto} from "./dto/update-accountHistoryCategory-dto";
 import {Message} from "../../../../../libs/message";
 import {createColor} from "../../../../../libs/utils";
+import {AccountHistoryRepository} from "../accountHistory.repository";
 
 @Injectable()
 export class AccountHistoryCategoryService {
     constructor(
         @InjectRepository(AccountHistoryCategoryRepository) private readonly accountHistoryCategoryRepository: AccountHistoryCategoryRepository,
+        @InjectRepository(AccountHistoryRepository) private readonly accountHistoryRepository: AccountHistoryRepository,
+        private readonly connection: Connection,
     ) {
     }
 
@@ -96,15 +99,6 @@ export class AccountHistoryCategoryService {
         member: MemberEntity,
         createAccountHistoryCategoryDto: CreateAccountHistoryCategoryDto
     ): Promise<AccountHistoryCategoryEntity> {
-        if (
-            (await this.duplicateChecker(
-                member,
-                createAccountHistoryCategoryDto.type,
-                createAccountHistoryCategoryDto.name
-            )).isDuplicate
-        ) {
-            throw Message.CUSTOM_ERROR('동일한 이름의 카테고리가 이미 존재합니다.');
-        }
         const accountHistoryCategory: AccountHistoryCategoryEntity = new AccountHistoryCategoryEntity();
 
         accountHistoryCategory.dataMigration(createAccountHistoryCategoryDto);
@@ -142,7 +136,7 @@ export class AccountHistoryCategoryService {
         ) {
             throw Message.CUSTOM_ERROR('기본 카테고리는 변경할 수 없습니다.');
         }
-        
+
         if (
             updateAccountHistoryCategoryDto?.name !== undefined
             &&
@@ -190,12 +184,53 @@ export class AccountHistoryCategoryService {
             throw Message.CUSTOM_ERROR('기본 카테고리는 삭제할 수 없습니다.');
         }
 
-        const deleteResult: DeleteResult = await this.accountHistoryCategoryRepository
-            .deleteAccountHistoryCategory(accountHistoryCategory);
+        const defaultCategoryInfo: AccountHistoryCategoryEntity =
+            await this.accountHistoryCategoryRepository
+                .selectOne(
+                    accountHistoryCategory.member,
+                    undefined,
+                    accountHistoryCategory.type,
+                    '기타'
+                );
 
-        if (deleteResult.affected !== 1) {
-            throw Message.SERVER_ERROR;
+        const queryRunner = this.connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        let deleteResult: DeleteResult;
+        try {
+            const migrationCategoryAccountHistory: UpdateResult =
+                await this.accountHistoryRepository
+                    .migrationAccountHistoryCategory(
+                        queryRunner,
+                        accountHistoryCategory.member.idx,
+                        accountHistoryCategory.idx,
+                        defaultCategoryInfo.idx
+                        );
+
+            if(migrationCategoryAccountHistory.affected.constructor !== Number){
+                throw Message.SERVER_ERROR;
+            }
+
+            deleteResult = await this.accountHistoryCategoryRepository
+                .deleteAccountHistoryCategory(queryRunner, accountHistoryCategory);
+
+            if (deleteResult.affected !== 1) {
+                throw Message.SERVER_ERROR;
+            }
+
+            await queryRunner.commitTransaction();
+        } catch (e) {
+            await queryRunner.rollbackTransaction();
+            throw e;
+        } finally {
+            await queryRunner.release();
         }
+
+        await this.arrangeOrder(
+            accountHistoryCategory.member,
+            accountHistoryCategory.type
+        );
 
         return deleteResult;
     }

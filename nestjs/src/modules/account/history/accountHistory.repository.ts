@@ -42,7 +42,7 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
             ])
             .orderBy('h.idx', 'DESC');
 
-        if(count){
+        if (count) {
             query = query
                 .take(count);
         }
@@ -98,6 +98,24 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
         );
 
         return await this.update(accountHistory.idx, obj);
+    }
+
+    async migrationAccountHistoryCategory(
+        queryRunner: QueryRunner,
+        memberIdx: number,
+        categoryIdx: number,
+        defaultCategoryIdx: number
+    ): Promise<UpdateResult> {
+        return await queryRunner
+            .manager
+            .createQueryBuilder()
+            .update(AccountHistoryEntity)
+            .set({accountHistoryCategory: {idx: defaultCategoryIdx}})
+            .where(
+                "accountIdx IN (SELECT idx FROM `account` WHERE memberIdx = :memberIdx) " +
+                "AND accountHistoryCategoryIdx = :categoryIdx",
+                {memberIdx: memberIdx, categoryIdx})
+            .execute();
     }
 
     async deleteAccountHistory(accountHistory: AccountHistoryEntity): Promise<DeleteResult> {
