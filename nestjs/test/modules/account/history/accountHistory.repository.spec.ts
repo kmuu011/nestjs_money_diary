@@ -1,5 +1,5 @@
 import {Test, TestingModule} from "@nestjs/testing";
-import {DeleteResult, UpdateResult} from "typeorm";
+import {DeleteResult, getConnection, QueryRunner, UpdateResult} from "typeorm";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {typeOrmOptions} from "../../../../config/config";
 import {AccountRepository} from "../../../../src/modules/account/account.repository";
@@ -9,15 +9,30 @@ import {AccountEntity} from "../../../../src/modules/account/entities/account.en
 import {AccountHistoryEntity} from "../../../../src/modules/account/history/entities/accountHistory.entity";
 import {AccountHistoryRepository} from "../../../../src/modules/account/history/accountHistory.repository";
 import {UpdateAccountHistoryDto} from "../../../../src/modules/account/history/dto/update-accountHistory-dto";
-import {getSavedAccountHistoryCategory, savedAccountHistoryCategoryData} from "./category/accountHistoryCategory";
+import {
+    getCreateAccountHistoryCategoryData,
+    getSavedAccountHistoryCategory,
+    savedAccountHistoryCategoryData
+} from "./category/accountHistoryCategory";
+import {
+    AccountHistoryCategoryRepository
+} from "../../../../src/modules/account/history/category/accountHistoryCategory.repository";
+import {MemberEntity} from "../../../../src/modules/member/entities/member.entity";
+import {getSavedMember} from "../../member/member";
+import {
+    AccountHistoryCategoryEntity
+} from "../../../../src/modules/account/history/category/entities/accountHistoryCategory.entity";
 
 describe('AccountHistory Repository', () => {
     const savedAccountInfo: AccountEntity = getSavedAccount();
     const savedAccountHistoryInfo: AccountHistoryEntity = getSavedAccountHistory();
+    const savedMemberInfo: MemberEntity = getSavedMember();
 
     let accountRepository: AccountRepository;
     let accountHistoryRepository: AccountHistoryRepository;
+    let accountHistoryCategoryRepository: AccountHistoryCategoryRepository;
     let createdAccountHistoryInfo: AccountHistoryEntity;
+    let connection;
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -25,13 +40,15 @@ describe('AccountHistory Repository', () => {
                 TypeOrmModule.forRoot(typeOrmOptions),
                 TypeOrmModule.forFeature([
                     AccountRepository,
-                    AccountHistoryRepository
+                    AccountHistoryRepository,
+                    AccountHistoryCategoryRepository
                 ])
             ],
-        }).compile()
+        }).compile();
 
         accountRepository = module.get<AccountRepository>(AccountRepository);
         accountHistoryRepository = module.get<AccountHistoryRepository>(AccountHistoryRepository);
+        accountHistoryCategoryRepository = module.get<AccountHistoryCategoryRepository>(AccountHistoryCategoryRepository);
 
         for (let i = 0; i < 4; i++) {
             savedAccountHistoryInfo.idx = i + 1;
@@ -43,6 +60,8 @@ describe('AccountHistory Repository', () => {
         }
 
         savedAccountHistoryInfo.idx = (getSavedAccountHistory()).idx;
+
+        connection = getConnection();
     });
 
     describe('selectOne()', () => {
@@ -70,6 +89,13 @@ describe('AccountHistory Repository', () => {
         it('가계부 내역 등록', async () => {
             const accountHistory: AccountHistoryEntity = getCreateAccountHistoryEntity();
 
+            const insertedAccountHistory: AccountHistoryEntity =
+                await accountHistoryRepository.selectOne(savedAccountInfo, accountHistory.idx);
+
+            if (insertedAccountHistory) {
+                await accountHistoryRepository.deleteAccountHistory(accountHistory);
+            }
+
             const createResult: AccountHistoryEntity = await accountHistoryRepository
                 .createAccountHistory(
                     undefined,
@@ -79,7 +105,7 @@ describe('AccountHistory Repository', () => {
             expect(createResult instanceof AccountHistoryEntity).toBeTruthy();
             expect(Date.now() - new Date(createResult.createdAt).getTime()).toBeTruthy();
 
-            const fixedAt: string = '2021.06.06'
+            const fixedAt: string = '2021.06.06';
 
             accountHistory.createdAt = new Date(fixedAt).toISOString();
 
@@ -123,10 +149,71 @@ describe('AccountHistory Repository', () => {
         });
     });
 
+    describe('migrationAccountHistoryCategory()', () => {
+        it('가계부 내역 카테고리 마이그레이션', async () => {
+            const queryRunner: QueryRunner = connection.createQueryRunner();
+            await queryRunner.startTransaction();
+
+            let migrationResult: UpdateResult;
+
+            try {
+                const targetCategory: AccountHistoryCategoryEntity =
+                    await accountHistoryCategoryRepository
+                        .createAccountHistoryCategory(undefined,
+                            getCreateAccountHistoryCategoryData(1001)
+                        );
+
+                const tempHistory: AccountHistoryEntity = getCreateAccountHistoryEntity();
+                tempHistory.idx = undefined;
+                tempHistory.accountHistoryCategory = targetCategory;
+
+                const createdHistory: AccountHistoryEntity =
+                    await accountHistoryRepository.createAccountHistory(undefined,
+                        tempHistory
+                    );
+
+                const defaultCategory = await accountHistoryCategoryRepository
+                    .selectOne(savedMemberInfo, undefined, 0, '기타');
+
+                migrationResult = await accountHistoryRepository
+                    .migrationAccountHistoryCategory(
+                        queryRunner,
+                        savedMemberInfo.idx,
+                        targetCategory.idx,
+                        defaultCategory.idx
+                    );
+
+                expect(migrationResult.affected.constructor === Number).toBeTruthy();
+
+                await queryRunner.commitTransaction();
+
+                const migratedHistory =
+                    await accountHistoryRepository.selectOne(savedAccountInfo, createdHistory.idx);
+
+                expect(migratedHistory.accountHistoryCategory.idx === defaultCategory.idx).toBeTruthy();
+            } catch (e) {
+                await queryRunner.rollbackTransaction();
+            } finally {
+                await queryRunner.release();
+            }
+        });
+    });
+
     describe('deleteAccountHistory()', () => {
         it('가계부 내역 삭제', async () => {
-            const deleteResult: DeleteResult
-                = await accountHistoryRepository.deleteAccountHistory(createdAccountHistoryInfo);
+            const queryRunner: QueryRunner = connection.createQueryRunner();
+            await queryRunner.startTransaction();
+
+            let deleteResult: DeleteResult;
+
+            try {
+                deleteResult = await accountHistoryRepository.deleteAccountHistory(createdAccountHistoryInfo);
+                await queryRunner.commitTransaction();
+            } catch (e) {
+                await queryRunner.rollbackTransaction();
+            } finally {
+                await queryRunner.release();
+            }
 
             expect(deleteResult.affected === 1).toBeTruthy();
         });
