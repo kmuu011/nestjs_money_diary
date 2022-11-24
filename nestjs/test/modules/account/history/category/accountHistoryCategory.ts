@@ -7,7 +7,7 @@ export const savedAccountHistoryCategoryData = {
     idx: 1,
     default: 0,
     type: 0,
-    color: 'f1f1f1',
+    color: '#f1f1f1',
     name: '식비',
     member: getSavedMember()
 };
@@ -27,7 +27,7 @@ export const getCreateAccountHistoryCategoryData = (idx?: number): AccountHistor
         member: getSavedMember(),
         default: 0,
         type: 0,
-        color: 'f1f1f1',
+        color: '#f1f1f1',
         name: '테스트 카테고리'
     });
 

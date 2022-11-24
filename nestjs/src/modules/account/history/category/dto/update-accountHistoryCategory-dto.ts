@@ -14,7 +14,7 @@ export class UpdateAccountHistoryCategoryDto {
     @IsString()
     @IsOptional()
     @ApiPropertyOptional({
-        example: 'f1f1f1'
+        example: '#f1f1f1'
     })
     color?: string;
 

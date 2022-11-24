@@ -97,6 +97,6 @@ export const createColor = (): string => {
         color += colorRangeStr[Math.floor(Math.random()*colorRangeStr.length)];
     }
 
-    return color;
+    return "#" + color;
 }
 

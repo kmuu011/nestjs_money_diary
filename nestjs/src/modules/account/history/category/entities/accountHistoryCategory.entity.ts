@@ -59,7 +59,7 @@ export class AccountHistoryCategoryEntity extends BaseEntity {
     @IsString()
     @Column({type: "varchar", length: 10, comment: "색상"})
     @ApiProperty({
-        example: 'f1f1f1'
+        example: '#f1f1f1'
     })
     color: string = undefined;
 
