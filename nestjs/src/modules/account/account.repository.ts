@@ -10,9 +10,61 @@ import {getUpdateObject} from "../../../libs/utils";
 import {AccountEntity} from "./entities/account.entity";
 import {MemberEntity} from "../member/entities/member.entity";
 import {AccountIncomeOutcomeType} from "../../common/type/type";
+import {AccountMonthDailySummaryType, AccountMonthSummaryType} from "./type/type";
 
 @EntityRepository(AccountEntity)
 export class AccountRepository extends Repository<AccountEntity> {
+    async selectMultiple(member: MemberEntity, accountIdxList: number[]): Promise<AccountEntity[]> {
+        const query = this.createQueryBuilder('a')
+            .where("a.memberIdx = :memberIdx", {memberIdx: member.idx})
+            .andWhere("a.idx IN (:accountIdxList)", {accountIdxList});
+
+        return query.getMany();
+    }
+
+    async selectMonthDailySummary(
+        member: MemberEntity,
+        startDate: string,
+        endDate: string,
+        accountIdxList?: number[]
+    ): Promise<AccountMonthDailySummaryType[]> {
+        const query = this.createQueryBuilder('a')
+            .innerJoin('a.accountHistoryList', 'h')
+            .select("DATE_FORMAT(h.createdAt, '%Y%m%d')", 'date')
+            .addSelect("SUM(IF(h.type = 0, h.amount, 0))", 'outcome')
+            .addSelect("SUM(IF(h.type = 1, h.amount, 0))", 'income')
+            .where("a.memberIdx = :memberIdx", {memberIdx: member.idx})
+            .andWhere("DATE_FORMAT(h.createdAt, '%Y%m%d') >= :startDate", {startDate})
+            .andWhere("DATE_FORMAT(h.createdAt, '%Y%m%d') <= :endDate", {endDate})
+            .groupBy("date")
+            .orderBy("`date`");
+
+        if(accountIdxList){
+            query.andWhere("a.idx IN (:accountIdxList)", {accountIdxList});
+        }
+
+        return await query.getRawMany();
+    }
+
+    async selectMonthSummary(
+        member: MemberEntity,
+        yearMonth: string,
+        accountIdxList?: number[],
+    ): Promise<AccountMonthSummaryType> {
+        const query = this.createQueryBuilder('a')
+            .innerJoin('a.accountHistoryList', 'h')
+            .select("SUM(IF(h.type = 0, h.amount, 0))", 'outcome')
+            .addSelect("SUM(IF(h.type = 1, h.amount, 0))", 'income')
+            .where("a.memberIdx = :memberIdx", {memberIdx: member.idx})
+            .andWhere("DATE_FORMAT(h.createdAt, '%Y%m') = :yearMonth", {yearMonth})
+
+        if(accountIdxList){
+            query.andWhere("a.idx IN (:accountIdxList)", {accountIdxList});
+        }
+
+        return await query.getRawOne();
+    }
+
     async selectOne(member: MemberEntity, accountIdx: number): Promise<AccountEntity> {
         return await this.findOne({
             where: {member, idx: accountIdx}
@@ -57,7 +109,11 @@ export class AccountRepository extends Repository<AccountEntity> {
         return [list, totalCount]
     }
 
-    async selectTotalIncomeOutcome(queryRunner: QueryRunner, member: MemberEntity, accountIdx: number): Promise<AccountIncomeOutcomeType> {
+    async selectTotalIncomeOutcome(
+        queryRunner: QueryRunner,
+        member: MemberEntity,
+        accountIdx: number
+    ): Promise<AccountIncomeOutcomeType> {
         const queryBuilder: SelectQueryBuilder<AccountEntity>
             = queryRunner ? queryRunner.manager.createQueryBuilder(AccountEntity, 'a', queryRunner)
             : this.createQueryBuilder('a');

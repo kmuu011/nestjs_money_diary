@@ -14,7 +14,7 @@ export class AccountEntity extends BaseEntity {
     })
     idx: number = undefined;
 
-    @ManyToOne(() => MemberEntity, member => member.todoGroupList, {
+    @ManyToOne(() => MemberEntity, member => member.accountList, {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
         nullable: false

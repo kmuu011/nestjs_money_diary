@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {CursorSelectListResponseType, SelectListResponseType} from "../../../common/type/type";
+import {CursorSelectListResponseType} from "../../../common/type/type";
 import {AccountEntity} from "../entities/account.entity";
 import {CreateAccountHistoryDto} from "./dto/create-accountHistory-dto";
 import {UpdateAccountHistoryDto} from "./dto/update-accountHistory-dto";
@@ -19,7 +19,8 @@ export class AccountHistoryService {
         @InjectRepository(AccountHistoryCategoryRepository) private readonly accountHistoryCategoryRepository: AccountHistoryCategoryRepository,
         private readonly accountService: AccountService,
         private readonly connection: Connection
-    ) {}
+    ) {
+    }
 
     async selectOne(account: AccountEntity, accountHistoryIdx: number): Promise<AccountHistoryEntity> {
         return await this.accountHistoryRepository.selectOne(account, accountHistoryIdx);
@@ -39,7 +40,7 @@ export class AccountHistoryService {
             }
         }
 
-        if(startCursor === -1) startCursor = undefined;
+        if (startCursor === -1) startCursor = undefined;
 
         const result = await this.accountHistoryRepository.selectList(account, type, startCursor, count, categoryInfo);
 

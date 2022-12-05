@@ -8,7 +8,7 @@ import {AccountRepository} from "./account.repository";
 import {AccountEntity} from "./entities/account.entity";
 import {UpdateAccountDto} from "./dto/update-account-dto";
 import {CreateAccountDto} from "./dto/create-account-dto";
-import {AccountCursorSelectListResponseType} from "./type/type";
+import {AccountCursorSelectListResponseType, AccountMonthSummaryResponseType} from "./type/type";
 
 @Injectable()
 export class AccountService {
@@ -52,6 +52,35 @@ export class AccountService {
             if (updateResult.affected !== 1) {
                 throw Message.SERVER_ERROR;
             }
+        }
+    }
+
+    async selectMonthSummary(
+        member: MemberEntity,
+        year: string,
+        month: string,
+        startDate: string,
+        endDate: string,
+        multipleAccountIdx?: string
+    ): Promise<AccountMonthSummaryResponseType> {
+        let accountList: number[];
+
+        if(accountList){
+            accountList = multipleAccountIdx.split(',').map(v => Number(v));
+
+            const accountInfoList: AccountEntity[] =
+                await this.accountRepository.selectMultiple(member, accountList);
+
+            if(accountInfoList.length !== accountInfoList.length){
+                throw Message.WRONG_PARAM('multipleAccountIdx');
+            }
+        }
+
+        return {
+            accountHistoryMonthDailySummary:
+                await this.accountRepository.selectMonthDailySummary(member, startDate, endDate, accountList),
+            accountHistoryMonthSummary:
+                await this.accountRepository.selectMonthSummary(member, year + month, accountList)
         }
     }
 

@@ -28,3 +28,19 @@ export class AccountCursorSelectListResponseType<T> {
     })
     totalAmount: number;
 }
+
+export class AccountMonthDailySummaryType {
+    date: string
+    outcome: number
+    income: number
+}
+
+export class AccountMonthSummaryType {
+    outcome: number
+    income: number
+}
+
+export class AccountMonthSummaryResponseType {
+    accountHistoryMonthDailySummary: AccountMonthDailySummaryType[]
+    accountHistoryMonthSummary: AccountMonthSummaryType
+}

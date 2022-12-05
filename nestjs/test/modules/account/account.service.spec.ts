@@ -9,12 +9,19 @@ import {
 } from "../../../src/common/type/type";
 import {DeleteResult, UpdateResult} from "typeorm";
 import {AccountEntity} from "../../../src/modules/account/entities/account.entity";
-import {getCreateAccountData, getSavedAccount} from "./account";
+import {
+    accountMonthSummaryDto,
+    getCreateAccountData,
+    getSavedAccount,
+    monthDailySummaryDataKeyList,
+    monthSummaryDataKeyList
+} from "./account";
 import {AccountService} from "../../../src/modules/account/account.service";
 import {AccountRepository} from "../../../src/modules/account/account.repository";
 import {CreateAccountDto} from "../../../src/modules/account/dto/create-account-dto";
 import {UpdateAccountDto} from "../../../src/modules/account/dto/update-account-dto";
 import {createRandomString} from "../../../libs/utils";
+import {dataExpect} from "../../../libs/test";
 
 describe('Account Service', () => {
     const savedMemberInfo: MemberEntity = getSavedMember();
@@ -68,6 +75,22 @@ describe('Account Service', () => {
             for(const t of insertedDummyAccountList){
                 await accountService.delete(savedMemberInfo, t);
             }
+        });
+    });
+
+    describe('selectMonthSummary()', () => {
+        it('가계부 월별 요약 조회', async () => {
+            const accountMonthSummary = await accountService.selectMonthSummary(
+                savedMemberInfo,
+                accountMonthSummaryDto.year,
+                accountMonthSummaryDto.month,
+                accountMonthSummaryDto.startDate,
+                accountMonthSummaryDto.endDate,
+                accountMonthSummaryDto.multipleAccountIdx
+            );
+
+            dataExpect(monthDailySummaryDataKeyList, accountMonthSummary.accountHistoryMonthDailySummary);
+            dataExpect(monthSummaryDataKeyList, [accountMonthSummary.accountHistoryMonthSummary]);
         });
     });
 

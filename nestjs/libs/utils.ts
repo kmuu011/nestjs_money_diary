@@ -1,7 +1,9 @@
 import {BaseEntity, Repository} from "typeorm";
+import {DateObjectType} from "../src/common/type/type";
 
 const ranStr = 'qwertyuiopasdfghjklzxcvbnm0123456789';
 const colorRangeStr = '1234567890abcdef';
+const dayStrList: string[] = ['일', '월', '화', '수', '목', '금', '토'];
 
 const textReplace = (data, key, from, to): void => {
     if (data[key] === undefined || data[key] === null) return;
@@ -100,3 +102,17 @@ export const createColor = (): string => {
     return "#" + color;
 }
 
+export const dateToObject = (dateValue?: Date): DateObjectType => {
+    dateValue = dateValue ? dateValue : new Date();
+
+    const year = dateValue.getFullYear().toString();
+    const month = (Number(dateValue.getMonth()) + 1).toString().padStart(2, '0');
+    const date = dateValue.getDate().toString().padStart(2, '0');
+    const day = dateValue.getDay();
+    const dayStr = dayStrList[day];
+    const hour = dateValue.getHours().toString().padStart(2, '0');
+    const minute = dateValue.getMinutes().toString().padStart(2, '0');
+    const second = dateValue.getSeconds().toString().padStart(2, '0');
+
+    return {year, month, date, day, dayStr, hour, minute, second};
+}
