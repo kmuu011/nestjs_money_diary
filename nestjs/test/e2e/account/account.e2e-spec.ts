@@ -47,6 +47,24 @@ describe('AccountController (e2e)', () => {
             expect(last !== undefined).toBeTruthy();
         });
 
+        it('/monthCostSummary (GET)', async () => {
+            const response = await request(app.getHttpServer())
+                .get('/account/monthCostSummary?' +
+                    'year=2022&month=12&startDate=20221127&endDate=20221231')
+                .set('ip', '127.0.0.1')
+                .set('user-agent', 'test-agent')
+                .set('token-code', savedMemberInfo.tokenInfo.code)
+                .expect(200);
+
+            const {
+                accountHistoryDailyCostSummary,
+                accountHistoryMonthCostSummary
+            } = response.body;
+
+            expect(accountHistoryDailyCostSummary !== undefined).toBeTruthy()
+            expect(accountHistoryMonthCostSummary !== undefined).toBeTruthy()
+        });
+
         it('/ (POST)', async () => {
             const response = await request(app.getHttpServer())
                 .post('/account')

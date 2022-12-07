@@ -27,6 +27,7 @@ import {
 import {
     AccountHistoryCategoryEntity
 } from "../../../src/modules/account/history/category/entities/accountHistoryCategory.entity";
+import {AccountHistoryRepository} from "../../../src/modules/account/history/accountHistory.repository";
 
 describe('Member Service', () => {
     let memberService: MemberService;
@@ -44,6 +45,7 @@ describe('Member Service', () => {
                     TokenRepository,
                     TodoGroupRepository,
                     AccountHistoryCategoryRepository,
+                    AccountHistoryRepository
                 ])
             ],
             providers: [

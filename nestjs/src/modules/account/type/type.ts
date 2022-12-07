@@ -28,3 +28,44 @@ export class AccountCursorSelectListResponseType<T> {
     })
     totalAmount: number;
 }
+
+export class AccountDailyCostSummaryType {
+    @ApiProperty({
+        example: '20221207'
+    })
+    date: string
+
+    @ApiProperty({
+        example: 10000
+    })
+    outcome: number
+
+    @ApiProperty({
+        example: 10000
+    })
+    income: number
+}
+
+export class AccountMonthCostSummaryType {
+    @ApiProperty({
+        example: 10000
+    })
+    outcome: number
+
+    @ApiProperty({
+        example: 10000
+    })
+    income: number
+}
+
+export class AccountMonthSummaryResponseType {
+    @ApiProperty({
+        example: [{date: "221207", outcome: 1000, income: 1000}]
+    })
+    accountHistoryDailyCostSummary: AccountDailyCostSummaryType[]
+
+    @ApiProperty({
+        example: {outcome: 10000, income: 10000}
+    })
+    accountHistoryMonthCostSummary: AccountMonthCostSummaryType
+}

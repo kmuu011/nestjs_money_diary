@@ -1,5 +1,5 @@
 import {Test, TestingModule} from "@nestjs/testing";
-import {DeleteResult, UpdateResult} from "typeorm";
+import {DeleteResult, getConnection, QueryRunner, UpdateResult} from "typeorm";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {
     AccountHistoryCategoryEntity
@@ -54,7 +54,7 @@ describe('AccountHistoryCategory Repository', () => {
 
     });
 
-    describe('selectOne()', () => {
+    describe('selectOneCategory()', () => {
         it('가계부 내역 카테고리 카테고리 상세 조회', async () => {
             const result: AccountHistoryCategoryEntity =
                 await accountHistoryCategoryRepository
@@ -67,7 +67,7 @@ describe('AccountHistoryCategory Repository', () => {
         });
     });
 
-    describe('selectList()', () => {
+    describe('selectCategoryList()', () => {
         it('가계부 내역 카테고리 목록 조회', async () => {
             const result: AccountHistoryCategoryEntity[]
                 = await accountHistoryCategoryRepository.selectList(savedMemberInfo, 0);
@@ -76,7 +76,7 @@ describe('AccountHistoryCategory Repository', () => {
         });
     });
 
-    describe('createAccountHistory()', () => {
+    describe('createAccountHistoryCategory()', () => {
         it('가계부 내역 카테고리 등록', async () => {
             const result: AccountHistoryCategoryEntity = await accountHistoryCategoryRepository
                 .createAccountHistoryCategory(undefined, getCreateAccountHistoryCategoryData());
@@ -87,7 +87,7 @@ describe('AccountHistoryCategory Repository', () => {
         });
     });
 
-    describe('updateAccountHistory()', () => {
+    describe('updateAccountHistoryCategory()', () => {
         it('가계부 내역 카테고리 수정', async () => {
             const updateAccountHistoryCategoryDto: UpdateAccountHistoryCategoryDto = {
                 name: '용돈',
@@ -116,11 +116,23 @@ describe('AccountHistoryCategory Repository', () => {
         });
     });
 
-    describe('deleteAccountHistory()', () => {
+    describe('deleteAccountHistoryCategory()', () => {
         it('가계부 내역 카테고리 삭제', async () => {
-            const deleteResult: DeleteResult
-                = await accountHistoryCategoryRepository
-                .deleteAccountHistoryCategory(createdAccountHistoryCategoryInfo);
+            const connection = getConnection();
+            const queryRunner:QueryRunner = connection.createQueryRunner();
+            await queryRunner.startTransaction();
+
+            let deleteResult: DeleteResult
+
+            try {
+                deleteResult = await accountHistoryCategoryRepository
+                    .deleteAccountHistoryCategory(queryRunner, createdAccountHistoryCategoryInfo);
+            }catch (e){
+                await queryRunner.rollbackTransaction();
+            }finally {
+                await queryRunner.release();
+                await connection.close();
+            }
 
             expect(deleteResult.affected === 1).toBeTruthy();
         });

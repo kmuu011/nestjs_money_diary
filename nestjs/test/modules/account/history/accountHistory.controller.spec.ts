@@ -6,7 +6,6 @@ import {typeOrmOptions} from "../../../../config/config";
 import {
     CursorSelectListResponseType,
     ResponseBooleanType,
-    SelectListResponseType
 } from "../../../../src/common/type/type";
 import {TokenRepository} from "../../../../src/modules/member/token/token.repository";
 import {getSavedAccount} from "../account";

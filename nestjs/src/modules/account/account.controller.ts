@@ -24,7 +24,8 @@ import {CreateAccountDto} from "./dto/create-account-dto";
 import {UpdateAccountDto} from "./dto/update-account-dto";
 import {AccountInterceptor} from "./account.interceptor";
 import {CursorSelectQueryDto} from "../../common/dto/cursor-select-query-dto";
-import {AccountCursorSelectListResponseType} from "./type/type";
+import {AccountCursorSelectListResponseType, AccountMonthSummaryResponseType} from "./type/type";
+import {SelectAccountMonthCostSummaryDto} from "./dto/select-accountHistoryMonthCostSummary-dto";
 
 @Controller('/account')
 @UseGuards(AuthGuard)
@@ -44,6 +45,27 @@ export class AccountController {
         const member: MemberEntity = req.locals.memberInfo;
 
         return await this.accountService.selectList(member, startCursor, endCursor, count);
+    }
+
+    @Get('/monthCostSummary')
+    @ApiOperation({summary: '월별 가계부 요약 조회', description: "multipleAccountIdx값을 보내지 않을 경우 전체 가계부 조회"})
+    @ApiOkResponse({
+        description: "월별 가계부 요약 조회 성공",
+        type: AccountMonthSummaryResponseType
+    })
+    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
+    async selectAccountMonthSummary(
+        @Req() req: Request,
+        @Query() query: SelectAccountMonthCostSummaryDto
+    ): Promise<AccountMonthSummaryResponseType> {
+        const {
+            year, month, startDate, endDate, multipleAccountIdx
+        } = query;
+        const member = req.locals.memberInfo;
+
+        return await this.accountService.selectMonthCostSummary(
+            member, year, month, startDate, endDate, multipleAccountIdx
+        );
     }
 
     @Post()

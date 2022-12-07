@@ -24,6 +24,7 @@ import {
     UpdateAccountHistoryCategoryDto
 } from "../../../../../src/modules/account/history/category/dto/update-accountHistoryCategory-dto";
 import {HttpException} from "@nestjs/common";
+import {AccountHistoryRepository} from "../../../../../src/modules/account/history/accountHistory.repository";
 
 describe('AccountHistoryCategory Service', () => {
     const savedMemberInfo: MemberEntity = getSavedMember();
@@ -53,6 +54,7 @@ describe('AccountHistoryCategory Service', () => {
                 TypeOrmModule.forRoot(typeOrmOptions),
                 TypeOrmModule.forFeature([
                     AccountHistoryCategoryRepository,
+                    AccountHistoryRepository
                 ])
             ],
             providers: [

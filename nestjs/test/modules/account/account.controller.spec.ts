@@ -12,10 +12,17 @@ import {TokenRepository} from "../../../src/modules/member/token/token.repositor
 import {CursorSelectListResponseType, ResponseBooleanType} from "../../../src/common/type/type";
 import {AccountEntity} from "../../../src/modules/account/entities/account.entity";
 import {CreateAccountDto} from "../../../src/modules/account/dto/create-account-dto";
-import {getCreateAccountData, getSavedAccount} from "./account";
+import {
+    accountMonthCostSummaryDto,
+    getCreateAccountData,
+    getSavedAccount,
+    monthDailySummaryDataKeyList,
+    monthSummaryDataKeyList
+} from "./account";
 import {UpdateAccountDto} from "../../../src/modules/account/dto/update-account-dto";
 import {getCursorSelectQueryDto} from "../../common/const";
 import {createRandomString} from "../../../libs/utils";
+import {dataExpect} from "../../../libs/test";
 
 describe('Account Controller', () => {
     let accountController: AccountController;
@@ -41,6 +48,24 @@ describe('Account Controller', () => {
 
         accountController = module.get<AccountController>(AccountController);
         accountService = module.get<AccountService>(AccountService);
+    });
+
+
+    describe('selectMonthCostSummary()', () => {
+        it('가계부 월별 요약 조회', async () => {
+            const req: Request = createRequest();
+
+            req.locals = {
+                memberInfo: savedMemberInfo
+            };
+
+            const accountMonthSummary = await accountController.selectAccountMonthSummary(req,
+                accountMonthCostSummaryDto
+            );
+
+            dataExpect(monthDailySummaryDataKeyList, accountMonthSummary.accountHistoryDailyCostSummary);
+            dataExpect(monthSummaryDataKeyList, [accountMonthSummary.accountHistoryMonthCostSummary]);
+        });
     });
 
     describe('selectList()', () => {

@@ -27,6 +27,7 @@ import {
 } from "../../../../../src/modules/account/history/category/dto/update-accountHistoryCategory-dto";
 import {ResponseBooleanType} from "../../../../../src/common/type/type";
 import {TokenRepository} from "../../../../../src/modules/member/token/token.repository";
+import {AccountHistoryRepository} from "../../../../../src/modules/account/history/accountHistory.repository";
 
 describe('AccountHistoryCategory Controller', () => {
     let accountHistoryCategoryController: AccountHistoryCategoryController;
@@ -41,6 +42,7 @@ describe('AccountHistoryCategory Controller', () => {
                 TypeOrmModule.forRoot(typeOrmOptions),
                 TypeOrmModule.forFeature([
                     TokenRepository,
+                    AccountHistoryRepository,
                     AccountHistoryCategoryRepository
                 ])
             ],

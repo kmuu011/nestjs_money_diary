@@ -8,13 +8,18 @@ import {AccountRepository} from "./account.repository";
 import {AccountEntity} from "./entities/account.entity";
 import {UpdateAccountDto} from "./dto/update-account-dto";
 import {CreateAccountDto} from "./dto/create-account-dto";
-import {AccountCursorSelectListResponseType} from "./type/type";
+import {
+    AccountCursorSelectListResponseType,
+    AccountDailyCostSummaryType,
+    AccountMonthSummaryResponseType, AccountMonthCostSummaryType
+} from "./type/type";
 
 @Injectable()
 export class AccountService {
     constructor(
         @InjectRepository(AccountRepository) private readonly accountRepository: AccountRepository,
-    ) {}
+    ) {
+    }
 
     async arrangeOrder(member: MemberEntity, account?: AccountEntity, order?: number): Promise<void> {
         const accountList = (await this.accountRepository.selectList(member))[0];
@@ -26,11 +31,11 @@ export class AccountService {
             const splicedAccount = splicedAccountList
                 .splice(splicedAccountList.findIndex(v => v.idx === account.idx), 1);
 
-            if(order === 1){
+            if (order === 1) {
                 splicedAccountList.unshift(splicedAccount[0]);
-            }else if(order === accountList.length){
+            } else if (order === accountList.length) {
                 splicedAccountList.push(splicedAccount[0]);
-            }else {
+            } else {
                 for (let i = 0; i < splicedAccountList.length; i++) {
                     if (newList.length + 1 === order) {
                         newList.push(splicedAccount[0]);
@@ -43,15 +48,58 @@ export class AccountService {
         }
 
         for (let i = 0; i < splicedAccountList.length; i++) {
-            splicedAccountList[i].order = i+1;
+            splicedAccountList[i].order = i + 1;
 
             const updateResult: UpdateResult =
                 await this.accountRepository
-                .updateAccount(undefined, splicedAccountList[i]);
+                    .updateAccount(undefined, splicedAccountList[i]);
 
             if (updateResult.affected !== 1) {
                 throw Message.SERVER_ERROR;
             }
+        }
+    }
+
+    async selectMonthCostSummary(
+        member: MemberEntity,
+        year: string,
+        month: string,
+        startDate: string,
+        endDate: string,
+        multipleAccountIdx?: string
+    ): Promise<AccountMonthSummaryResponseType> {
+        let accountList: number[];
+
+        if (accountList) {
+            accountList = multipleAccountIdx.split(',').map(v => Number(v));
+
+            const accountInfoList: AccountEntity[] =
+                await this.accountRepository.selectMultiple(member, accountList);
+
+            if (accountInfoList.length !== accountInfoList.length) {
+                throw Message.WRONG_PARAM('multipleAccountIdx');
+            }
+        }
+
+        const accountHistoryDailyCostSummary: AccountDailyCostSummaryType[] =
+            await this.accountRepository.selectMonthDailySummary(member, startDate, endDate, accountList);
+
+        accountHistoryDailyCostSummary.forEach((v) => {
+            v.outcome = Number(v.outcome);
+            v.income = Number(v.income);
+        });
+
+        const accountHistoryMonthCostSummary: AccountMonthCostSummaryType =
+            await this.accountRepository.selectMonthCostSummary(member, year + month, accountList);
+
+        Object.keys(accountHistoryMonthCostSummary).forEach((k) => {
+            const v = Number(accountHistoryMonthCostSummary[k]);
+            accountHistoryMonthCostSummary[k] = isNaN(v) === true ? 0 : v;
+        });
+
+        return {
+            accountHistoryDailyCostSummary,
+            accountHistoryMonthCostSummary
         }
     }
 

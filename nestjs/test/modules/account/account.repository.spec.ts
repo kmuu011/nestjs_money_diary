@@ -6,11 +6,22 @@ import {typeOrmOptions} from "../../../config/config";
 import {AccountRepository} from "../../../src/modules/account/account.repository";
 import {getSavedMember} from "../member/member";
 import {AccountEntity} from "../../../src/modules/account/entities/account.entity";
-import {getCreateAccountData, getSavedAccount} from "./account";
-import {createRandomString} from "../../../libs/utils";
+import {
+    accountMonthCostSummaryDto,
+    getCreateAccountData,
+    getSavedAccount,
+    monthDailySummaryDataKeyList,
+    monthSummaryDataKeyList
+} from "./account";
+import {createRandomString, dateToObject} from "../../../libs/utils";
 import {AccountIncomeOutcomeType} from "../../../src/common/type/type";
 import {AccountHistoryEntity} from "../../../src/modules/account/history/entities/accountHistory.entity";
 import {AccountHistoryRepository} from "../../../src/modules/account/history/accountHistory.repository";
+import {
+    AccountDailyCostSummaryType,
+    AccountMonthCostSummaryType
+} from "../../../src/modules/account/type/type";
+import {dataExpect} from "../../../libs/test";
 
 describe('Account Repository', () => {
     const savedMemberInfo: MemberEntity = getSavedMember();
@@ -44,6 +55,42 @@ describe('Account Repository', () => {
         }
 
         savedAccountInfo.idx = (getSavedAccount()).idx;
+    });
+
+    describe('selectMultiple()', () => {
+        it('가계부 여러개 조회', async () => {
+            const accountIdxList: number[] = [Number(accountMonthCostSummaryDto.multipleAccountIdx)];
+
+            const accountInfoList: AccountEntity[] = await accountRepository.selectMultiple(savedMemberInfo, accountIdxList);
+
+            expect(accountInfoList.every(v => v instanceof AccountEntity)).toBeTruthy();
+        });
+    });
+
+    describe('selectMonthDailySummary()', () => {
+        it('월별 가계부 일일 요약 조회', async () => {
+            const startDateObj = dateToObject();
+            const endDateObj = dateToObject(new Date(Date.now()+60*60*24*30*1000));
+
+            const accountHistoryDailyCostSummaryList: AccountDailyCostSummaryType[] =
+                await accountRepository.selectMonthDailySummary(
+                    savedMemberInfo,
+                    startDateObj.year+startDateObj.month+startDateObj.date,
+                    endDateObj.year+endDateObj.month+endDateObj.date
+                );
+
+            dataExpect(monthDailySummaryDataKeyList, accountHistoryDailyCostSummaryList);
+        });
+    });
+
+    describe('selectMonthCostSummary()', () => {
+        it('월별 가계부 요약 조회', async () => {
+            const yearMonth = accountMonthCostSummaryDto.year + accountMonthCostSummaryDto.month;
+            const accountHistoryMonthCostSummary: AccountMonthCostSummaryType =
+                await accountRepository.selectMonthCostSummary(savedMemberInfo, yearMonth);
+
+            dataExpect(monthSummaryDataKeyList, [accountHistoryMonthCostSummary])
+        });
     });
 
     describe('selectOne()', () => {

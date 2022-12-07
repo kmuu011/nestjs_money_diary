@@ -7,6 +7,7 @@ export const keyDescription = {
     todo: '할일',
     file: '파일',
     account: '가계부',
+    multipleAccountIdx: '가계부 목록',
     accountHistory: '가계부 내역',
     category: '카테고리',
 }

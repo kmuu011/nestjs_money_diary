@@ -5,7 +5,6 @@ import {typeOrmOptions} from "../../../../config/config";
 import {
     AccountIncomeOutcomeType,
     CursorSelectListResponseType,
-    SelectListResponseType
 } from "../../../../src/common/type/type";
 import {DeleteResult, UpdateResult} from "typeorm";
 import {getSavedAccount} from "../account";
