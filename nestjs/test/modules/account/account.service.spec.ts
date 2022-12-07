@@ -10,7 +10,7 @@ import {
 import {DeleteResult, UpdateResult} from "typeorm";
 import {AccountEntity} from "../../../src/modules/account/entities/account.entity";
 import {
-    accountMonthSummaryDto,
+    accountMonthCostSummaryDto,
     getCreateAccountData,
     getSavedAccount,
     monthDailySummaryDataKeyList,
@@ -78,19 +78,19 @@ describe('Account Service', () => {
         });
     });
 
-    describe('selectMonthSummary()', () => {
+    describe('selectMonthCostSummary()', () => {
         it('가계부 월별 요약 조회', async () => {
-            const accountMonthSummary = await accountService.selectMonthSummary(
+            const accountMonthSummary = await accountService.selectMonthCostSummary(
                 savedMemberInfo,
-                accountMonthSummaryDto.year,
-                accountMonthSummaryDto.month,
-                accountMonthSummaryDto.startDate,
-                accountMonthSummaryDto.endDate,
-                accountMonthSummaryDto.multipleAccountIdx
+                accountMonthCostSummaryDto.year,
+                accountMonthCostSummaryDto.month,
+                accountMonthCostSummaryDto.startDate,
+                accountMonthCostSummaryDto.endDate,
+                accountMonthCostSummaryDto.multipleAccountIdx
             );
 
-            dataExpect(monthDailySummaryDataKeyList, accountMonthSummary.accountHistoryMonthDailySummary);
-            dataExpect(monthSummaryDataKeyList, [accountMonthSummary.accountHistoryMonthSummary]);
+            dataExpect(monthDailySummaryDataKeyList, accountMonthSummary.accountHistoryDailyCostSummary);
+            dataExpect(monthSummaryDataKeyList, [accountMonthSummary.accountHistoryMonthCostSummary]);
         });
     });
 

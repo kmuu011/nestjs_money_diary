@@ -10,7 +10,7 @@ import {getUpdateObject} from "../../../libs/utils";
 import {AccountEntity} from "./entities/account.entity";
 import {MemberEntity} from "../member/entities/member.entity";
 import {AccountIncomeOutcomeType} from "../../common/type/type";
-import {AccountMonthDailySummaryType, AccountMonthSummaryType} from "./type/type";
+import {AccountDailyCostSummaryType, AccountMonthCostSummaryType} from "./type/type";
 
 @EntityRepository(AccountEntity)
 export class AccountRepository extends Repository<AccountEntity> {
@@ -27,7 +27,7 @@ export class AccountRepository extends Repository<AccountEntity> {
         startDate: string,
         endDate: string,
         accountIdxList?: number[]
-    ): Promise<AccountMonthDailySummaryType[]> {
+    ): Promise<AccountDailyCostSummaryType[]> {
         const query = this.createQueryBuilder('a')
             .innerJoin('a.accountHistoryList', 'h')
             .select("DATE_FORMAT(h.createdAt, '%Y%m%d')", 'date')
@@ -46,11 +46,11 @@ export class AccountRepository extends Repository<AccountEntity> {
         return await query.getRawMany();
     }
 
-    async selectMonthSummary(
+    async selectMonthCostSummary(
         member: MemberEntity,
         yearMonth: string,
         accountIdxList?: number[],
-    ): Promise<AccountMonthSummaryType> {
+    ): Promise<AccountMonthCostSummaryType> {
         const query = this.createQueryBuilder('a')
             .innerJoin('a.accountHistoryList', 'h')
             .select("SUM(IF(h.type = 0, h.amount, 0))", 'outcome')
