@@ -28,7 +28,7 @@ export class AccountRepository extends Repository<AccountEntity> {
         endDate: string,
         accountIdxList?: number[]
     ): Promise<AccountDailyCostSummaryType[]> {
-        const query = this.createQueryBuilder('a')
+        let query = this.createQueryBuilder('a')
             .innerJoin('a.accountHistoryList', 'h')
             .select("DATE_FORMAT(h.createdAt, '%Y%m%d')", 'date')
             .addSelect("SUM(IF(h.type = 0, h.amount, 0))", 'outcome')
@@ -40,7 +40,7 @@ export class AccountRepository extends Repository<AccountEntity> {
             .orderBy("`date`");
 
         if(accountIdxList){
-            query.andWhere("a.idx IN (:accountIdxList)", {accountIdxList});
+            query = query.andWhere("a.idx IN (:accountIdxList)", {accountIdxList});
         }
 
         return await query.getRawMany();

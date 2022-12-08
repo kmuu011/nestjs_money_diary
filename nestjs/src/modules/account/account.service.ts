@@ -68,13 +68,13 @@ export class AccountService {
         endDate: string,
         multipleAccountIdx?: string
     ): Promise<AccountMonthSummaryResponseType> {
-        let accountList: number[];
+        let accountIdxList: number[];
 
-        if (accountList) {
-            accountList = multipleAccountIdx.split(',').map(v => Number(v));
+        if (multipleAccountIdx && multipleAccountIdx !== '-1') {
+            accountIdxList = multipleAccountIdx.split(',').map(v => Number(v));
 
             const accountInfoList: AccountEntity[] =
-                await this.accountRepository.selectMultiple(member, accountList);
+                await this.accountRepository.selectMultiple(member, accountIdxList);
 
             if (accountInfoList.length !== accountInfoList.length) {
                 throw Message.WRONG_PARAM('multipleAccountIdx');
@@ -82,7 +82,7 @@ export class AccountService {
         }
 
         const accountHistoryDailyCostSummary: AccountDailyCostSummaryType[] =
-            await this.accountRepository.selectMonthDailySummary(member, startDate, endDate, accountList);
+            await this.accountRepository.selectMonthDailySummary(member, startDate, endDate, accountIdxList);
 
         accountHistoryDailyCostSummary.forEach((v) => {
             v.outcome = Number(v.outcome);
@@ -90,7 +90,7 @@ export class AccountService {
         });
 
         const accountHistoryMonthCostSummary: AccountMonthCostSummaryType =
-            await this.accountRepository.selectMonthCostSummary(member, year + month, accountList);
+            await this.accountRepository.selectMonthCostSummary(member, year + month, accountIdxList);
 
         Object.keys(accountHistoryMonthCostSummary).forEach((k) => {
             const v = Number(accountHistoryMonthCostSummary[k]);

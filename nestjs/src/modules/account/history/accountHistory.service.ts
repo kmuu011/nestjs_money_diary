@@ -36,7 +36,7 @@ export class AccountHistoryService {
         multipleAccountHistoryCategoryIdx?: string,
         date?: string
     ): Promise<CursorSelectListResponseType<AccountHistoryEntity>> {
-        const accountIdxList = multipleAccountIdx ?
+        const accountIdxList = multipleAccountIdx !== '-1' ?
             multipleAccountIdx.replace(/\s/g, '').split(',')
                 .filter(v => v !== "") : undefined;
         const categoryIdxList = multipleAccountHistoryCategoryIdx ?
