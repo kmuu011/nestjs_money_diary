@@ -11,6 +11,7 @@ import {AccountHistoryEntity} from "./entities/accountHistory.entity";
 import {AccountService} from "../account.service";
 import {AccountHistoryCategoryRepository} from "./category/accountHistoryCategory.repository";
 import {AccountHistoryCategoryEntity} from "./category/entities/accountHistoryCategory.entity";
+import {MemberEntity} from "../../member/entities/member.entity";
 
 @Injectable()
 export class AccountHistoryService {
@@ -27,22 +28,50 @@ export class AccountHistoryService {
     }
 
     async selectList(
-        account: AccountEntity, type: number, startCursor: number, count: number,
-        accountHistoryCategoryIdx?: number
+        member: MemberEntity,
+        multipleAccountIdx: string,
+        type: number,
+        startCursor: number,
+        count: number,
+        multipleAccountHistoryCategoryIdx?: string
     ): Promise<CursorSelectListResponseType<AccountHistoryEntity>> {
-        let categoryInfo;
-        if (accountHistoryCategoryIdx) {
-            categoryInfo = await this.accountHistoryCategoryRepository
-                .selectOne(account.member, accountHistoryCategoryIdx);
+        const accountIdxList = multipleAccountIdx ?
+            multipleAccountIdx.replace(/\s/g, '').split(',')
+                .filter(v => v !== "") : undefined;
+        const categoryIdxList = multipleAccountHistoryCategoryIdx ?
+            multipleAccountHistoryCategoryIdx.replace(/\s/g, '').split(',')
+                .filter(v => v !== "") : undefined;
 
-            if (!categoryInfo) {
-                throw Message.NOT_EXIST('category');
+        if(accountIdxList){
+            for(const a of accountIdxList){
+                if(isNaN(Number(a))) throw Message.WRONG_PARAM('account');
+
+                const accountInfo = await this.accountService.selectOne(member, Number(a));
+
+                if(!accountInfo){
+                    throw Message.NOT_EXIST('account')
+                }
+            }
+        }
+
+        if (categoryIdxList) {
+            for(const c of categoryIdxList) {
+                if(isNaN(Number(c))) throw Message.WRONG_PARAM('category');
+
+                const categoryInfo = await this.accountHistoryCategoryRepository
+                    .selectOne(member, Number(c));
+
+                if (!categoryInfo) {
+                    throw Message.NOT_EXIST('category');
+                }
             }
         }
 
         if (startCursor === -1) startCursor = undefined;
 
-        const result = await this.accountHistoryRepository.selectList(account, type, startCursor, count, categoryInfo);
+        const result = await this.accountHistoryRepository.selectList(
+            accountIdxList, type, startCursor, count, categoryIdxList
+        );
 
         return {
             items: result[0],

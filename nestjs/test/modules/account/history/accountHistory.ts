@@ -53,6 +53,6 @@ export const getSelectAccountHistoryDto = (): SelectAccountHistoryDto => {
         startCursor: 0,
         count: 10,
         type: 0,
-        accountHistoryCategoryIdx: savedCategoryInfo.idx
+        multipleAccountHistoryCategoryIdx: savedCategoryInfo.idx.toString()
     }
 }

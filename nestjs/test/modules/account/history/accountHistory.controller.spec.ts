@@ -26,12 +26,15 @@ import {savedAccountHistoryCategoryData} from "./category/accountHistoryCategory
 import {
     AccountHistoryCategoryEntity
 } from "../../../../src/modules/account/history/category/entities/accountHistoryCategory.entity";
+import {MemberEntity} from "../../../../src/modules/member/entities/member.entity";
+import {getSavedMember} from "../../member/member";
 
 describe('AccountHistory Controller', () => {
     let accountHistoryController: AccountHistoryController;
     let accountHistoryService: AccountHistoryService;
     let createdAccountHistoryInfo: AccountHistoryEntity;
     const savedAccountInfo: AccountEntity = getSavedAccount();
+    const savedMemberInfo: MemberEntity = getSavedMember();
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -60,7 +63,7 @@ describe('AccountHistory Controller', () => {
             const req: Request = createRequest();
 
             req.locals = {
-                accountInfo: savedAccountInfo
+                memberInfo: savedMemberInfo
             };
 
             const response: CursorSelectListResponseType<AccountHistoryEntity>

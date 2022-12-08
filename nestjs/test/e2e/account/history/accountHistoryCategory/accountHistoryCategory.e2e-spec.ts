@@ -67,8 +67,8 @@ describe('AccountHistoryCategoryController (e2e)', () => {
                 .set('user-agent', 'test-agent')
                 .set('token-code', savedMemberInfo.tokenInfo.code)
                 .send({
-                    name: '용돈',
-                    type: 1,
+                    name: '용돈231',
+                    type: 0,
                     color: '555555'
                 })
                 .expect(200);

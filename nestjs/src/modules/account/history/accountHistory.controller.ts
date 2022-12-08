@@ -26,8 +26,7 @@ import {swagger} from "../../../../config/config";
 import {AccountHistoryService} from "./accountHistory.service";
 import {SelectAccountHistoryDto} from "./dto/select-accountHistory-dto";
 
-@Controller('/account/:accountIdx(\\d+)/history')
-@UseInterceptors(AccountInterceptor)
+@Controller('/account')
 @UseGuards(AuthGuard)
 @ApiTags('AccountHistory')
 export class AccountHistoryController {
@@ -36,7 +35,7 @@ export class AccountHistoryController {
         private readonly accountHistoryService: AccountHistoryService
     ) {}
 
-    @Get('/')
+    @Get('/history')
     @ApiOperation({summary: '가계부 내역 조회'})
     @ApiOkResponseSelectList(AccountHistoryEntity, '가계부 내역 조회 성공')
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
@@ -45,13 +44,19 @@ export class AccountHistoryController {
         @Req() req: Request,
         @Query() query: SelectAccountHistoryDto
     ): Promise<CursorSelectListResponseType<AccountHistoryEntity>> {
-        const {type, startCursor, count, accountHistoryCategoryIdx} = query;
-        const accountInfo: AccountEntity = req.locals.accountInfo;
+        const {
+            multipleAccountIdx,
+            type, startCursor, count,
+            multipleAccountHistoryCategoryIdx
+        } = query;
 
-        return await this.accountHistoryService.selectList(accountInfo, type, startCursor, count, accountHistoryCategoryIdx);
+        return await this.accountHistoryService.selectList(
+            req.locals.memberInfo, multipleAccountIdx, type, startCursor, count, multipleAccountHistoryCategoryIdx
+        );
     }
 
-    @Post('/')
+    @Post('/:accountIdx(\\d+)/history')
+    @UseInterceptors(AccountInterceptor)
     @ApiOperation({summary: '가계부 내역 등록'})
     @ApiCreatedResponse({description: '가계부 내역 등록 성공', type: AccountHistoryEntity})
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
@@ -65,8 +70,9 @@ export class AccountHistoryController {
         return await this.accountHistoryService.create(account, body);
     }
 
-    @Get('/:accountHistoryIdx(\\d+)')
+    @Get('/:accountIdx(\\d+)/history/:accountHistoryIdx(\\d+)')
     @UseInterceptors(AccountHistoryInterceptor)
+    @UseInterceptors(AccountInterceptor)
     @ApiOperation({summary: '가계부 내역 상세 조회'})
     @ApiOkResponse({description: '가계부 내역 상세 조회 성공', type: AccountHistoryEntity})
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
@@ -80,8 +86,9 @@ export class AccountHistoryController {
         return accountHistoryInfo;
     }
 
-    @Patch('/:accountHistoryIdx(\\d+)')
+    @Patch('/:accountIdx(\\d+)/history/:accountHistoryIdx(\\d+)')
     @UseInterceptors(AccountHistoryInterceptor)
+    @UseInterceptors(AccountInterceptor)
     @ApiOperation({summary: '가계부 내역 수정'})
     @ApiOkResponse({description: '가계부 내역 수정 성공', type: ResponseBooleanType})
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
@@ -98,8 +105,9 @@ export class AccountHistoryController {
         return {result: true};
     }
 
-    @Delete('/:accountHistoryIdx(\\d+)')
+    @Delete('/:accountIdx(\\d+)/history/:accountHistoryIdx(\\d+)')
     @UseInterceptors(AccountHistoryInterceptor)
+    @UseInterceptors(AccountInterceptor)
     @ApiOperation({summary: '가계부 내역 삭제'})
     @ApiOkResponse({description: '가계부 내역 삭제 성공', type: ResponseBooleanType})
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
