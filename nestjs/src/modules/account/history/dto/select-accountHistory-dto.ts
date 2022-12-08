@@ -20,10 +20,17 @@ export class SelectAccountHistoryDto extends PickType(
     })
     type?: number;
 
-    @IsOptional()
     @IsString()
+    @IsOptional()
     @ApiPropertyOptional({
         example: "1,2,3,4"
     })
     multipleAccountHistoryCategoryIdx?: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiPropertyOptional({
+        example: "20221208"
+    })
+    date?: string;
 }

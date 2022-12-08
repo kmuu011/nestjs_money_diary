@@ -1,4 +1,4 @@
-import {BaseEntity, Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import {BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {IsDateString, IsNumber, IsString} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 import {AccountEntity} from "../../entities/account.entity";

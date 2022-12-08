@@ -47,11 +47,14 @@ export class AccountHistoryController {
         const {
             multipleAccountIdx,
             type, startCursor, count,
-            multipleAccountHistoryCategoryIdx
+            multipleAccountHistoryCategoryIdx,
+            date
         } = query;
 
         return await this.accountHistoryService.selectList(
-            req.locals.memberInfo, multipleAccountIdx, type, startCursor, count, multipleAccountHistoryCategoryIdx
+            req.locals.memberInfo,
+            multipleAccountIdx, type, startCursor, count,
+            multipleAccountHistoryCategoryIdx, date
         );
     }
 

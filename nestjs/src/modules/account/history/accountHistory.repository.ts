@@ -9,6 +9,7 @@ import {AccountHistoryEntity} from "./entities/accountHistory.entity";
 import {getUpdateObject} from "../../../../libs/utils";
 import {UpdateAccountHistoryDto} from "./dto/update-accountHistory-dto";
 import {AccountEntity} from "../entities/account.entity";
+import {MemberEntity} from "../../member/entities/member.entity";
 
 @EntityRepository(AccountHistoryEntity)
 export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
@@ -27,6 +28,7 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
     }
 
     async selectList(
+        member: MemberEntity,
         accountIdxList?: string[],
         type?: number,
         startCursor?: number,
@@ -36,12 +38,15 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
     ): Promise<[AccountHistoryEntity[], number]> {
         let query = this.createQueryBuilder('h')
             .leftJoinAndSelect('h.accountHistoryCategory', 'c')
+            .leftJoinAndSelect('h.account', 'a')
+            .leftJoin('a.member', 'm')
             .select([
                 'h.idx', 'h.content', 'h.amount', 'h.type',
+                'a.idx','a.accountName',
                 'c.idx', 'c.name',
                 'h.createdAt', 'h.updatedAt'
             ])
-            .where("h.idx != 0")
+            .where("m.idx = :memberIdx", {memberIdx: member.idx})
             .orderBy('h.idx', 'DESC');
 
         if (count) {
