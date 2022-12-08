@@ -31,16 +31,14 @@ describe('AccountHistoryController (e2e)', () => {
         await app.close();
     });
 
-    describe('/account/:accountIdx/history', () => {
+    describe('/account/history', () => {
         it('/ (GET)', async () => {
             const response = await request(app.getHttpServer())
-                .get('/account/'+ savedAccountInfo.idx
-                    +'/history?page=1&count=10')
+                .get('/account/history?startCursor=999&count=10')
                 .set('ip', '127.0.0.1')
                 .set('user-agent', 'test-agent')
                 .set('token-code', savedMemberInfo.tokenInfo.code)
                 .expect(200);
-
 
             const { items, count, totalCount, last } = response.body;
 
@@ -50,6 +48,9 @@ describe('AccountHistoryController (e2e)', () => {
             expect(last !== undefined).toBeTruthy();
         });
 
+    })
+
+    describe('/account/:accountIdx/history', () => {
         it('/ (POST)', async () => {
             const response = await request(app.getHttpServer())
                 .post('/account/'+ savedAccountInfo.idx + '/history')

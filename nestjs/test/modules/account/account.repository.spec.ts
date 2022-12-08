@@ -121,7 +121,9 @@ describe('Account Repository', () => {
                 );
 
             const accountHistoryList: [AccountHistoryEntity[], number]
-                = await accountHistoryRepository.selectList(savedAccountInfo, undefined, 0, 999);
+                = await accountHistoryRepository.selectList(
+                    [savedAccountInfo.idx.toString()], undefined, 0, 999
+            );
 
             const incomeOutcome: {
                 income: number,

@@ -20,8 +20,11 @@ import {savedAccountHistoryCategoryData} from "./category/accountHistoryCategory
 import {
     AccountHistoryCategoryRepository
 } from "../../../../src/modules/account/history/category/accountHistoryCategory.repository";
+import {MemberEntity} from "../../../../src/modules/member/entities/member.entity";
+import {getSavedMember} from "../../member/member";
 
 describe('AccountHistory Service', () => {
+    const savedMemberInfo: MemberEntity = getSavedMember();
     const savedAccountInfo: AccountEntity = getSavedAccount();
     const savedAccountHistoryInfo: AccountHistoryEntity = getSavedAccountHistory();
     let accountService: AccountService;
@@ -64,7 +67,11 @@ describe('AccountHistory Service', () => {
         it('가계부 내역 리스트 조회', async () => {
             const accountHistoryList: CursorSelectListResponseType<AccountHistoryEntity>
                 = await accountHistoryService
-                .selectList(savedAccountInfo, 0, 0, 10, savedAccountHistoryCategoryData.idx);
+                .selectList(
+                    savedMemberInfo,
+                    savedAccountInfo.idx.toString(),
+                    0, 0, 10,
+                    savedAccountHistoryCategoryData.idx.toString());
 
             expect(accountHistoryList.items.every(t => t instanceof AccountHistoryEntity)).toBeTruthy();
         });

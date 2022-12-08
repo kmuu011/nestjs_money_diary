@@ -1,8 +1,6 @@
 import {
     DeleteResult,
     EntityRepository,
-    FindOperator,
-    LessThan,
     QueryRunner,
     Repository,
     UpdateResult
@@ -11,7 +9,7 @@ import {AccountHistoryEntity} from "./entities/accountHistory.entity";
 import {getUpdateObject} from "../../../../libs/utils";
 import {UpdateAccountHistoryDto} from "./dto/update-accountHistory-dto";
 import {AccountEntity} from "../entities/account.entity";
-import {AccountHistoryCategoryEntity} from "./category/entities/accountHistoryCategory.entity";
+import {MemberEntity} from "../../member/entities/member.entity";
 
 @EntityRepository(AccountHistoryEntity)
 export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
@@ -30,16 +28,25 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
     }
 
     async selectList(
-        account: AccountEntity, type?: number, startCursor?: number, count?: number,
-        category?: AccountHistoryCategoryEntity
+        member: MemberEntity,
+        accountIdxList?: string[],
+        type?: number,
+        startCursor?: number,
+        count?: number,
+        categoryIdxList?: string[],
+        date?: string
     ): Promise<[AccountHistoryEntity[], number]> {
         let query = this.createQueryBuilder('h')
             .leftJoinAndSelect('h.accountHistoryCategory', 'c')
+            .leftJoinAndSelect('h.account', 'a')
+            .leftJoin('a.member', 'm')
             .select([
                 'h.idx', 'h.content', 'h.amount', 'h.type',
+                'a.idx','a.accountName',
                 'c.idx', 'c.name',
                 'h.createdAt', 'h.updatedAt'
             ])
+            .where("m.idx = :memberIdx", {memberIdx: member.idx})
             .orderBy('h.idx', 'DESC');
 
         if (count) {
@@ -47,31 +54,30 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
                 .take(count);
         }
 
-        const where: {
-            account: AccountEntity,
-            type?: number,
-            accountHistoryCategory?: AccountHistoryCategoryEntity,
-            idx?: FindOperator<number>
-        } = {account};
-
-        if (type) {
-            where.type = type;
+        if (accountIdxList) {
+            query = query.andWhere("h.accountIdx IN (:accountIdxList)", {accountIdxList});
         }
 
-        if (category) {
-            where.accountHistoryCategory = category;
+        if (type) {
+            query = query.andWhere("h.type = :type", {type});
+        }
+
+        if (categoryIdxList) {
+            query = query.andWhere("h.accountHistoryCategoryIdx IN (:categoryIdxList)", {categoryIdxList});
+        }
+
+        if (date) {
+            query = query.andWhere("DATE_FORMAT(h.createdAt, '%Y%m%d') = :date", {date});
         }
 
         const totalCount = await query
-            .where(where)
             .getCount();
 
         if (startCursor) {
-            where.idx = LessThan(startCursor);
+            query = query.andWhere("h.idx < :startCursor", {startCursor});
         }
 
         const list = await query
-            .where(where)
             .getMany();
 
         return [list, totalCount];
