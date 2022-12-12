@@ -126,7 +126,7 @@ export class AccountService {
         member: MemberEntity,
         startCursor: number,
         endCursor: number,
-        count: number
+        count?: number
     ): Promise<AccountCursorSelectListResponseType<AccountEntity>> {
         const result = await this.accountRepository.selectList(member, startCursor, endCursor, count);
         const totalAmount = await this.accountRepository.selectTotalAmount(member);
