@@ -36,28 +36,29 @@ export class AccountHistoryService {
         multipleAccountHistoryCategoryIdx?: string,
         date?: string
     ): Promise<CursorSelectListResponseType<AccountHistoryEntity>> {
-        const accountIdxList = multipleAccountIdx !== '-1' ?
+        const accountIdxList = multipleAccountIdx && multipleAccountIdx !== '-1' ?
             multipleAccountIdx.replace(/\s/g, '').split(',')
                 .filter(v => v !== "") : undefined;
+
         const categoryIdxList = multipleAccountHistoryCategoryIdx ?
             multipleAccountHistoryCategoryIdx.replace(/\s/g, '').split(',')
                 .filter(v => v !== "") : undefined;
 
-        if(accountIdxList){
-            for(const a of accountIdxList){
-                if(isNaN(Number(a))) throw Message.WRONG_PARAM('account');
+        if (accountIdxList) {
+            for (const a of accountIdxList) {
+                if (isNaN(Number(a))) throw Message.WRONG_PARAM('account');
 
                 const accountInfo = await this.accountService.selectOne(member, Number(a));
 
-                if(!accountInfo){
+                if (!accountInfo) {
                     throw Message.NOT_EXIST('account')
                 }
             }
         }
 
         if (categoryIdxList) {
-            for(const c of categoryIdxList) {
-                if(isNaN(Number(c))) throw Message.WRONG_PARAM('category');
+            for (const c of categoryIdxList) {
+                if (isNaN(Number(c))) throw Message.WRONG_PARAM('category');
 
                 const categoryInfo = await this.accountHistoryCategoryRepository
                     .selectOne(member, Number(c));
@@ -123,6 +124,26 @@ export class AccountHistoryService {
     }
 
     async update(accountHistory: AccountHistoryEntity, updateAccountHistoryDto: UpdateAccountHistoryDto): Promise<UpdateResult> {
+        let newAccountInfo: AccountEntity;
+        let oldAccountInfo: AccountEntity;
+
+        if (updateAccountHistoryDto.accountIdx) {
+            newAccountInfo = await this.accountService.selectOne(
+                accountHistory.account.member,
+                updateAccountHistoryDto.accountIdx
+            );
+
+            if (!newAccountInfo) {
+                throw Message.NOT_EXIST('account');
+            }
+
+            oldAccountInfo = new AccountEntity();
+            oldAccountInfo.dataMigration(accountHistory.account);
+
+            newAccountInfo.member = accountHistory.account.member;
+            accountHistory.account = newAccountInfo;
+        }
+
         const queryRunner = this.connection.createQueryRunner();
 
         await queryRunner.connect();
@@ -130,7 +151,7 @@ export class AccountHistoryService {
 
         accountHistory.dataMigration(updateAccountHistoryDto);
 
-        let updateResult: UpdateResult
+        let updateResult: UpdateResult;
 
         try {
             updateResult = await this.accountHistoryRepository.updateAccountHistory(accountHistory, updateAccountHistoryDto);
@@ -140,6 +161,10 @@ export class AccountHistoryService {
             }
 
             await this.accountService.resetTotalAmount(queryRunner, accountHistory.account);
+
+            if (newAccountInfo) {
+                await this.accountService.resetTotalAmount(queryRunner, oldAccountInfo);
+            }
 
             await queryRunner.commitTransaction();
         } catch (e) {

@@ -1,4 +1,5 @@
-import {ApiProperty} from "@nestjs/swagger";
+import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
+import {IsOptional} from "class-validator";
 
 export class AccountCursorSelectListResponseType<T> {
     items: T[];
@@ -8,10 +9,11 @@ export class AccountCursorSelectListResponseType<T> {
     })
     startCursor: number;
 
-    @ApiProperty({
+    @ApiPropertyOptional({
         example: 10
     })
-    count: number;
+    @IsOptional()
+    count?: number;
 
     @ApiProperty({
         example: 32

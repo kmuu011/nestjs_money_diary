@@ -16,7 +16,7 @@ import {AccountEntity} from "../entities/account.entity";
 import {CreateAccountHistoryDto} from "./dto/create-accountHistory-dto";
 import {AccountHistoryEntity} from "./entities/accountHistory.entity";
 import {UpdateAccountHistoryDto} from "./dto/update-accountHistory-dto";
-import {CursorSelectListResponseType, ResponseBooleanType, SelectListResponseType} from "../../../common/type/type";
+import {CursorSelectListResponseType, ResponseBooleanType} from "../../../common/type/type";
 
 import {AccountHistoryInterceptor} from "./accountHistory.interceptor";
 import {AccountInterceptor} from "../account.interceptor";
@@ -25,6 +25,7 @@ import {ApiOkResponseSelectList} from "../../../common/swagger/customDecorator";
 import {swagger} from "../../../../config/config";
 import {AccountHistoryService} from "./accountHistory.service";
 import {SelectAccountHistoryDto} from "./dto/select-accountHistory-dto";
+import {AccountHistorySelectResponse} from "./swagger/customResponse";
 
 @Controller('/account')
 @UseGuards(AuthGuard)
@@ -37,13 +38,12 @@ export class AccountHistoryController {
 
     @Get('/history')
     @ApiOperation({summary: '가계부 내역 조회'})
-    @ApiOkResponseSelectList(AccountHistoryEntity, '가계부 내역 조회 성공')
+    @ApiOkResponseSelectList(AccountHistorySelectResponse, '가계부 내역 조회 성공')
     @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
-    @ApiParam({type: 'number', name: 'accountIdx'})
     async selectAccountHistoryList(
         @Req() req: Request,
         @Query() query: SelectAccountHistoryDto
-    ): Promise<CursorSelectListResponseType<AccountHistoryEntity>> {
+    ): Promise<CursorSelectListResponseType<AccountHistorySelectResponse>> {
         const {
             multipleAccountIdx,
             type, startCursor, count,
