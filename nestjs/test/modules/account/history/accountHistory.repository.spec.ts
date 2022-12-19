@@ -79,6 +79,7 @@ describe('AccountHistory Repository', () => {
             const result: [AccountHistoryEntity[], number] =
                 await accountHistoryRepository
                     .selectList(
+                        savedMemberInfo,
                         [savedAccountInfo.idx.toString()],
                         0, 0, 10,
                         [getSavedAccountHistoryCategory().idx.toString()]

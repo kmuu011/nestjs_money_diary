@@ -104,8 +104,6 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
             true
         );
 
-        console.log(obj)
-
         return await this.update(accountHistory.idx, obj);
     }
 

@@ -71,3 +71,25 @@ export class AccountMonthSummaryResponseType {
     })
     accountHistoryMonthCostSummary: AccountMonthCostSummaryType
 }
+
+export class AccountCostSummaryByCategoryType {
+    @ApiProperty({
+        example: '#f1f1f1'
+    })
+    color: string
+
+    @ApiProperty({
+        example: '식비'
+    })
+    categoryName: string
+
+    @ApiProperty({
+        example: '1'
+    })
+    accountHistoryCategoryIdx: number
+
+    @ApiProperty({
+        example: 34000
+    })
+    amount: number
+}

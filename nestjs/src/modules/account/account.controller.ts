@@ -24,8 +24,13 @@ import {CreateAccountDto} from "./dto/create-account-dto";
 import {UpdateAccountDto} from "./dto/update-account-dto";
 import {AccountInterceptor} from "./account.interceptor";
 import {CursorSelectQueryDto} from "../../common/dto/cursor-select-query-dto";
-import {AccountCursorSelectListResponseType, AccountMonthSummaryResponseType} from "./type/type";
+import {
+    AccountCostSummaryByCategoryType,
+    AccountCursorSelectListResponseType,
+    AccountMonthSummaryResponseType
+} from "./type/type";
 import {SelectAccountMonthCostSummaryDto} from "./dto/select-accountHistoryMonthCostSummary-dto";
+import {SelectAccountHistoryCostSummaryByCategoryDto} from "./dto/select-accountHistoryCostSummaryByCategory-dto";
 
 @Controller('/account')
 @UseGuards(AuthGuard)
@@ -65,6 +70,27 @@ export class AccountController {
 
         return await this.accountService.selectMonthCostSummary(
             member, year, month, startDate, endDate, multipleAccountIdx
+        );
+    }
+
+    @Get('/categoryCostSummary')
+    @ApiOperation({summary: '카테고리별 가계부 요약 조회', description: "multipleAccountIdx값을 보내지 않을 경우 전체 가계부 조회"})
+    @ApiOkResponse({
+        description: "카테고리별 가계부 요약 조회 성공",
+        type: [AccountCostSummaryByCategoryType]
+    })
+    @ApiHeader({description: '토큰 코드', name: 'token-code', schema: {example: swagger.dummyUserInfo.tokenCode}})
+    async selectCostSummaryByCategory(
+        @Req() req: Request,
+        @Query() query: SelectAccountHistoryCostSummaryByCategoryDto
+    ): Promise<AccountCostSummaryByCategoryType[]> {
+        const {
+            type, year, month, multipleAccountIdx
+        } = query;
+        const member = req.locals.memberInfo;
+
+        return await this.accountService.selectCostSummaryByCategory(
+            member, type, year, month, multipleAccountIdx
         );
     }
 

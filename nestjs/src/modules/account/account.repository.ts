@@ -10,7 +10,7 @@ import {getUpdateObject} from "../../../libs/utils";
 import {AccountEntity} from "./entities/account.entity";
 import {MemberEntity} from "../member/entities/member.entity";
 import {AccountIncomeOutcomeType} from "../../common/type/type";
-import {AccountDailyCostSummaryType, AccountMonthCostSummaryType} from "./type/type";
+import {AccountCostSummaryByCategoryType, AccountDailyCostSummaryType, AccountMonthCostSummaryType} from "./type/type";
 
 @EntityRepository(AccountEntity)
 export class AccountRepository extends Repository<AccountEntity> {
@@ -63,6 +63,40 @@ export class AccountRepository extends Repository<AccountEntity> {
         }
 
         return await query.getRawOne();
+    }
+
+    async selectCostSummaryByCategory(
+        member: MemberEntity,
+        type: number,
+        year: string,
+        month?: string,
+        accountIdxList?: number[]
+    ): Promise<AccountCostSummaryByCategoryType[]> {
+        let query = this.createQueryBuilder('a')
+            .leftJoin('a.accountHistoryList', 'h')
+            .leftJoin('h.accountHistoryCategory', 'c')
+            .select("h.accountHistoryCategoryIdx", "accountHistoryCategoryIdx")
+            .addSelect("SUM(h.amount)", "amount")
+            .addSelect("c.name", "categoryName")
+            .addSelect("c.color", "color")
+            .where("a.memberIdx = :memberIdx", {memberIdx: member.idx})
+            .andWhere("h.type = :type", {type});
+
+        if(year){
+            query = query.andWhere("YEAR(h.createdAt) = :year", {year});
+        }
+
+        if(month){
+            query = query.andWhere("MONTH(h.createdAt) = :month", {month});
+        }
+
+        if(accountIdxList){
+            query = query.andWhere("a.idx IN (:accountIdxList)", {accountIdxList});
+        }
+
+        query = query.groupBy("h.accountHistoryCategory");
+
+        return await query.getRawMany();
     }
 
     async selectOne(member: MemberEntity, accountIdx: number): Promise<AccountEntity> {
