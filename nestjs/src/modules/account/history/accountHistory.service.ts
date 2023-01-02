@@ -34,6 +34,8 @@ export class AccountHistoryService {
         startCursor: number,
         count: number,
         multipleAccountHistoryCategoryIdx?: string,
+        year?: string,
+        month?: string,
         date?: string
     ): Promise<CursorSelectListResponseType<AccountHistoryEntity>> {
         const accountIdxList = multipleAccountIdx && multipleAccountIdx !== '-1' ?
@@ -73,7 +75,8 @@ export class AccountHistoryService {
 
         const result = await this.accountHistoryRepository.selectList(
             member,
-            accountIdxList, type, startCursor, count, categoryIdxList, date
+            accountIdxList, type, startCursor, count, categoryIdxList,
+            year, month, date
         );
 
         return {

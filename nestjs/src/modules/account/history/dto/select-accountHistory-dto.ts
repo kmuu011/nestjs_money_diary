@@ -30,7 +30,21 @@ export class SelectAccountHistoryDto extends PickType(
     @IsString()
     @IsOptional()
     @ApiPropertyOptional({
-        example: "20221208"
+        example: "2022"
+    })
+    year?: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiPropertyOptional({
+        example: "12"
+    })
+    month?: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiPropertyOptional({
+        example: "08"
     })
     date?: string;
 }
