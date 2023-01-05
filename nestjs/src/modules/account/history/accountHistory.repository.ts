@@ -60,7 +60,7 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
             query = query.andWhere("h.accountIdx IN (:accountIdxList)", {accountIdxList});
         }
 
-        if (type) {
+        if (type !== undefined) {
             query = query.andWhere("h.type = :type", {type});
         }
 
