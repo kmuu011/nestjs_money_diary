@@ -1,6 +1,5 @@
 import {Global, MiddlewareConsumer, Module, NestModule, RequestMethod} from '@nestjs/common';
 
-import {TodoGroupModule} from './modules/todoGroup/todoGroup.module';
 import {MemberModule} from "./modules/member/member.module";
 
 import {PrefixMiddleware} from "./common/middleware/prefix.middleware";
@@ -10,7 +9,6 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {sentry, typeOrmOptions} from "../config/config";
 import {MemberRepository} from "./modules/member/member.repository";
 import {TokenRepository} from "./modules/member/token/token.repository";
-import {TodoGroupRepository} from "./modules/todoGroup/todoGroup.repository";
 import * as Sentry from '@sentry/node';
 import {SentryModule} from './sentry/sentry.module';
 import '@sentry/tracing';
@@ -32,14 +30,12 @@ import {AccountModule} from "./modules/account/account.module";
             TokenRepository,
         ]),
         MemberModule,
-        TodoGroupModule,
         AccountModule
     ],
     exports: [
         TypeOrmModule.forFeature([
             MemberRepository,
             TokenRepository,
-            TodoGroupRepository,
         ]),
     ]
 })

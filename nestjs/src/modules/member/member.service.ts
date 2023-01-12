@@ -15,8 +15,6 @@ import {UpdateMemberDto} from "./dto/update-member.dto";
 import {encryptPassword} from "../../../libs/member";
 import {staticPath, filePath, swagger} from "../../../config/config";
 import {Connection, DeleteResult, UpdateResult} from "typeorm";
-import {TodoGroupEntity} from "../todoGroup/entities/todoGroup.entity";
-import {TodoGroupRepository} from "../todoGroup/todoGroup.repository";
 import {TokenEntity} from "./token/entities/token.entity";
 import {AccountHistoryCategoryRepository} from "../account/history/category/accountHistoryCategory.repository";
 import {AccountHistoryCategoryEntity} from "../account/history/category/entities/accountHistoryCategory.entity";
@@ -38,7 +36,6 @@ export class MemberService {
     constructor(
         @InjectRepository(MemberRepository) private readonly memberRepository: MemberRepository,
         @InjectRepository(TokenRepository) private readonly tokenRepository: TokenRepository,
-        @InjectRepository(TodoGroupRepository) private readonly todoGroupRepository: TodoGroupRepository,
         @InjectRepository(AccountHistoryCategoryRepository) private readonly accountHistoryCategoryRepository: AccountHistoryCategoryRepository,
         private readonly connection: Connection
     ) {
@@ -114,19 +111,6 @@ export class MemberService {
             resultMember = await this.memberRepository.signUp(queryRunner, member);
 
             if (!resultMember) {
-                throw Message.SERVER_ERROR;
-            }
-
-            const todoGroup: TodoGroupEntity = new TodoGroupEntity();
-
-            todoGroup.dataMigration({
-                title: "기본그룹",
-                member: resultMember
-            });
-
-            const resultTodoGroup: TodoGroupEntity = await this.todoGroupRepository.createTodoGroup(queryRunner, todoGroup);
-
-            if (!resultTodoGroup) {
                 throw Message.SERVER_ERROR;
             }
 

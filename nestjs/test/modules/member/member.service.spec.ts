@@ -9,7 +9,6 @@ import {
 import {MemberService} from "../../../src/modules/member/member.service";
 import {MemberRepository} from "../../../src/modules/member/member.repository";
 import {TokenRepository} from "../../../src/modules/member/token/token.repository";
-import {TodoGroupRepository} from "../../../src/modules/todoGroup/todoGroup.repository";
 import {LoginMemberDto} from "../../../src/modules/member/dto/login-member.dto";
 import {CreateMemberDto} from "../../../src/modules/member/dto/create-member-dto";
 import {createRandomString} from "../../../libs/utils";
@@ -43,7 +42,6 @@ describe('Member Service', () => {
                 TypeOrmModule.forFeature([
                     MemberRepository,
                     TokenRepository,
-                    TodoGroupRepository,
                     AccountHistoryCategoryRepository,
                     AccountHistoryRepository
                 ])

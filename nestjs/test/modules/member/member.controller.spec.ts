@@ -8,7 +8,6 @@ import {
 } from "./member";
 import {MemberRepository} from "../../../src/modules/member/member.repository";
 import {TokenRepository} from "../../../src/modules/member/token/token.repository";
-import {TodoGroupRepository} from "../../../src/modules/todoGroup/todoGroup.repository";
 import {LoginMemberDto} from "../../../src/modules/member/dto/login-member.dto";
 import {MemberController} from "../../../src/modules/member/member.controller";
 import {MemberService} from "../../../src/modules/member/member.service";
@@ -36,7 +35,6 @@ describe('Member Controller', () => {
                 TypeOrmModule.forFeature([
                     MemberRepository,
                     TokenRepository,
-                    TodoGroupRepository,
                     AccountHistoryCategoryRepository,
                 ])
             ],

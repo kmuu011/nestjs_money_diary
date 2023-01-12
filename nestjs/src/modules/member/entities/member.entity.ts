@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 import {JwtPayload} from "jsonwebtoken";
 import {createToken, decodeToken, encryptPassword} from "../../../../libs/member";
-import {TodoGroupEntity} from "../../todoGroup/entities/todoGroup.entity";
 import {ApiProperty} from "@nestjs/swagger";
 import {AccountEntity} from "../../account/entities/account.entity";
 import {AccountHistoryCategoryEntity} from "../../account/history/category/entities/accountHistoryCategory.entity";
@@ -138,9 +137,6 @@ export class MemberEntity extends BaseEntity {
     @OneToOne(() => TokenEntity, token => token.member)
     @ApiProperty()
     tokenInfo: TokenEntity = undefined;
-
-    @OneToMany(() => TodoGroupEntity, todoGroup => todoGroup.member)
-    todoGroupList: TodoGroupEntity[];
 
     @OneToMany(() => AccountEntity, account => account.member)
     accountList: AccountEntity[];
