@@ -1,6 +1,5 @@
 # 프로젝트 설명
-Nest JS 기반의 가계부 서비스를 구현할 예정으로
-현재 Nest JS BoilerPlate를 클론한 상태임.
+Nest JS 기반의 가계부 서비스의 프로젝트 입니다.
 
 ### DB
 Mysql과 TypeORM으로 구성
@@ -36,6 +35,9 @@ docker-compose -f docker-compose-dev up
 nestjs/config/example.ts 파일의 이름을
 
 nestjs/config/config.ts로 변경해서 사용할것!
+
+## 프론트 코드 주소
+https://github.com/kmuu011/nextjs_money_diary
 
 # 커밋 타입
 | 키워드      | 설명                               |
