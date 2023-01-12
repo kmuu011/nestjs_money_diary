@@ -11,7 +11,7 @@ import {CreateAccountDto} from "./dto/create-account-dto";
 import {
     AccountCursorSelectListResponseType,
     AccountDailyCostSummaryType,
-    AccountMonthSummaryResponseType, AccountMonthCostSummaryType
+    AccountMonthSummaryResponseType, AccountMonthCostSummaryType, AccountCostSummaryByCategoryType
 } from "./type/type";
 
 @Injectable()
@@ -19,6 +19,26 @@ export class AccountService {
     constructor(
         @InjectRepository(AccountRepository) private readonly accountRepository: AccountRepository,
     ) {
+    }
+
+    async accountListCheck(
+        member: MemberEntity,
+        multipleAccountIdx: string
+    ): Promise<number[]> {
+        let accountIdxList: number[];
+
+        if (multipleAccountIdx && multipleAccountIdx !== '-1') {
+            accountIdxList = multipleAccountIdx.split(',').map(v => Number(v));
+
+            const accountInfoList: AccountEntity[] =
+                await this.accountRepository.selectMultiple(member, accountIdxList);
+
+            if (accountInfoList.length !== accountInfoList.length) {
+                throw Message.WRONG_PARAM('multipleAccountIdx');
+            }
+        }
+
+        return accountIdxList;
     }
 
     async arrangeOrder(member: MemberEntity, account?: AccountEntity, order?: number): Promise<void> {
@@ -68,18 +88,7 @@ export class AccountService {
         endDate: string,
         multipleAccountIdx?: string
     ): Promise<AccountMonthSummaryResponseType> {
-        let accountIdxList: number[];
-
-        if (multipleAccountIdx && multipleAccountIdx !== '-1') {
-            accountIdxList = multipleAccountIdx.split(',').map(v => Number(v));
-
-            const accountInfoList: AccountEntity[] =
-                await this.accountRepository.selectMultiple(member, accountIdxList);
-
-            if (accountInfoList.length !== accountInfoList.length) {
-                throw Message.WRONG_PARAM('multipleAccountIdx');
-            }
-        }
+        const accountIdxList: number[] = await this.accountListCheck(member, multipleAccountIdx);
 
         const accountHistoryDailyCostSummary: AccountDailyCostSummaryType[] =
             await this.accountRepository.selectMonthDailySummary(member, startDate, endDate, accountIdxList);
@@ -101,6 +110,28 @@ export class AccountService {
             accountHistoryDailyCostSummary,
             accountHistoryMonthCostSummary
         }
+    }
+
+    async selectCostSummaryByCategory(
+        member: MemberEntity,
+        type: number,
+        year: string,
+        month?: string,
+        multipleAccountIdx?: string
+    ): Promise<AccountCostSummaryByCategoryType[]> {
+        const accountIdxList: number[] = await this.accountListCheck(member, multipleAccountIdx);
+
+        return (await this.accountRepository
+            .selectCostSummaryByCategory(
+                member,
+                type,
+                year,
+                month,
+                accountIdxList
+            )).map(v => {
+            v.amount = Number(v.amount);
+            return v
+        });
     }
 
     async selectIncomeOutcome(queryRunner: QueryRunner, account: AccountEntity): Promise<AccountIncomeOutcomeType> {

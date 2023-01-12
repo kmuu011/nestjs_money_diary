@@ -7,7 +7,7 @@ import {AccountRepository} from "../../../src/modules/account/account.repository
 import {getSavedMember} from "../member/member";
 import {AccountEntity} from "../../../src/modules/account/entities/account.entity";
 import {
-    accountMonthCostSummaryDto,
+    accountMonthCostSummaryDto, costSummaryByCategoryDataKeyList,
     getCreateAccountData,
     getSavedAccount,
     monthDailySummaryDataKeyList,
@@ -18,6 +18,7 @@ import {AccountIncomeOutcomeType} from "../../../src/common/type/type";
 import {AccountHistoryEntity} from "../../../src/modules/account/history/entities/accountHistory.entity";
 import {AccountHistoryRepository} from "../../../src/modules/account/history/accountHistory.repository";
 import {
+    AccountCostSummaryByCategoryType,
     AccountDailyCostSummaryType,
     AccountMonthCostSummaryType
 } from "../../../src/modules/account/type/type";
@@ -45,8 +46,8 @@ describe('Account Repository', () => {
         accountRepository = module.get<AccountRepository>(AccountRepository);
         accountHistoryRepository = module.get<AccountHistoryRepository>(AccountHistoryRepository);
 
-        for(let i=0 ; i<4 ; i++){
-            savedAccountInfo.idx = i+1;
+        for (let i = 0; i < 4; i++) {
+            savedAccountInfo.idx = i + 1;
             const account: AccountEntity = await accountRepository.selectOne(savedMemberInfo, savedAccountInfo.idx);
 
             if (account) continue;
@@ -70,13 +71,13 @@ describe('Account Repository', () => {
     describe('selectMonthDailySummary()', () => {
         it('월별 가계부 일일 요약 조회', async () => {
             const startDateObj = dateToObject();
-            const endDateObj = dateToObject(new Date(Date.now()+60*60*24*30*1000));
+            const endDateObj = dateToObject(new Date(Date.now() + 60 * 60 * 24 * 30 * 1000));
 
             const accountHistoryDailyCostSummaryList: AccountDailyCostSummaryType[] =
                 await accountRepository.selectMonthDailySummary(
                     savedMemberInfo,
-                    startDateObj.year+startDateObj.month+startDateObj.date,
-                    endDateObj.year+endDateObj.month+endDateObj.date
+                    startDateObj.year + startDateObj.month + startDateObj.date,
+                    endDateObj.year + endDateObj.month + endDateObj.date
                 );
 
             dataExpect(monthDailySummaryDataKeyList, accountHistoryDailyCostSummaryList);
@@ -90,6 +91,21 @@ describe('Account Repository', () => {
                 await accountRepository.selectMonthCostSummary(savedMemberInfo, yearMonth);
 
             dataExpect(monthSummaryDataKeyList, [accountHistoryMonthCostSummary])
+        });
+    });
+
+    describe('selectCostSummaryByCategory()', () => {
+        it('카테고리별 가계부 요약 조회', async () => {
+            const result: AccountCostSummaryByCategoryType[] =
+                await accountRepository
+                    .selectCostSummaryByCategory(
+                        savedMemberInfo,
+                        0,
+                        '2022',
+                        '12'
+                    );
+
+            dataExpect(costSummaryByCategoryDataKeyList, result);
         });
     });
 
@@ -122,16 +138,18 @@ describe('Account Repository', () => {
 
             const accountHistoryList: [AccountHistoryEntity[], number]
                 = await accountHistoryRepository.selectList(
-                    [savedAccountInfo.idx.toString()], undefined, 0, 999
+                savedMemberInfo,
+                [savedAccountInfo.idx.toString()],
+                undefined, 0, 999
             );
 
             const incomeOutcome: {
                 income: number,
                 outcome: number
             } = accountHistoryList[0].reduce((obj, v) => {
-                if(v.type === 0) {
+                if (v.type === 0) {
                     obj.outcome += Number(v.amount);
-                }else{
+                } else {
                     obj.income += Number(v.amount);
                 }
 
@@ -148,7 +166,7 @@ describe('Account Repository', () => {
             const totalAmountOfAllAccount = await accountRepository
                 .selectTotalAmount(savedMemberInfo);
 
-            expect(!isNaN(totalAmountOfAllAccount*10)).toBeTruthy();
+            expect(!isNaN(totalAmountOfAllAccount * 10)).toBeTruthy();
         });
     });
 

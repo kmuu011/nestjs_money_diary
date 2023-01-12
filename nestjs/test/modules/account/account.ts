@@ -1,7 +1,9 @@
 import {AccountEntity} from "../../../src/modules/account/entities/account.entity";
 import {getSavedMember} from "../member/member";
 import {dateToObject} from "../../../libs/utils";
-import {SelectAccountMonthCostSummaryDto} from "../../../src/modules/account/dto/select-accountHistoryMonthCostSummary-dto";
+import {
+    SelectAccountMonthCostSummaryDto
+} from "../../../src/modules/account/dto/select-accountHistoryMonthCostSummary-dto";
 
 const nowDateObj = dateToObject();
 const endDateObj = dateToObject(new Date(Date.now() + 60 * 60 * 24 * 30 * 1000));
@@ -54,10 +56,29 @@ export const monthDailySummaryDataKeyList = [
     ...monthSummaryDataKeyList
 ];
 
+export const costSummaryByCategoryDataKeyList = [
+    {
+        key: "color",
+        type: "string"
+    },
+    {
+        key: "categoryName",
+        type: "string"
+    },
+    {
+        key: "accountHistoryCategoryIdx",
+        type: "number"
+    },
+    {
+        key: "amount",
+        type: "number"
+    },
+];
+
 export const accountMonthCostSummaryDto: SelectAccountMonthCostSummaryDto = {
     year: nowDateObj.year,
     month: nowDateObj.year,
     startDate: nowDateObj.year + nowDateObj.month + nowDateObj.date,
     endDate: endDateObj.year + endDateObj.month + endDateObj.date,
-    multipleAccountIdx : savedAccountData.idx.toString(),
+    multipleAccountIdx: savedAccountData.idx.toString(),
 }

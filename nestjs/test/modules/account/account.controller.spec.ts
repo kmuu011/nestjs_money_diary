@@ -9,11 +9,11 @@ import {AccountRepository} from "../../../src/modules/account/account.repository
 import {createRequest} from "node-mocks-http";
 import {Request} from "express";
 import {TokenRepository} from "../../../src/modules/member/token/token.repository";
-import {CursorSelectListResponseType, ResponseBooleanType} from "../../../src/common/type/type";
+import {ResponseBooleanType} from "../../../src/common/type/type";
 import {AccountEntity} from "../../../src/modules/account/entities/account.entity";
 import {CreateAccountDto} from "../../../src/modules/account/dto/create-account-dto";
 import {
-    accountMonthCostSummaryDto,
+    accountMonthCostSummaryDto, costSummaryByCategoryDataKeyList,
     getCreateAccountData,
     getSavedAccount,
     monthDailySummaryDataKeyList,
@@ -23,6 +23,13 @@ import {UpdateAccountDto} from "../../../src/modules/account/dto/update-account-
 import {getCursorSelectQueryDto} from "../../common/const";
 import {createRandomString} from "../../../libs/utils";
 import {dataExpect} from "../../../libs/test";
+import {
+    AccountCostSummaryByCategoryType,
+    AccountCursorSelectListResponseType
+} from "../../../src/modules/account/type/type";
+import {
+    SelectAccountHistoryCostSummaryByCategoryDto
+} from "../../../src/modules/account/dto/select-accountHistoryCostSummaryByCategory-dto";
 
 describe('Account Controller', () => {
     let accountController: AccountController;
@@ -59,12 +66,39 @@ describe('Account Controller', () => {
                 memberInfo: savedMemberInfo
             };
 
-            const accountMonthSummary = await accountController.selectAccountMonthSummary(req,
-                accountMonthCostSummaryDto
-            );
+            const accountMonthSummary = await accountController
+                .selectAccountMonthSummary(
+                    req,
+                    accountMonthCostSummaryDto
+                );
 
             dataExpect(monthDailySummaryDataKeyList, accountMonthSummary.accountHistoryDailyCostSummary);
             dataExpect(monthSummaryDataKeyList, [accountMonthSummary.accountHistoryMonthCostSummary]);
+        });
+    });
+
+    describe('selectCostSummaryByCategory()', () => {
+        it('카테고리별 가계부 요약 조회', async () => {
+            const req: Request = createRequest();
+
+            req.locals = {
+                memberInfo: savedMemberInfo
+            };
+
+            const queryDto: SelectAccountHistoryCostSummaryByCategoryDto = {
+                type: 0,
+                year: accountMonthCostSummaryDto.year,
+                month: accountMonthCostSummaryDto.month,
+                multipleAccountIdx: accountMonthCostSummaryDto.multipleAccountIdx
+            }
+
+            const categoryCostSummaryList: AccountCostSummaryByCategoryType[] = await accountController
+                .selectCostSummaryByCategory(
+                    req,
+                    queryDto
+                );
+
+            dataExpect(costSummaryByCategoryDataKeyList, categoryCostSummaryList)
         });
     });
 
@@ -76,12 +110,12 @@ describe('Account Controller', () => {
                 memberInfo: savedMemberInfo
             };
 
-            const response: CursorSelectListResponseType<AccountEntity> =
+            const response: AccountCursorSelectListResponseType<AccountEntity> =
                 await accountController.selectAccountList(req, getCursorSelectQueryDto());
 
             const endCursor: number = response.items[1].order;
 
-            const responseWithEndCursor: CursorSelectListResponseType<AccountEntity> =
+            const responseWithEndCursor: AccountCursorSelectListResponseType<AccountEntity> =
                 await accountController.selectAccountList(req, {
                     ...getCursorSelectQueryDto(),
                     endCursor

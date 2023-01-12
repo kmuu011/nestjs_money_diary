@@ -34,6 +34,8 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
         startCursor?: number,
         count?: number,
         categoryIdxList?: string[],
+        year?: string,
+        month?: string,
         date?: string
     ): Promise<[AccountHistoryEntity[], number]> {
         let query = this.createQueryBuilder('h')
@@ -58,7 +60,7 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
             query = query.andWhere("h.accountIdx IN (:accountIdxList)", {accountIdxList});
         }
 
-        if (type) {
+        if (type !== undefined) {
             query = query.andWhere("h.type = :type", {type});
         }
 
@@ -66,8 +68,16 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
             query = query.andWhere("h.accountHistoryCategoryIdx IN (:categoryIdxList)", {categoryIdxList});
         }
 
+        if (year) {
+            query = query.andWhere("DATE_FORMAT(h.createdAt, '%Y') = :year", {year});
+        }
+
+        if (month) {
+            query = query.andWhere("DATE_FORMAT(h.createdAt, '%m') = :month", {month});
+        }
+
         if (date) {
-            query = query.andWhere("DATE_FORMAT(h.createdAt, '%Y%m%d') = :date", {date});
+            query = query.andWhere("DATE_FORMAT(h.createdAt, '%d') = :date", {date});
         }
 
         const totalCount = await query
@@ -103,8 +113,6 @@ export class AccountHistoryRepository extends Repository<AccountHistoryEntity> {
             },
             true
         );
-
-        console.log(obj)
 
         return await this.update(accountHistory.idx, obj);
     }

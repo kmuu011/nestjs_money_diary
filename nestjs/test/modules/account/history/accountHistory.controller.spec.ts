@@ -28,6 +28,7 @@ import {
 } from "../../../../src/modules/account/history/category/entities/accountHistoryCategory.entity";
 import {MemberEntity} from "../../../../src/modules/member/entities/member.entity";
 import {getSavedMember} from "../../member/member";
+import {AccountHistorySelectResponse} from "../../../../src/modules/account/history/swagger/customResponse";
 
 describe('AccountHistory Controller', () => {
     let accountHistoryController: AccountHistoryController;
@@ -66,7 +67,7 @@ describe('AccountHistory Controller', () => {
                 memberInfo: savedMemberInfo
             };
 
-            const response: CursorSelectListResponseType<AccountHistoryEntity>
+            const response: CursorSelectListResponseType<AccountHistorySelectResponse>
                 = await accountHistoryController.selectAccountHistoryList(req, getSelectAccountHistoryDto());
 
             expect(response.items.every(v => v instanceof AccountHistoryEntity)).toBeTruthy();

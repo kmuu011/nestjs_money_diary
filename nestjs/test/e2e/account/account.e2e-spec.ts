@@ -6,8 +6,9 @@ import {
     getSavedMember,
 } from "../../modules/member/member";
 import {MemberEntity} from "../../../src/modules/member/entities/member.entity";
-import {getCreateAccountData} from "../../modules/account/account";
+import {costSummaryByCategoryDataKeyList, getCreateAccountData} from "../../modules/account/account";
 import {AccountEntity} from "../../../src/modules/account/entities/account.entity";
+import {dataExpect} from "../../../libs/test";
 
 describe('AccountController (e2e)', () => {
     const savedMemberInfo: MemberEntity = getSavedMember();
@@ -63,6 +64,20 @@ describe('AccountController (e2e)', () => {
 
             expect(accountHistoryDailyCostSummary !== undefined).toBeTruthy()
             expect(accountHistoryMonthCostSummary !== undefined).toBeTruthy()
+        });
+
+        it('/categoryCostSummary (GET)', async () => {
+            const response = await request(app.getHttpServer())
+                .get('/account/categoryCostSummary?' +
+                    'type=0&year=2022&month=12')
+                .set('ip', '127.0.0.1')
+                .set('user-agent', 'test-agent')
+                .set('token-code', savedMemberInfo.tokenInfo.code)
+                .expect(200);
+
+            const result = response.body;
+
+            dataExpect(costSummaryByCategoryDataKeyList, result);
         });
 
         it('/ (POST)', async () => {

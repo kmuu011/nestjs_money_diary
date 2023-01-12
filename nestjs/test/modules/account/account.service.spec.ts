@@ -10,7 +10,7 @@ import {
 import {DeleteResult, UpdateResult} from "typeorm";
 import {AccountEntity} from "../../../src/modules/account/entities/account.entity";
 import {
-    accountMonthCostSummaryDto,
+    accountMonthCostSummaryDto, costSummaryByCategoryDataKeyList,
     getCreateAccountData,
     getSavedAccount,
     monthDailySummaryDataKeyList,
@@ -22,6 +22,10 @@ import {CreateAccountDto} from "../../../src/modules/account/dto/create-account-
 import {UpdateAccountDto} from "../../../src/modules/account/dto/update-account-dto";
 import {createRandomString} from "../../../libs/utils";
 import {dataExpect} from "../../../libs/test";
+import {
+    AccountCostSummaryByCategoryType,
+    AccountCursorSelectListResponseType
+} from "../../../src/modules/account/type/type";
 
 describe('Account Service', () => {
     const savedMemberInfo: MemberEntity = getSavedMember();
@@ -59,7 +63,7 @@ describe('Account Service', () => {
 
             account.idx = 2;
 
-            const accountStatus: CursorSelectListResponseType<AccountEntity> =
+            const accountStatus: AccountCursorSelectListResponseType<AccountEntity> =
                 await accountService.selectList(savedMemberInfo, 0, undefined, 100);
 
             const totalCount: number = accountStatus.totalCount;
@@ -67,7 +71,7 @@ describe('Account Service', () => {
 
             await accountService.arrangeOrder(savedMemberInfo, account, randomOrder);
 
-            const orderChangedAccountList: CursorSelectListResponseType<AccountEntity> =
+            const orderChangedAccountList: AccountCursorSelectListResponseType<AccountEntity> =
                 await accountService.selectList(savedMemberInfo, 0, undefined,100);
 
             expect(orderChangedAccountList.items.findIndex(t => t.order === randomOrder) === randomOrder-1).toBeTruthy();
@@ -91,6 +95,35 @@ describe('Account Service', () => {
 
             dataExpect(monthDailySummaryDataKeyList, accountMonthSummary.accountHistoryDailyCostSummary);
             dataExpect(monthSummaryDataKeyList, [accountMonthSummary.accountHistoryMonthCostSummary]);
+        });
+    });
+
+    describe('selectMonthCostSummary()', () => {
+        it('가계부 월별 요약 조회', async () => {
+            const accountMonthSummary = await accountService.selectMonthCostSummary(
+                savedMemberInfo,
+                accountMonthCostSummaryDto.year,
+                accountMonthCostSummaryDto.month,
+                accountMonthCostSummaryDto.startDate,
+                accountMonthCostSummaryDto.endDate,
+                accountMonthCostSummaryDto.multipleAccountIdx
+            );
+
+            dataExpect(monthDailySummaryDataKeyList, accountMonthSummary.accountHistoryDailyCostSummary);
+            dataExpect(monthSummaryDataKeyList, [accountMonthSummary.accountHistoryMonthCostSummary]);
+        });
+    });
+
+    describe('selectCostSummaryByCategory()', () => {
+        it('카테고리별 가계부 요약 조회', async () => {
+            const result: AccountCostSummaryByCategoryType[] = await accountService.selectCostSummaryByCategory(
+                savedMemberInfo,
+                0,
+                accountMonthCostSummaryDto.year,
+                undefined,
+            )
+
+            dataExpect(costSummaryByCategoryDataKeyList, result);
         });
     });
 
@@ -130,7 +163,7 @@ describe('Account Service', () => {
 
     describe('selectList()', () => {
         it('가계부 리스트 조회', async () => {
-            const accountList: CursorSelectListResponseType<AccountEntity>
+            const accountList: AccountCursorSelectListResponseType<AccountEntity>
                 = await accountService.selectList(savedMemberInfo, 0, undefined, 10);
 
             expect(accountList.items.every(t => t instanceof AccountEntity)).toBeTruthy();
